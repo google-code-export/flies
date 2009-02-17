@@ -1,0 +1,432 @@
+/* <!-- */
+body {
+	margin:0;
+	padding:0;
+	border:0;			/* This removes the border around the viewport in old versions of IE */
+	width:100%;
+	background:#fff;
+	min-width:800px;		/* Minimum width of layout - remove line if not required */
+					/* The min-width property does not work in old versions of Internet Explorer */
+	font-size:90%;
+}
+
+h1 {
+	border-bottom: 1px solid #eee;
+}
+	
+
+a img{
+	border: none;
+}
+input[type=submit], input[type=button] {
+	font-size: 10px;
+	margin: 5px 5px 5px 0;
+	cursor: pointer;
+}
+
+input[type=text], input[type=password], textarea {
+	font-size: 11px;
+	padding-left: 1px;
+}
+
+.tableControl, .actionButtons {
+	width: 100%;
+}
+
+.tableControl a {
+	padding-left: 10px;
+}
+
+.tableControl {
+	text-align: right;
+}
+
+.rich-table {
+	width: 100%;
+}
+
+.columnHeader:hover {
+	color: #FF6600;
+}
+
+.message {
+	padding: 5px;
+	list-style: none;
+	border: 0;
+	background: none;
+	padding: 0;
+	color: #000000;
+	margin: 5px 0 8px 0;
+	font-size: 12px;
+}
+
+.message li {
+	background: no-repeat left center;
+	padding-top: 1px;
+	padding-left: 20px;
+	margin-left: 3px;
+}
+
+.message li.infomsg {
+	background-image: url(../img/msginfo.png);
+}
+
+.message li.errormsg {
+	background-image: url(../img/msgerror.png);
+}
+
+.message li.warnmsg {
+	background-image: url(../img/msgwarn.png);
+}
+
+.name {
+	vertical-align: top;
+	font-weight: bold;
+	width: 115px;
+	float: left;
+	padding: 5px;
+	margin-top: 3px;
+	clear: left;
+}
+
+.value {
+	float: left;
+	padding: 5px;
+}
+
+.error {
+	float: left;
+	padding: 5px;
+}
+
+.errors {
+	color: red;
+	vertical-align: middle;
+}
+
+img.errors {
+	padding-right: 5px;
+}
+
+.errors input, .errors textarea {
+	border: 1px solid red !important;
+}
+
+.required {
+	color: red;
+	padding-left: 2px;
+}
+
+.rich-stglpanel-body {
+	overflow: auto;
+} 
+
+/* the specificity here is necessary to override the defaults */
+.rich-panel .rich-panel-header,
+.rich-stglpanel .rich-stglpanel-header {
+	padding: 2px 3px;
+}
+
+select {
+	font-size: 12px;
+}
+
+.rich-panel input[type=submit], .rich-panel input[type=button],
+.rich-tabpanel input[type=submit], .rich-tabpanel input[type=button] {
+	margin-bottom: 0;
+}
+
+.tableControl input[type=submit], .tableControl input[type=button], .tableControl select {
+	margin: 5px 0 5px 5px;
+}
+
+/* I don't know why this is necessary, but the select is off by a pixel on the top and is padding too much on the left */
+.tableControl select {
+	margin-left: 2px;
+	position: relative;
+	top: 1px;
+}
+
+.actionButtons {
+	padding-right: 10px;
+	text-align: right;
+}
+
+.actionButtons select {
+	margin: 5px 5px 5px 0;
+	vertical-align: bottom;
+}
+
+.rich-datalist {
+	list-style: square;
+	margin: 6px 0 1px 0;
+	padding-left: 18px;
+}
+
+.rich-list-item {
+	padding-bottom: 4px;
+}
+
+div.info {
+	font-size: 1.2em;
+}
+
+ul.bullets {
+	list-style: square;
+}
+
+ul.bullets li {
+	padding-bottom: 2px;
+}
+
+td.action {
+	text-align: center;
+	width: 8em;
+	white-space: nowrap;
+}
+
+td.action a {
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+.dr-pnl{
+	background-color: inherit;
+}
+
+#headerlogo {
+	position: absolute;
+	left: 10px;
+	top:10px;
+}
+
+#header_top_right {
+	position: absolute;
+	right: 30px;
+	top: 10px;
+	font-size: 11px;
+}
+
+#loading_top_right {
+	position: fixed;
+	right: 2px;
+	top: 2px;
+}
+
+/* column container */
+.colmask {
+	position:relative;	/* This fixes the IE7 overflow hidden bug */
+	clear:both;
+	float:left;
+	width:100%;			/* width of whole page */
+	overflow:hidden;		/* This chops off any overhanging divs */
+}
+/* common column settings */
+.colright,
+.colmid,
+.colleft {
+	float:left;
+	width:100%;			/* width of page */
+	position:relative;
+}
+.col_center,
+.col_left,
+.col_right {
+	float:left;
+	position:relative;
+	padding:10px 0 1em 0;	/* no left and right padding on columns, we just make them narrower instead 
+					only padding top and bottom is included here, make it whatever value you need */
+	overflow:hidden;
+}
+/* 3 Column settings */
+.threecol {
+	/*background:#eee;*/		/* right column background colour */
+}
+.threecol .colmid {
+	right:20%;			/* width of the right column  (25%)*/
+	/*background:#fff;*/		/* center column background colour */
+}
+.threecol .colleft {
+	right:60%;			/* width of the middle column (50%)*/
+	/*background:#f4f4f4;*/	/* left column background colour */
+}
+.threecol .col_center {
+	width:56%;			/* width of center column content (column width minus padding on either side)  (46%)*/
+	left:102%;			/* 100% plus left padding of center column (102%)*/
+}
+.threecol .col_left {
+	width:16%;			/* Width of left column content (column width minus padding on either side) (21%)*/
+	left:26%;			/* width of (right column) plus (center column left and right padding) plus (left column left padding) (31%)*/
+}
+.threecol .col_right {
+	width:16%;			/* Width of right column content (column width minus padding on either side) (21%)*/
+	left:91%;			/* Please make note of the brackets here: (85%)
+					(100% - left column width) plus (center column left and right padding) plus (left column left and right padding) plus (right column left padding) */
+}
+/* Footer styles */
+#footer {
+	clear:both;
+	float:left;
+	width:100%;
+	border-top:1px solid #eee;
+	text-align: center;
+	font-size: 11px;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+
+/* Styles from the security-stuff in seamspace*/
+
+div.checkmark {
+  background: url(../img/checkmark.png) top left no-repeat;
+  width: 14px;
+  height: 15px;
+  margin-left: auto;
+  margin-right: auto;    
+}
+
+div.cross {
+  background: url(../img/cross.png) top left no-repeat;
+  width: 14px;
+  height: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+tr.odd {
+  background-color: #ffffff;
+}
+
+tr.even {
+  background-color: #E9F5FF;
+}
+
+td.enabled {
+  text-align: center;
+}
+
+td.action {
+  text-align: right;
+}
+
+table.fullwidth {
+  width: 100%
+}
+
+
+#search_panel{
+  margin: 0 auto 0.5em auto;
+  width: 80%;
+  border:1px solid #efefff;
+  background-color: #f5f5ff;
+  padding: 20px;
+  -moz-border-radius: 15px;
+  font-size: 16px;
+}
+
+#search_panel_form, #search_panel_links{
+  text-align: center;
+  margin: 0.2em auto 0.2em auto;
+}
+
+#projectList h3{
+	margin-bottom: 2px;
+}
+
+#projectList .no-description{
+	color: #777777;
+}
+
+#projectList .description{
+	color: #777777;
+}
+
+
+.resource-by-category-panel{
+	background-color: #fafafa;
+	border: 1px solid #efefef;
+	padding: 4px;
+    -moz-border-radius: 8px;
+    overflow: hidden;
+}
+
+.resource-by-category-panel .header{
+	display: block;
+	padding: 0px;
+	margin: 0px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+.resource-by-category-panel .header h2{
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	padding-right: 10px;
+}
+
+.resource-by-category-panel .header h2.cat-documentation{
+	padding-left: 24px;
+	background: transparent url("../img/cat-documentation.png") no-repeat;
+}
+
+
+.resource-by-category-panel .summary{
+	display: block;
+	font-style: italic;
+	margin-top: 2px;
+	margin-bottom: 4px;
+	font-size: 10px;
+	color: grey;
+}
+.resource-by-category-panel .header .status-bar{
+	float: right;
+	margin: 0px;
+	padding: 0px;
+}
+
+.resource-by-category-panel .toolbar{
+	display: block;
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.resource-by-category-panel .toolbar .actions{
+	float: left;
+}
+
+
+.resource-by-category-panel .toolbar .expand{
+	float: right;
+	font-style: italic;
+	font-size: 10px;
+	color: grey;
+}
+
+.resource-name{
+	font-size: 14pt;
+	color: grey;
+	font-style: italic;
+}
+
+.resources-panel{
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}
+
+.actions{
+	font-size: 10pt;
+}
+
+.resource-by-category-panel .toolbar .expand img{
+	margin-bottom: -5px;
+}
+
+.resource-by-category-panel .expanded-content{
+	padding: 5px;
+	margin-top: 10px;
+}
+
+
+/* --> */
