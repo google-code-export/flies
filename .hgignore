@@ -1,0 +1,16 @@
+syntax: glob
+*~
+*/target/*
+syntax: regexp
+^\.pc/
+^lib/
+^test-build/
+^exploded-archives/
+^classes/
+^flies-deps-[0-9.\-_]*.zip
+^build.properties
+^test-report/
+^target/
+^.ant-targets-build.xml
+^dist/
+^bootstrap/data/hypersonic/
