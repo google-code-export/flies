@@ -1,0 +1,15 @@
+syntax: glob
+*~
+*/target/*
+syntax: regexp
+^\.pc/
+^flies-web/lib/
+^flies-web/test-build/
+^flies-web/exploded-archives/
+^flies-web/classes/
+^flies-web/build.properties
+^flies-web/test-report/
+^flies-web/target/
+^.ant-targets-build.xml
+^flies-web/dist/
+^flies-web/bootstrap/data/hypersonic/
