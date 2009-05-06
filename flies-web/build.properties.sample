@@ -1,0 +1,3 @@
+jboss.home =/usr/share/jboss-4.2.3.GA
+jboss.domain=default
+seam.home =/usr/share/jboss-seam-2.1.1.GA
