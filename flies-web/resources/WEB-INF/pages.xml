@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns="http://jboss.com/products/seam/pages"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd"
+
+       no-conversation-view-id="/home.xhtml"
+       login-view-id="/login.xhtml">
+
+	<conversation name="TargetView"
+			parameter-name="targetId"
+			parameter-value="#{redirect.parameters.targetId != null ? redirect.parameters.targetId : (targetHome.instance.id != null ? targetHome.instance.id : '')}"
+			/>
+
+	<conversation name="ProjectView"
+			parameter-name="projectId"
+			parameter-value="#{redirect.parameters.projectId != null ? redirect.parameters.projectId : (projectHome.instance.id != null ? projectHome.instance.id : '')}" 
+			/>
+
+	<conversation name="TranslationWorkspaceView"
+			parameter-name="wid"
+			parameter-value="#{redirect.parameters.wid != null ? redirect.parameters.wid : (translateAction.workspaceId != null ? translateAction.workspaceId : '')}" 
+			/>
+
+
+    <page view-id="*">
+        <navigation>
+            <rule if-outcome="home">
+                <redirect view-id="/home.xhtml"/>
+            </rule>
+        </navigation>
+    </page>
+    
+    <page view-id="/project/project.xhtml" conversation="ProjectView">
+
+    	<description>#{projectHome.instance.name}</description>
+    	
+        <action execute="#{projectHome.validateEntityFound}"
+            if="#{view.viewId == '/project/project.xhtml' or
+                (view.viewId == '/project/edit.xhtml' and projectHome.projectId != null)}"/>
+                
+        <navigation from-action="#{projectHome.validateEntityFound}">
+            <rule if-outcome="invalid">
+                <redirect view-id="/project/home.xhtml" >
+                    <message severity="WARN">
+                        The project you requested does not exist.
+                    </message>
+                </redirect>
+            </rule>
+        </navigation>
+    	
+    </page>
+
+    <page view-id="/project/edit.xhtml" conversation="ProjectView">
+    </page>
+
+    <page view-id="/translate.xhtml" conversation="TranslationWorkspaceView">
+    	<description>#{translateAction.workspaceId}</description>
+    	<begin-conversation conversation="TranslationWorkspaceView" join="true" if="#{not translateAction.conversationActive}"/>
+    	<action execute="#{translateAction.initialize()}" if="#{not translateAction.conversationActive}" />
+	</page>
+    
+    <page view-id="/project/target.xhtml" conversation="TargetView">
+
+    	<description>#{targetHome.instance.name}</description>
+    	
+        <action execute="#{targetHome.validateEntityFound}"
+            if="#{view.viewId == '/project/target.xhtml' or
+                (view.viewId == '/project/edit.xhtml' and targetHome.targetId != null)}"/>
+                
+        <navigation from-action="#{targetHome.validateEntityFound}">
+            <rule if-outcome="invalid">
+                <redirect view-id="/project/home.xhtml" >
+                    <message severity="WARN">
+                        The project you requested does not exist.
+                    </message>
+                </redirect>
+            </rule>
+        </navigation>
+    </page>
+
+    <exception class="org.jboss.seam.framework.EntityNotFoundException">
+        <redirect view-id="/error.xhtml">
+            <message severity="warn">Record not found</message>
+        </redirect>
+    </exception>
+    
+    <exception class="javax.persistence.EntityNotFoundException">
+        <redirect view-id="/error.xhtml">
+            <message severity="warn">Record not found</message>
+        </redirect>
+    </exception>
+
+    <exception class="javax.persistence.EntityExistsException">
+        <redirect view-id="/error.xhtml">
+            <message severity="warn">Duplicate record</message>
+        </redirect>
+    </exception>
+    
+    <exception class="javax.persistence.OptimisticLockException">
+        <end-conversation/>
+        <redirect view-id="/error.xhtml">
+            <message severity="warn">Another user changed the same data, please try again</message>
+        </redirect>
+    </exception>
+    
+    <exception class="org.jboss.seam.security.AuthorizationException">
+        <redirect view-id="/error.xhtml">
+            <message severity="error">You don't have permission to access this resource</message>
+        </redirect>
+    </exception>
+    
+    <exception class="org.jboss.seam.security.NotLoggedInException">
+        <redirect view-id="/login.xhtml">
+            <message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+        </redirect>
+    </exception>
+    
+    <exception class="javax.faces.application.ViewExpiredException">
+        <redirect view-id="/error.xhtml">
+            <message severity="warn">Your session has timed out, please try again</message>
+        </redirect>
+    </exception>
+    
+    <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
+      <http-error error-code="503" />
+    </exception>
+     
+    <exception>
+        <redirect view-id="/error.xhtml">
+            <message severity="error">Unexpected error, please try again</message>
+        </redirect>
+    </exception>
+    
+</pages>
