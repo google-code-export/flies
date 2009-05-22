@@ -1,0 +1,120 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:flies="http://flies.fedorahosted.org/ui"
+    template="../layout/template.xhtml">
+
+<ui:define name="breadcrumbs">
+  »
+  <s:link view="/project/home.xhtml" propagation="none">Projects</s:link>
+  »
+  <s:link view="/project/project.xhtml" propagation="none">
+    <f:param name="slug" value="#{targetHome.instance.project.slug}"/>
+    #{targetHome.instance.project.name}
+  </s:link>
+  #{targetHome.instance.name}
+</ui:define>
+
+<ui:define name="left_content">
+  <rich:panel>
+    <f:facet name="header">Actions</f:facet>
+    <s:link view="/project/target_edit.xhtml" propagation="none">
+      <f:param name="mslug" value="#{targetHome.multiSlug}"/>
+      Edit
+    </s:link>
+  </rich:panel>
+</ui:define>
+
+<ui:define name="center_content">
+  <rich:jQuery selector="#tab_projects" query="addClass('ui-tabs-selected')" />
+
+  <h1>#{targetHome.instance.project.name} : #{targetHome.instance.name}</h1>
+
+  <ui:repeat value="#{targetCategories}" var="category">
+    <h:form id="category_form_#{category.id}">
+      <s:conversationId/>
+      <div class="resource-by-category-panel">
+        <div class="header">
+          <h2 class="cat-documentation">#{category.name}</h2>
+          <div class="status-bar">
+            <ui:param name="status" value="#{targetHome.getStatisticsForCategory(category)}" />
+            <flies:translation-status-bar
+              translated="#{status.approved}" 
+              fuzzy="0" 
+              untranslated="#{status.notApproved}"/>
+          </div>
+          <div style="clear: both;"/>
+        </div>
+        <!-- 
+        <s:div styleClass="summary" rendered="false">
+          #{targetHome.instance.description}
+        </s:div>
+         -->
+        <div class="toolbar">
+          <div class="actions">
+            <s:link view="/translate.xhtml" propagation="none">
+              Translate
+              <f:param name="wid" value="#{targetHome.instance.id}/gu-IN"/>
+            </s:link> &nbsp;|&nbsp; 
+            <s:link view="/home.xhtml">Download Archive</s:link> &nbsp;|&nbsp; 
+            <s:link view="/home.xhtml">More...</s:link>
+          </div>
+          <ui:param name="catDocuments" value="#{targetHome.getDocumentsForCategory(category)}" />
+          <div class="expand">
+            #{catDocuments.size} File(s) 
+             <rich:toggleControl for="eContent">
+               <h:graphicImage value="/img/expand.png" />
+             </rich:toggleControl>
+          </div>
+          <div style="clear: both;"/>
+        </div>
+      <rich:togglePanel id="eContent" switchType="server" stateOrder="closed,open" initialState="open">
+       <f:facet name="closed">
+        <!-- Invisible -->
+       </f:facet>
+       <f:facet name="open">
+          <rich:dataTable value="#{catDocuments}"
+            var="document" width="100%" rows="50" reRender="ds">
+            <rich:column width="100%" sortBy="#{document.name}">
+              <f:facet name="header">
+                <h:outputText value="Name"/>
+              </f:facet>
+              <div class="resource-name">#{document.name}</div>
+              <div style="clear:both"/>
+              <div class="actions">
+                 <a href="#">Download</a> <a href="#">Upload..</a> 
+              </div>
+              <s:div styleClass="translation-status" rendered="#{document.id % 5 lt 2}">
+                Asgeir Frimannsson is working on this file
+              </s:div>
+              
+            </rich:column>
+            <rich:column>
+              <f:facet name="header">
+                <h:outputText value="Status"/>
+              </f:facet>
+              <ui:param name="tstatus" value="#{targetHome.getStatisticsForDocument(document)}" />
+              <flies:translation-status-bar
+                title="Total: #{tstatus.total}, Translated: #{tstatus.approved}, Fuzzy #{tstatus.fuzzyMatch}"
+                translated="#{tstatus.approved}" 
+                fuzzy="0" 
+                untranslated="#{tstatus.notApproved}"/>
+            </rich:column>
+            <f:facet name="footer">
+              <rich:datascroller id="ds" rendered="#{targetHome.instance.documents.size > 50}"></rich:datascroller>
+            </f:facet>
+          </rich:dataTable>
+       </f:facet>
+        
+      </rich:togglePanel>
+      </div>
+    </h:form>
+  </ui:repeat>
+</ui:define>
+
+</ui:composition>

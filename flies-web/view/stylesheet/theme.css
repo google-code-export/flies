@@ -1,0 +1,506 @@
+/* <!-- */
+
+a {
+	color: #2222BB;	
+}
+th, td {
+	border-color: #f4f4f4;
+}
+
+input, textarea {
+	-moz-border-radius-bottomleft: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
+	border:1px solid #BBBBBB;
+	padding: 3px;
+	color: #222222;
+	font-weight: bold;
+}
+button, input[type="checkbox"], input[type="radio"], input[type="reset"], input[type="submit"], input[type="button"]  {
+	color: #222222;
+	padding:2px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+button, input[type="reset"], input[type="submit"], input[type="button"]  {
+	background-color: #fafafa;
+	
+}
+input.with_icon {
+	background-position:5px 50%;
+	background-repeat:no-repeat;
+	padding-left: 25px;
+}
+
+.search_icon{
+	background-image: url(../img/silk/zoom.png);
+}
+
+.input_help{
+	vertical-align: middle;
+	padding-left: 2px;
+	/* error img takes up 16px */
+	padding-right: 2px;
+}
+
+.input_nohelp{
+	display: inline;
+}
+.tableControl,.actionButtons {
+	width: 100%;
+}
+
+.tableControl a {
+	padding-left: 10px;
+}
+
+.tableControl {
+	text-align: right;
+}
+
+.rich-table {
+	width: 100%;
+}
+
+.columnHeader:hover {
+	color: #FF6600;
+}
+
+.message {
+	padding: 5px;
+	list-style: none;
+	border: 0;
+	background: none;
+	padding: 0;
+	color: #000000;
+	margin: 5px 0 8px 0;
+}
+
+.message li {
+	background: no-repeat left center;
+	padding-top: 1px;
+	padding-left: 20px;
+	margin-left: 3px;
+}
+
+.message li.infomsg {
+	background-image: url(../img/msginfo.png);
+}
+
+.message li.errormsg {
+	background-image: url(../img/msgerror.png);
+}
+
+.message li.warnmsg {
+	background-image: url(../img/msgwarn.png);
+}
+
+.name {
+	vertical-align: top;
+	font-weight: bold;
+	width: 115px;
+	float: left;
+	padding: 5px;
+	margin-top: 3px;
+	clear: left;
+}
+
+.prop{
+	vertical-align: middle;
+}
+
+.value {
+	float: left;
+	padding: 5px;
+}
+
+.error {
+	float: left;
+	padding: 5px;
+}
+
+.errors {
+	color: #F00000;
+	vertical-align: middle;
+}
+
+img.errors {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.errors input,.errors textarea {
+	border: 1px solid #F00000 !important;
+	background-color: #FFFAFA;
+}
+
+.required {
+	color: #F00000;
+	padding-left: 2px;
+}
+
+.rich-stglpanel-body {
+	overflow: auto;
+}
+
+/* the specificity here is necessary to override the defaults */
+.rich-panel .rich-panel-header,.rich-stglpanel .rich-stglpanel-header {
+	padding: 2px 3px;
+}
+
+.rich-panel input[type=submit],.rich-panel input[type=button],.rich-tabpanel input[type=submit],.rich-tabpanel input[type=button]
+	{
+	margin-bottom: 0;
+}
+
+.tableControl input[type=submit],.tableControl input[type=button],.tableControl select
+	{
+	margin: 5px 0 5px 5px;
+}
+
+/* I don't know why this is necessary, but the select is off by a pixel on the top and is padding too much on the left */
+.tableControl select {
+	margin-left: 2px;
+	position: relative;
+	top: 1px;
+}
+
+.actionButtons {
+	padding-right: 10px;
+	text-align: right;
+}
+
+.actionButtons select {
+	margin: 5px 5px 5px 0;
+	vertical-align: bottom;
+}
+
+div.info {
+	
+}
+
+ul.bullets {
+	list-style: square;
+}
+
+ul.bullets li {
+	padding-bottom: 2px;
+}
+
+td.action {
+	text-align: center;
+	width: 8em;
+	white-space: nowrap;
+}
+
+td.action a {
+	padding-left: 1px;
+	padding-right: 1px;
+}
+
+#headerlogo {
+	position: absolute;
+	left: 10px;
+	top: 10px;
+}
+
+#header_top_right {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	padding: 5px;
+	padding-right: 25px;
+	font-size: 77%;
+	background-color: #f4f4f4;
+	border-bottom: 1px solid #f4f4f4;
+	border-left: 1px solid #f4f4f4;
+	color: #999999;
+	-moz-border-radius-bottomleft: 10px;
+}
+
+#loading_top_right {
+	position: fixed;
+	right: 2px;
+	top: 2px;
+}
+
+#breadcrumbs {
+	margin: 5px 0 0 255px;
+	font-size: 77%;
+	color: #ddddef;
+}
+
+#breadcrumbs a {
+	text-decoration: none;
+	font-weight: bold;
+	color: #ddddef;
+}
+
+/* Footer styles */
+#footer {
+	border-top: 1px solid #eee;
+	text-align: center;
+	font-size: 77%;
+	padding: 5px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+/* Styles from the security-stuff in seamspace*/
+div.checkmark {
+	background: url(../img/checkmark.png) top left no-repeat;
+	width: 14px;
+	height: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.cross {
+	background: url(../img/cross.png) top left no-repeat;
+	width: 14px;
+	height: 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+tr.odd {
+	background-color: #ffffff;
+}
+
+tr.even {
+	background-color: #E9F5FF;
+}
+
+td.enabled {
+	text-align: center;
+}
+
+td.action {
+	text-align: right;
+}
+
+table.fullwidth {
+	width: 100%
+}
+
+#search_panel {
+	position: absolute;
+	right: 0px;
+	top: 40px;
+	padding: 5px;
+	padding-right: 25px;
+	color: #999999;
+	-moz-border-radius: 10px;
+		
+}
+
+#projectList h3 {
+	margin-bottom: 2px;
+}
+
+#projectList .no-description {
+	color: #777777;
+}
+
+#projectList .description {
+	color: #777777;
+}
+
+.resource-by-category-panel {
+	background-color: #fafafa;
+	border: 1px solid #efefef;
+	padding: 4px;
+	-moz-border-radius: 8px;
+	overflow: hidden;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.resource-by-category-panel .header {
+	display: block;
+	padding: 0px;
+	margin: 0px;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+.resource-by-category-panel .header h2 {
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	padding-right: 10px;
+}
+
+.resource-by-category-panel .header h2.cat-documentation {
+	padding-left: 24px;
+	background: transparent url("../img/cat-documentation.png") no-repeat;
+}
+
+.resource-by-category-panel .summary {
+	display: block;
+	font-style: italic;
+	margin-top: 2px;
+	margin-bottom: 4px;
+	font-size: 77%;
+	color: grey;
+}
+
+.resource-by-category-panel .header .status-bar {
+	float: right;
+	margin: 0px;
+	padding: 0px;
+}
+
+.resource-by-category-panel .toolbar {
+	display: block;
+	width: 100%;
+	margin-bottom: 5px;
+}
+
+.resource-by-category-panel .toolbar .actions {
+	float: left;
+}
+
+.resource-by-category-panel .toolbar .expand {
+	float: right;
+	font-style: italic;
+	color: grey;
+}
+
+.resource-name {
+	font-size: 108%;
+	color: grey;
+	font-style: italic;
+}
+
+.resources-panel {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+}
+
+.actions {
+	float: left;
+}
+
+.resource-by-category-panel .toolbar .expand img {
+	margin-bottom: -5px;
+}
+
+.resource-by-category-panel .expanded-content {
+	padding: 5px;
+	margin-top: 10px;
+}
+
+.translation-status {
+	float: right;
+	color: grey;
+}
+
+.projectList td {
+	margin-top: 0px;
+	padding-bottom: 10px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.projectList h3 {
+	margin-top: 0px;
+	margin-bottom: 2px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#language-chooser {
+	color: grey;
+	position: absolute;
+	left: 400px;
+	top: 10px;
+	font-size: 77%;
+}
+
+.rich-panel {
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-topright: 8px;
+}
+
+.rich-panel-header {
+	-moz-border-radius-topleft: 8px;
+	-moz-border-radius-topright: 8px;
+}
+
+.dr-pnl {
+	background-color: inherit;
+	border: none;
+}
+
+.dr-pnl-b {
+	
+}
+
+.rich-panel-body {
+	border: 1px solid;
+	border-color: #f4f4f4;
+}
+
+.dr-pnl-h {
+	background-color: #f4f4f4;
+	background-image: none;
+	border-color: #f4f4f4;
+	color: #999999;
+	font-family: inherit;
+	font-size: 100%;
+	font-weight: bold;
+}
+
+.dr-table{
+}
+.dr-table-cell{
+	border: 1px solid #f4f4f4;
+}
+.dr-table-header{
+	background-color: #f4f4f4;
+	background-image: none;
+	border-color: #f4f4f4;
+	color: #999999;
+	font-family: inherit;
+	font-size: 100%;
+	font-weight: bold;
+}
+
+.dr-table-footer{
+	background-color: #f4f4f4;
+}
+
+.datacsr-mini{
+	padding:0px;
+	margin:0px;
+	font-size: 77%;	
+}
+
+.rich-datalist {
+	list-style: square;
+	margin: 6px 0 1px 0;
+	padding-left: 18px;
+}
+
+.rich-list-item {
+	padding-bottom: 4px;
+}
+
+.dr-dscr{
+	background-color: #f4f4f4;
+}
+
+.panel-body-no-padding{
+	padding: 0px;
+	overflow: hidden;
+}
+
+.docrow{
+	overflow: hidden;
+}
+
+/* --> */
