@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 import org.fedorahosted.flies.core.dao.ProjectDAO;
 import org.fedorahosted.flies.core.model.Project;
 import org.fedorahosted.flies.core.model.ProjectSeries;
-import org.fedorahosted.flies.core.model.ProjectTarget;
+import org.fedorahosted.flies.core.model.ProjectIteration;
 import org.fedorahosted.flies.core.rest.api.IterationProject;
 import org.fedorahosted.flies.core.rest.api.MetaProject;
 import org.fedorahosted.flies.core.rest.api.MetaProject.ProjectType;
@@ -74,10 +74,12 @@ public class ProjectResource {
 		Project p = projectDAO.getBySlug(projectSlug);
 		if(p == null)
 			throw new NotFoundException("Project not found: "+projectSlug);
+		Entry entry = null;
+		if( p instanceof org.fedorahosted.flies.core.model.IterationProject){
+			IterationProject project = new IterationProject((org.fedorahosted.flies.core.model.IterationProject) p);
+			entry = create(project);
+		}
 
-		IterationProject project = new IterationProject(p);
-
-		Entry entry = create(project);
 		return entry;
 	}
 

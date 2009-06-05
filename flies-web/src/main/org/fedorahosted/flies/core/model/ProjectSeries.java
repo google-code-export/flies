@@ -16,12 +16,12 @@ public class ProjectSeries extends AbstractFliesEntity implements Serializable {
 
 	private String name;
 
-	private Project project;
+	private IterationProject project;
 
 	private ProjectSeries parent;
 	private List<ProjectSeries> children;
 
-	private List<ProjectTarget> projectTargets;
+	private List<ProjectIteration> projectIterations;
 
 	public static final String DEFAULT = "default";
 	
@@ -36,11 +36,11 @@ public class ProjectSeries extends AbstractFliesEntity implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "projectId")
-	public Project getProject() {
+	public IterationProject getProject() {
 		return project;
 	}
 
-	public void setProject(Project project) {
+	public void setProject(IterationProject project) {
 		this.project = project;
 	}
 
@@ -64,12 +64,12 @@ public class ProjectSeries extends AbstractFliesEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "projectSeries")
-	public List<ProjectTarget> getProjectTargets() {
-		return projectTargets;
+	public List<ProjectIteration> getProjectIterations() {
+		return projectIterations;
 	}
 
-	public void setProjectTargets(List<ProjectTarget> projectTargets) {
-		this.projectTargets = projectTargets;
+	public void setProjectIterations(List<ProjectIteration> projectIterations) {
+		this.projectIterations = projectIterations;
 	}
 
 	@Transient
