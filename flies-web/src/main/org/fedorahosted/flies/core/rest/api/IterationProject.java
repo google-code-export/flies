@@ -7,8 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.fedorahosted.flies.core.model.Project;
-import org.fedorahosted.flies.core.model.ProjectTarget;
+import org.fedorahosted.flies.core.model.*;;
 
 @XmlRootElement(name="project", namespace="http://flies.fedorahosted.org/")
 public class IterationProject extends MetaProject{
@@ -20,12 +19,12 @@ public class IterationProject extends MetaProject{
 		setProjectType(ProjectType.IterationProject);
 	}
 	
-	public IterationProject(Project project) {
+	public IterationProject(org.fedorahosted.flies.core.model.IterationProject project) {
 		super(project);
 		setProjectType(ProjectType.IterationProject);
 		
-		for(ProjectTarget target: project.getProjectTargets()){
-			ProjectIteration iteration = new ProjectIteration(target);
+		for(org.fedorahosted.flies.core.model.ProjectIteration iter: project.getProjectIterations()){
+			ProjectIteration iteration = new ProjectIteration(iter);
 			getIterations().add(iteration);
 		}
 	}

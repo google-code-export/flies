@@ -3,10 +3,11 @@ package org.fedorahosted.flies.repository.model;
 
 
 import org.dbunit.operation.DatabaseOperation;
+import org.fedorahosted.flies.core.model.IterationProject;
 import org.fedorahosted.flies.core.model.Person;
 import org.fedorahosted.flies.core.model.Project;
 import org.fedorahosted.flies.core.model.ProjectSeries;
-import org.fedorahosted.flies.core.model.ProjectTarget;
+import org.fedorahosted.flies.core.model.ProjectIteration;
 import org.jboss.seam.mock.DBUnitSeamTest;
 import org.testng.annotations.Test;
 
@@ -29,16 +30,16 @@ public class DocumentTests extends DBUnitSeamTest {
 
             protected void invokeApplication() throws Exception {
                 EntityManager em = (EntityManager) getInstance("entityManager");
-                Project project = em.find(Project.class, 1l);
+                IterationProject project = em.find(IterationProject.class, 1l);
                 assertNotNull(project, "Failed to find project by Id");
                 
                 List<ProjectSeries> projectSeries =  project.getProjectSeries();
                 assertEquals(projectSeries.size(), 1, "Project should have n series");
                 
-                List<ProjectTarget> projectTargets = project.getProjectTargets();
+                List<ProjectIteration> projectTargets = project.getProjectIterations();
                 assertEquals(projectTargets.size(), 1, "Project should have n targets");
                 
-                ProjectTarget target = projectTargets.get(0);
+                ProjectIteration target = projectTargets.get(0);
                 assertEquals(target.getId(), Long.valueOf(1l), "expected target with id 1");
                 
             }

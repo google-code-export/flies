@@ -14,7 +14,7 @@ import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
 @Entity
-public class ProjectTarget extends AbstractSlugEntity implements Serializable {
+public class ProjectIteration extends AbstractSlugEntity implements Serializable {
 
 	private String name;
 
@@ -26,11 +26,9 @@ public class ProjectTarget extends AbstractSlugEntity implements Serializable {
 
 	private Boolean active = true;
 	
-	private ProjectTarget parent;
-	private List<ProjectTarget> children;
+	private ProjectIteration parent;
+	private List<ProjectIteration> children;
 	private List<Document> documents;
-
-	private List<Collection> collections;
 
 	private String localDirectory;
 	
@@ -91,25 +89,25 @@ public class ProjectTarget extends AbstractSlugEntity implements Serializable {
 	}
 
 	@OneToMany(mappedBy = "parent")
-	public List<ProjectTarget> getChildren() {
+	public List<ProjectIteration> getChildren() {
 		return children;
 	}
 
-	public void setChildren(List<ProjectTarget> children) {
+	public void setChildren(List<ProjectIteration> children) {
 		this.children = children;
 	}
 
 	@ManyToOne
 	@JoinColumn(name = "parentId")
-	public ProjectTarget getParent() {
+	public ProjectIteration getParent() {
 		return parent;
 	}
 
-	public void setParent(ProjectTarget parent) {
+	public void setParent(ProjectIteration parent) {
 		this.parent = parent;
 	}
 
-	@OneToMany(mappedBy = "projectTarget")
+	@OneToMany(mappedBy = "projectIteration")
 	public List<Document> getDocuments() {
 		return documents;
 	}
@@ -117,14 +115,5 @@ public class ProjectTarget extends AbstractSlugEntity implements Serializable {
 	public void setDocuments(List<Document> documents) {
 		this.documents = documents;
 
-	}
-
-	@ManyToMany(mappedBy = "projectTargets")
-	public List<Collection> getCollections() {
-		return collections;
-	}
-
-	public void setCollections(List<Collection> collections) {
-		this.collections = collections;
 	}
 }
