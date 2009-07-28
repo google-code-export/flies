@@ -1,42 +1,29 @@
-<?xml version="1.0"?><project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fedorahosted.flies.ui</groupId>
+  <artifactId>flies-richfaces-ui</artifactId>
   <parent>
-    <artifactId>root</artifactId>
     <groupId>org.fedorahosted.flies</groupId>
+    <artifactId>root</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>flies-richfaces-ui</artifactId>
+
   <name>Flies Richfaces JSF Components</name>
   <url>http://flies.fedorahosted.org/ui</url>
+  <packaging>pom</packaging>
+  
+  <modules>
+    <module>translation-status-bar</module>
+    <module>assembly</module>
+  </modules>
 
-	<properties>
-		<version.richfaces>3.3.1.GA</version.richfaces>
-	</properties>
-
+  <properties>
+    <version.richfaces>3.3.1.GA</version.richfaces>
+  </properties>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.richfaces.cdk</groupId>
-        <artifactId>maven-cdk-plugin</artifactId>
-        <version>${version.richfaces}</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <library>
-            <prefix>org.fedorahosted.flies</prefix>
-            <taglib>
-              <shortName>flies-richfaces-ui</shortName>
-            </taglib>
-          </library>
-        </configuration>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <inherited>true</inherited>
@@ -45,8 +32,26 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+    
+      <plugin>
+        <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>    
+
     </plugins>
+    
   </build>
+
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -113,4 +118,5 @@
     </dependency>
         
   </dependencies>
+  
 </project>
