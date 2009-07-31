@@ -1,0 +1,45 @@
+syntax: glob
+
+*~
+*/target/*
+syntax: regexp
+\.jar$
+
+^\.pc/
+^.ant-targets-build.xml
+\.pages.xml.spdia$
+
+# flies-web
+^flies-web/lib/
+^flies-web/build.properties
+^flies-web/dist/
+^flies-web/build-tools/lib/
+^flies-web/build/
+^flies-web/.settings/org.jboss.tools.common.resref.core.prefs
+
+# flies-web-test
+^flies-web-test/lib/
+^flies-web-test/build/
+^flies-web-test/bootstrap/data/
+^flies-web-test/test-output/
+
+# flies-richfaces-ui
+^flies-richfaces-ui/(translation-status-bar|assembly)/.classpath
+^flies-richfaces-ui/(translation-status-bar|assembly)/.project
+^flies-richfaces-ui/(translation-status-bar|assembly)/.settings/
+
+
+# ant-eclipse-classpath
+^ant-eclipse-classpath/lib/
+^ant-eclipse-classpath/build/
+^ant-eclipse-classpath/*.jar
+
+# flies-rest-client
+^flies-rest-client/.classpath
+^flies-rest-client/.project
+^flies-rest-client/.settings/
+
+# flies-common-api
+^flies-common-api/.classpath
+^flies-common-api/.project
+^flies-common-api/.settings/
