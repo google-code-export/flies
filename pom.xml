@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fedorahosted.flies</groupId>
+  <artifactId>root</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <url>http://flies.fedorahosted.org/ui</url>
+  <packaging>pom</packaging>
+  <modules>
+    <module>flies-richfaces-ui</module>
+    <module>flies-rest-api</module>
+    <module>flies-rest-client</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
+      </plugin>
+    </plugins>
+  </build>
+
+    <repositories>
+
+        <!--  jboss.org repo  -->
+        <repository>
+            <id>jboss-repository</id>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/maven2</url>
+              <releases>
+                   <enabled>true</enabled>
+              </releases>
+              <snapshots>
+                   <enabled>false</enabled>
+                   <updatePolicy>never</updatePolicy>
+              </snapshots>
+        </repository>
+
+        <!--  jboss.org snapshot repo  -->
+        <repository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>http://snapshots.jboss.org/maven2</url>
+              <releases>
+                   <enabled>false</enabled>
+              </releases>
+              <snapshots>
+                   <enabled>true</enabled>
+                   <updatePolicy>always</updatePolicy>
+              </snapshots>
+        </repository>
+
+    </repositories>
+
+	<pluginRepositories>
+	     <pluginRepository>
+	          <id>maven.jboss.org</id>
+	          <name>JBoss Repository for Maven Snapshots</name>
+	          <url>http://snapshots.jboss.org/maven2/</url>
+	          <releases>
+	               <enabled>false</enabled>
+	          </releases>
+	          <snapshots>
+	               <enabled>true</enabled>
+	               <updatePolicy>always</updatePolicy>
+	          </snapshots>
+	     </pluginRepository>
+	     <pluginRepository>
+	          <id>repository.jboss.com</id>
+	          <name>Jboss Repository for Maven</name>
+	          <url>http://repository.jboss.com/maven2/</url>
+	          <layout>default</layout>
+	          <releases>
+	               <enabled>true</enabled>
+	          </releases>
+	          <snapshots>
+	               <enabled>false</enabled>
+	               <updatePolicy>never</updatePolicy>
+	          </snapshots>
+	     </pluginRepository>
+	</pluginRepositories>
+</project>
