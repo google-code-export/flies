@@ -13,7 +13,7 @@ syntax: regexp
 \.classpath$
 \.project$
 \.settings/
-
+^target
 
 # flies-web
 ^flies-web/lib/
