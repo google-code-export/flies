@@ -1,8 +1,9 @@
 package org.fedorahosted.flies.account.action;
 
+import java.io.Serializable;
+
 import javax.persistence.EntityManager;
 
-import org.fedorahosted.flies.KeyNotFoundException;
 import org.fedorahosted.flies.core.model.AccountActivationKey;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.Begin;
@@ -18,7 +19,9 @@ import org.jboss.seam.security.management.IdentityManager;
 
 @Name("activate")
 @Scope(ScopeType.CONVERSATION)
-public class ActivateAction {
+public class ActivateAction implements Serializable{
+
+	private static final long serialVersionUID = -8079131168179421345L;
 
 	@Logger
 	Log log;

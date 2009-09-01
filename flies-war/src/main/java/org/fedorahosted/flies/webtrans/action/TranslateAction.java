@@ -1,5 +1,6 @@
 package org.fedorahosted.flies.webtrans.action;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -7,9 +8,9 @@ import javax.persistence.EntityManager;
 import org.fedorahosted.flies.LocaleId;
 import org.fedorahosted.flies.core.model.Account;
 import org.fedorahosted.flies.core.model.Person;
-import org.fedorahosted.flies.repository.model.document.HDocumentTarget;
-import org.fedorahosted.flies.repository.model.document.HTextFlowTarget;
-import org.fedorahosted.flies.repository.model.project.HProject;
+import org.fedorahosted.flies.repository.model.HDocumentTarget;
+import org.fedorahosted.flies.repository.model.HProjectContainer;
+import org.fedorahosted.flies.repository.model.HTextFlowTarget;
 import org.fedorahosted.flies.webtrans.NoSuchWorkspaceException;
 import org.fedorahosted.flies.webtrans.TranslationWorkspace;
 import org.fedorahosted.flies.webtrans.TranslationWorkspaceManager;
@@ -33,7 +34,9 @@ import org.richfaces.model.selection.SimpleSelection;
 @Name("translateAction")
 @Scope(ScopeType.CONVERSATION)
 @Restrict("#{identity.loggedIn}")
-public class TranslateAction {
+public class TranslateAction implements Serializable {
+
+	private static final long serialVersionUID = -6246244099116248138L;
 
 	@RequestParameter("wid")
 	private String workspaceId;
@@ -51,7 +54,7 @@ public class TranslateAction {
 	Account authenticatedAccount;
 
 	private LocaleId locale;
-	private HProject project;
+	private HProjectContainer projectContainer;
 
 	public String getWorkspaceId() {
 		return workspaceId;
@@ -61,12 +64,12 @@ public class TranslateAction {
 		this.workspaceId = workspaceId;
 	}
 	
-	public HProject getProject() {
-		return project;
+	public HProjectContainer getProject() {
+		return projectContainer;
 	}
 	
-	public void setProject(HProject project) {
-		this.project = project;
+	public void setProject(HProjectContainer project) {
+		this.projectContainer = project;
 	}
 	
 	public LocaleId getLocale() {
@@ -116,7 +119,7 @@ public class TranslateAction {
 		documentTargets = entityManager.createQuery("select d from HDocumentTarget d " +
 								"where d.locale = :locale and d.template.project = :project")
 					.setParameter("locale", locale)
-					.setParameter("project", project).getResultList();
+					.setParameter("project", projectContainer).getResultList();
 	}
 
 	//@Factory("textFlowTargets")
@@ -141,7 +144,7 @@ public class TranslateAction {
 
 	
 	public boolean isConversationActive(){
-		return project != null && locale != null; 
+		return projectContainer != null && locale != null; 
 	}
 	
 	public void initialize() {
@@ -159,7 +162,7 @@ public class TranslateAction {
 			try{
 				Long projectIterationId = Long.parseLong(ws[0]);
 				String localeId = ws[1];
-				project = entityManager.find(HProject.class, projectIterationId);
+				projectContainer = entityManager.find(HProjectContainer.class, projectIterationId);
 				locale = new LocaleId(localeId);
 				Person translator = entityManager.find(Person.class, authenticatedAccount.getPerson().getId());
 				getWorkspace().registerTranslator(translator);
@@ -171,7 +174,7 @@ public class TranslateAction {
 	}
 
 	public TranslationWorkspace getWorkspace(){
-		return translationWorkspaceManager.getOrRegisterWorkspace(project.getId(), locale);
+		return translationWorkspaceManager.getOrRegisterWorkspace(projectContainer.getId(), locale);
 	}
 	
 	@End
@@ -182,7 +185,7 @@ public class TranslateAction {
 	public boolean ping(){
 		Person translator = entityManager.find(Person.class, authenticatedAccount.getPerson().getId());
 		log.info("ping {3} - {0} - {2}", 
-				this.project.getProjectId(), 
+				"n/a", 
 				this.locale,
 				translator.getAccount().getUsername());
 		getWorkspace().registerTranslator(translator);
