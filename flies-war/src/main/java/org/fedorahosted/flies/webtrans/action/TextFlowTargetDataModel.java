@@ -1,10 +1,12 @@
 package org.fedorahosted.flies.webtrans.action;
 
+import java.io.Serializable;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.fedorahosted.flies.repository.model.document.HTextFlowTarget;
+import org.fedorahosted.flies.repository.model.HTextFlowTarget;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
@@ -16,7 +18,9 @@ import org.jboss.seam.annotations.Scope;
 @AutoCreate
 @Scope(ScopeType.CONVERSATION)
 public class TextFlowTargetDataModel extends
-		BaseModifiableHibernateDataModel<HTextFlowTarget> {
+		BaseModifiableHibernateDataModel<HTextFlowTarget> implements Serializable{
+
+	private static final long serialVersionUID = 8997820110607899775L;
 
 	@In(value = "#{entityManager.delegate}")
 	private Session hibernateSession;
