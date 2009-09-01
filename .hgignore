@@ -1,0 +1,18 @@
+syntax: glob
+
+*~
+*/target/*
+*/fliessearchindex/*
+syntax: regexp
+\.jar$
+
+^\.pc/
+^.ant-targets-build.xml
+\.pages.xml.spdia$
+
+# eclipse and maven stuff
+\.classpath$
+\.project$
+\.settings/
+^target
+^flies-war/profiles.xml
