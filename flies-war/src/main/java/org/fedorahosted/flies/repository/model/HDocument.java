@@ -58,7 +58,7 @@ public class HDocument extends AbstractFliesEntity{
 	private Map<String, HResource> resources;
 	private List<HResource> resourceTree;
 	
-	private List<HDocumentTarget> targets = new ArrayList<HDocumentTarget>();
+	private Map<LocaleId, HDocumentTarget> targets;
 
 	public HDocument(String fullPath, ContentType contentType) {
 		this(fullPath, contentType, LocaleId.EN_US);
@@ -146,12 +146,13 @@ public class HDocument extends AbstractFliesEntity{
 	public void copy(List<Resource> content){
 		for(Resource res :content){
 			HResource hRes = create(res);
+			hRes.setDocument(this);
 			getResourceTree().add(hRes);
 		}
 	}
 	
 	@NaturalId
-	@Length(max=256)
+	@Length(max=128)
 	@NotEmpty
 	public String getDocId() {
 		return docId;
@@ -246,11 +247,14 @@ public class HDocument extends AbstractFliesEntity{
 	
 	@OneToMany(mappedBy = "template")
 	@OnDelete(action=OnDeleteAction.CASCADE)
-	public List<HDocumentTarget> getTargets() {
+	@MapKey(name="locale")
+	public Map<LocaleId, HDocumentTarget> getTargets() {
+		if(targets == null)
+			targets = new HashMap<LocaleId, HDocumentTarget>();
 		return targets;
 	}
 
-	public void setTargets(List<HDocumentTarget> targets) {
+	public void setTargets(Map<LocaleId, HDocumentTarget> targets) {
 		this.targets = targets;
 	}
 
