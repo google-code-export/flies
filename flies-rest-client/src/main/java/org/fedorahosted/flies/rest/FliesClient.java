@@ -7,10 +7,14 @@ import java.net.URISyntaxException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.fedorahosted.flies.ContentType;
 import org.fedorahosted.flies.rest.client.DocumentResource;
 import org.fedorahosted.flies.rest.client.ProjectIterationResource;
 import org.fedorahosted.flies.rest.client.ProjectResource;
+import org.fedorahosted.flies.rest.dto.Document;
 import org.fedorahosted.flies.rest.dto.Project;
+import org.fedorahosted.flies.rest.dto.ProjectIteration;
+import org.fedorahosted.flies.rest.dto.TextFlow;
 import org.jboss.resteasy.client.ClientRequestFactory;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ProxyFactory;
@@ -47,12 +51,13 @@ public class FliesClient {
 	}
 	
 	public ProjectIterationResource getProjectIterationResource(String projectSlug){
-		return clientRequestFactory.createProxy(ProjectIterationResource.class, baseUri.toString() + "projects/p/" + projectSlug + "/iterations");
+		String resolvedUri = baseUri.toString() + "/projects/p/" + projectSlug + "/iterations";
+		return clientRequestFactory.createProxy(ProjectIterationResource.class, resolvedUri);
 	}
 	
 	public DocumentResource getDocumentResource(String projectSlug, String iterationSlug){
 		return clientRequestFactory.createProxy(DocumentResource.class, 
-				baseUri.toString() + "projects/p/" + projectSlug + "/iterations/i/" + iterationSlug + "/documents");
+				baseUri.toString() + "/projects/p/" + projectSlug + "/iterations/i/" + iterationSlug + "/documents");
 	}
 	
 	public URI getBaseUri() {
@@ -61,25 +66,5 @@ public class FliesClient {
 	
 	public String getApiKey() {
 		return apiKey;
-	}
-
-	public static void main(String[] args) throws URISyntaxException {
-		FliesClient client = new FliesClient("http://localhost:8080/flies/seam/resource/restv1", "bob");
-		
-		ProjectResource projectResource = client.getProjectResource();
-		
-		ClientResponse<Project> projectResponse = projectResource.getProject("myproject");
-		
-		if (projectResponse.getResponseStatus().getStatusCode() < 399) {
-			Project p = projectResponse.getEntity();
-			System.out.println( p.getName() );
-			p.setName( "replaced "+ p.getName());
-			Response r = projectResource.updateProject("myproject", p);
-			System.out.println("Completed with status: " + r.getStatus());
-		}
-		
-		DocumentResource documentResource = client.getDocumentResource("myproject", "myiteration");
-		//r = documentResource.addDocument("myid", document);
-		
 	}
 }
