@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<dataset>
+	<Person id="1"
+		creationDate="[NULL]"
+		timestamp="[NULL]" 
+		email="bean@mr.com" 
+		name="Mr Bean"
+	/>
+</dataset>
