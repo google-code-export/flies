@@ -3,12 +3,14 @@ syntax: glob
 *~
 */target/*
 */fliessearchindex/*
+*/test-output/*
 syntax: regexp
 \.jar$
 
 ^\.pc/
 ^.ant-targets-build.xml
 \.pages.xml.spdia$
+temp-testng-customsuite.xml$
 
 # eclipse and maven stuff
 \.classpath$

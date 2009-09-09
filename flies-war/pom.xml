@@ -13,7 +13,7 @@
   <name>flies Webapp</name>
 
   <properties>
-    <version.seam>2.2.0.GA</version.seam>
+    <version.seam>2.2.1-SNAPSHOT</version.seam>
     <version.resteasy>1.1.GA</version.resteasy>
     <version.drools>5.0.1</version.drools>
     <version.richfaces>3.3.1.GA</version.richfaces>
@@ -302,12 +302,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-          </includes>
-          <excludes>
-            <exclude>**/*SeamTest.java</exclude>
-          </excludes>
+          <groups>unit-tests</groups>
         </configuration>
       </plugin>
       
@@ -323,10 +318,11 @@
             <include>**/*SeamTest.java</include>
           </includes>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/AllTests.tng.xml</suiteXmlFile>
+            <suiteXmlFile>src/test/resources/AllIntegrationTests.tng.xml</suiteXmlFile>
           </suiteXmlFiles>        
           <additionalClasspathElements>
             <additionalClasspathElement>${project.build.testOutputDirectory}/bootstrap</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/flies</additionalClasspathElement>
           </additionalClasspathElements>
           <childDelegation>true</childDelegation>
           <useSystemClassLoader>true</useSystemClassLoader>
@@ -403,6 +399,13 @@
       <groupId>org.jboss.seam</groupId>
       <artifactId>jboss-seam-resteasy</artifactId>
       <version>${version.seam}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
