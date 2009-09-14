@@ -38,6 +38,7 @@ import org.hibernate.validator.InvalidStateException;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.security.Restrict;
 import org.jboss.seam.log.Log;
 
 @Name("projectResource")
@@ -117,6 +118,7 @@ public class ProjectService{
 	@POST
 	@Path("/p/{projectSlug}")
 	@Consumes({ MediaTypes.APPLICATION_FLIES_PROJECT_XML, MediaType.APPLICATION_JSON })
+	@Restrict("#{identity.loggedIn}")
 	public Response updateProject(@PathParam("projectSlug") String projectSlug, Project project){
 			
 		HProject hProject = projectDAO.getBySlug(projectSlug);
@@ -137,6 +139,7 @@ public class ProjectService{
 	
 	@PUT
 	@Consumes({ MediaTypes.APPLICATION_FLIES_PROJECT_XML, MediaType.APPLICATION_JSON })
+	@Restrict("#{identity.loggedIn}")
 	public Response addProject(Project project) throws URISyntaxException{
 		
 		HProject hProject = projectDAO.getBySlug(project.getId());
