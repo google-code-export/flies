@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.rest.service;
+package org.fedorahosted.flies.rest;
 
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
