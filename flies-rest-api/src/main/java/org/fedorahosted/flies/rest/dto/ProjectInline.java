@@ -1,5 +1,7 @@
 package org.fedorahosted.flies.rest.dto;
 
+import java.net.URI;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -9,26 +11,24 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement(name="project", namespace=Namespaces.DOCUMENT)
 @XmlType(name="projectRefType", namespace=Namespaces.DOCUMENT)
-public class ProjectRef extends AbstractProject{
+public class ProjectInline extends AbstractProject{
 	
-	private Project ref;
+	private URI ref;
 	
-	private ProjectRef(){
+	private ProjectInline(){
 		super();
 	}
 	
-	public ProjectRef(Project project) {
+	public ProjectInline(Project project) {
 		super(project);
-		this.ref = project;
 	}
 	
-	@XmlJavaTypeAdapter(value = UriAdapter.class)
 	@XmlAttribute
-	public Project getRef() {
+	public URI getRef() {
 		return ref;
 	}
 	
-	public void setRef(Project ref) {
+	public void setRef(URI ref) {
 		this.ref = ref;
 	}
 }

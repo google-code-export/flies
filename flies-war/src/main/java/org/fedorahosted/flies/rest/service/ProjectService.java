@@ -30,9 +30,9 @@ import org.fedorahosted.flies.rest.FliesRestSecurityInterceptor;
 import org.fedorahosted.flies.rest.MediaTypes;
 import org.fedorahosted.flies.rest.dto.Project;
 import org.fedorahosted.flies.rest.dto.ProjectIteration;
-import org.fedorahosted.flies.rest.dto.ProjectIterationRef;
-import org.fedorahosted.flies.rest.dto.ProjectRef;
-import org.fedorahosted.flies.rest.dto.ProjectRefs;
+import org.fedorahosted.flies.rest.dto.ProjectIterationInline;
+import org.fedorahosted.flies.rest.dto.ProjectInline;
+import org.fedorahosted.flies.rest.dto.ProjectInlineList;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.validator.InvalidStateException;
@@ -89,7 +89,7 @@ public class ProjectService{
 			HIterationProject itProject = (HIterationProject) hProject;
 			for(HProjectIteration pIt : itProject.getProjectIterations()){
 				project.getIterations().add(
-						new ProjectIterationRef(
+						new ProjectIterationInline(
 								new ProjectIteration(
 										pIt.getSlug(),
 										pIt.getName(), 
@@ -124,6 +124,36 @@ public class ProjectService{
 		try{
 			session.save(hProject);
 			return Response.created( new URI("/projects/p/"+hProject.getSlug()) ).build();
+		}
+        catch(InvalidStateException e){
+        	return Response.status(Status.BAD_REQUEST).build();
+        }
+        catch(HibernateException e){
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@POST
+	@Consumes({ MediaTypes.APPLICATION_FLIES_PROJECT_XML, MediaType.APPLICATION_JSON })
+	@Restrict("#{identity.loggedIn}")
+	public Response post(Project project) throws URISyntaxException{
+		
+		HProject hProject = projectDAO.getBySlug(project.getId());
+		if(hProject == null){
+			return Response.status(404).build();
+		}
+		hProject = new org.fedorahosted.flies.core.model.HIterationProject();
+		hProject.setSlug(project.getId());
+		hProject.setName(project.getName());
+		hProject.setDescription(project.getDescription());
+		HAccount hAccount = accountDAO.getByUsername(Identity.instance().getCredentials().getUsername());
+		if(hAccount != null && hAccount.getPerson() != null) {
+			hProject.getMaintainers().add(hAccount.getPerson());
+		}
+		
+		try{
+			session.update(hProject);
+			return Response.status(Status.ACCEPTED).build();
 		}
         catch(InvalidStateException e){
         	return Response.status(Status.BAD_REQUEST).build();

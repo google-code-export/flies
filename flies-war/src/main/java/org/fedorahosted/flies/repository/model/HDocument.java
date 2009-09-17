@@ -22,6 +22,7 @@ import org.fedorahosted.flies.hibernate.type.LocaleIdType;
 import org.fedorahosted.flies.rest.dto.Container;
 import org.fedorahosted.flies.rest.dto.DataHook;
 import org.fedorahosted.flies.rest.dto.Document;
+import org.fedorahosted.flies.rest.dto.DocumentInline;
 import org.fedorahosted.flies.rest.dto.Reference;
 import org.fedorahosted.flies.rest.dto.Resource;
 import org.fedorahosted.flies.rest.dto.TextFlow;
@@ -102,7 +103,7 @@ public class HDocument extends AbstractFliesEntity{
 	
 	public HDocument() {
 	}
-
+	
 	public HDocument(Document docInfo) {
 		this.docId = docInfo.getId();
 		this.name = docInfo.getName();
