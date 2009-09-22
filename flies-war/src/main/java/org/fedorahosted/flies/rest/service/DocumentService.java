@@ -23,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Variant;
 import javax.ws.rs.core.Response.Status;
 
 import org.fedorahosted.flies.LocaleId;
@@ -153,15 +154,13 @@ public class DocumentService {
 				//textFlow.setLang(hTextFlow.get) TODO language
 				resources.add(textFlow);
 				
-				if(includedTargets != null) {
-					for (LocaleId locale : includedTargets) {
-						HTextFlowTarget hTextFlowTarget = hTextFlow.getTargets().get(locale);
-						if(hTextFlowTarget != null) {
-							TextFlowTarget textFlowTarget = new TextFlowTarget(textFlow, locale);
-							textFlowTarget.setContent(hTextFlowTarget.getContent());
-							textFlowTarget.setState(hTextFlowTarget.getState());
-							textFlow.addTarget(textFlowTarget);
-						}
+				for (LocaleId locale : includedTargets) {
+					HTextFlowTarget hTextFlowTarget = hTextFlow.getTargets().get(locale);
+					if(hTextFlowTarget != null) {
+						TextFlowTarget textFlowTarget = new TextFlowTarget(textFlow, locale);
+						textFlowTarget.setContent(hTextFlowTarget.getContent());
+						textFlowTarget.setState(hTextFlowTarget.getState());
+						textFlow.addTarget(textFlowTarget);
 					}
 				}
 			}
@@ -190,7 +189,7 @@ public class DocumentService {
 		String hDocId = URIHelper.convertFromDocumentURIId(documentId);
 
 		if(!document.getId().equals(hDocId)){
-			Response.notAcceptable(null).build();
+			Response.notAcceptable(Collections.EMPTY_LIST).build();
 		}
 
 		HProjectContainer hProjectContainer = getContainerOrFail();
@@ -199,7 +198,8 @@ public class DocumentService {
 		
 		if(hDoc == null) { // it's a create operation
 			hDoc = new HDocument(document);
-			hProjectContainer.getDocuments().add(hDoc);
+			hDoc.setRevision(1);
+			hProjectContainer.getDocuments().put(hDoc.getDocId(), hDoc);
 			try{
 				session.flush();
 				for(Resource res : document.getResources()) {
@@ -223,7 +223,7 @@ public class DocumentService {
 				return Response.ok().build();
 			}
 			catch(Exception e){
-				return Response.notAcceptable(null).build();
+				return Response.notAcceptable(Collections.EMPTY_LIST).build();
 			}
 		}
 		
