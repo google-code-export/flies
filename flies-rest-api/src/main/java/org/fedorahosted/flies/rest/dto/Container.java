@@ -58,7 +58,15 @@ public class Container extends AbstractBaseResource implements Resource {
 
 	@XmlAnyElement(lax=true)
 	public List<Object> getExtensions() {
-		if(extensions == null)
+		return extensions;
+	}
+	
+	public boolean hasExtensions() {
+		return extensions != null;
+	}
+	
+	public List<Object> getExtensions(boolean create) {
+		if(extensions == null && create)
 			extensions = new ArrayList<Object>();
 		return extensions;
 	}
@@ -106,7 +114,15 @@ public class Container extends AbstractBaseResource implements Resource {
 		@XmlElement(name="data-hook", type=DataHook.class, namespace=Namespaces.FLIES)
 		})
 	public List<Resource> getContent() {
-		if(content == null)
+		return content;
+	}
+	
+	public boolean hasContent() {
+		return content != null;
+	}
+	
+	public List<Resource> getContent(boolean create) {
+		if(content == null && create)
 			content = new ArrayList<Resource>();
 		return content;
 	}

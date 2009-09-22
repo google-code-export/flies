@@ -125,7 +125,7 @@ public class DocumentService {
 			}
 
 			List<HResource> hResources = hDoc.getResourceTree();
-			List<Resource> rootResources = doc.getResources();
+			List<Resource> rootResources = doc.getResources(true);
 			populateResources(rootResources, hResources, requestedLanguages, true);
 		}
 		
@@ -139,7 +139,7 @@ public class DocumentService {
 				HContainer hContainer = (HContainer) hResource;
 				Container container = new Container(hContainer.getResId());
 				resources.add(container);
-				if(levels != 0) {
+				if(levels != 0 && container.hasContent()) {
 					populateResources(container.getContent(), hContainer.getChildren(), includedTargets, --levels);
 				}
 			}
@@ -204,11 +204,13 @@ public class DocumentService {
 			hDoc.setProject(hProjectContainer);
 			try{
 				session.flush();
-				for(Resource res : document.getResources()) {
-					HResource hRes = HDocument.create(res);
-					hRes.setDocument(hDoc);
-					hDoc.getResourceTree().add(hRes);
-					session.flush();
+				if(document.hasResources()){
+					for(Resource res : document.getResources()) {
+						HResource hRes = HDocument.create(res);
+						hRes.setDocument(hDoc);
+						hDoc.getResourceTree().add(hRes);
+						session.flush();
+					}
 				}
 				return Response.created( uri.getBaseUri().resolve(URIHelper.getDocument(projectSlug, iterationSlug, documentId))).build();
 			}
@@ -217,8 +219,9 @@ public class DocumentService {
 			}
 		}
 		else{ // it's an update operation
-			if(!document.getName().equals(hDoc.getName()) ){
-				hDoc.setName(document.getName());
+			copyMetaData(document, hDoc);
+			if(!document.getResources().isEmpty()){
+				
 			}
 			try{
 				session.flush();
@@ -231,6 +234,17 @@ public class DocumentService {
 		
 	}
 
+	private void copyMetaData(Document from, HDocument to){
+		final String fromName = from.getName();
+		if(fromName == null && to.getName() != null || !fromName.equals(to.getName())) {
+			to.setName(fromName);
+		}
+		final String fromPath = from.getPath();
+		if(fromPath == null && to.getPath() != null || !fromPath.equals(to.getPath())) {
+			to.setPath(from.getPath());
+		}
+	}
+	
 	@GET
 	@Path("content/{qualifier}")
 	public Response getContent(
