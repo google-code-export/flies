@@ -21,6 +21,7 @@ import org.fedorahosted.flies.rest.dto.Relationships;
 import org.fedorahosted.flies.rest.dto.Resource;
 import org.fedorahosted.flies.rest.dto.TextFlow;
 import org.fedorahosted.flies.rest.dto.TextFlowTarget;
+import org.fedorahosted.flies.rest.dto.TextFlowTargets;
 import org.jboss.resteasy.client.ClientRequestFactory;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
@@ -114,13 +115,14 @@ public class DocumentServiceSeamTest extends DBUnitSeamTest{
 		response = documentResource.get( ContentQualifier.SOURCE );
 		assertThat( response.getResponseStatus(), is(Status.OK) ) ;
 		doc = response.getEntity();
-		assertThat( doc.getResources().size(), is(1) );
+		assertThat("Should have one resource", doc.getResources().size(), is(1) );
+		assertThat("No targets should be included", ((TextFlow)doc.getResources().get(0)).getExtension(TextFlowTargets.class), nullValue() );
 
 		LocaleId nbLocale = new LocaleId("nb-NO");
 		response = documentResource.get( ContentQualifier.fromLocales(nbLocale));
 		assertThat( response.getResponseStatus(), is(Status.OK) ) ;
 		doc = response.getEntity();
-		assertThat( doc.getResources().size(), is(1) );
+		assertThat("should have one resource", doc.getResources().size(), is(1) );
 		
 		LocaleId deLocale = new LocaleId("de-DE");
 		response = documentResource.get( ContentQualifier.fromLocales( nbLocale, deLocale));
@@ -130,24 +132,25 @@ public class DocumentServiceSeamTest extends DBUnitSeamTest{
 		assertThat( resources.size(), is(1) );
 		TextFlow tf = (TextFlow) resources.get(0);
 		assertThat( tf, notNullValue());
-		assertThat( tf.getId(), is("tf1") );
+		assertThat("should have a textflow with this id", tf.getId(), is("tf1") );
 
 		TextFlowTarget tfTarget = tf.getTarget(nbLocale);
-		assertThat( tfTarget, notNullValue());
-		assertThat( tfTarget.getContent(), is("hei verden"));
+		assertThat("expected nb-NO target", tfTarget, notNullValue());
+		assertThat("expected translation for nb-NO", tfTarget.getContent(), is("hei verden"));
 		
 		tfTarget = tf.getTarget(deLocale);
-		assertThat( tfTarget, notNullValue());
-		assertThat( tfTarget.getContent(), is("hello welt"));
+		assertThat("exected de-DE target", tfTarget, notNullValue());
+		assertThat("expected translation for de-DE",  tfTarget.getContent(), is("hello welt"));
 	}
 	
 	public void putNewDocument() {
-		IDocumentResource documentResource = getDocumentService("my,fancy,document.txt");
-		Document doc = new Document("my/fancy/document.txt", ContentType.TextPlain);
+		String docUrl = "my,fancy,document.txt";
+		IDocumentResource documentResource = getDocumentService(docUrl);
+		Document doc = new Document("/my/fancy/document.txt", ContentType.TextPlain);
 		Response response = documentResource.put(doc);
 
 		assertThat( response.getStatus(), is(Status.CREATED.getStatusCode()) );
-		
+		// todo, change to clientresponse<string>
 		ClientResponse<Document> documentResponse = documentResource.get(null);
 		
 		assertThat( documentResponse.getResponseStatus(), is(Status.OK) );
@@ -156,7 +159,7 @@ public class DocumentServiceSeamTest extends DBUnitSeamTest{
 		assertThat( doc.getVersion(), is(1) );
 		Link link = doc.findLinkByRel(Relationships.SELF); 
 		assertThat( link, notNullValue() );
-		assertThat( link.getHref().toString(), endsWith(url) );
+		assertThat( link.getHref().toString(), endsWith(url+docUrl) );
 		
 		link = doc.findLinkByRel(Relationships.DOCUMENT_CONTAINER); 
 		assertThat( link, notNullValue() );
