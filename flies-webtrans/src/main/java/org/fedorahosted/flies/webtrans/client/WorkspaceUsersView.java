@@ -1,16 +1,23 @@
 package org.fedorahosted.flies.webtrans.client;
 
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DecoratedStackPanel;
+import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalSplitPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TranslatorsPanel extends Composite {
+public class WorkspaceUsersView extends Composite implements WorkspaceUsersPresenter.Display {
 
-	public TranslatorsPanel() {
-		initWidget( getChatAllPanel() );
+	private final StackPanel panel;
+	
+	public WorkspaceUsersView() {
+		panel = new DecoratedStackPanel();
+		initWidget( panel );
+		panel.add(getChatAllPanel(), "Translators");
 	}
 	
 	private static Tree createLocaleTranslatorsTree() {
@@ -38,9 +45,27 @@ public class TranslatorsPanel extends Composite {
 		
 		VerticalSplitPanel vSplit = new VerticalSplitPanel();
 		vSplit.setBottomWidget(new Label("Chat"));
-		vSplit.setWidth("100%");
+		vSplit.setWidth("200px");
 		vSplit.setHeight("300px");
 		vSplit.setTopWidget(createLocaleTranslatorsTree());
 		return vSplit;
 	}
+	
+	@Override
+	public Widget asWidget() {
+		return this;
+	}
+
+	@Override
+	public void startProcessing() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void stopProcessing() {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
