@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.client.mvp;
+package org.fedorahosted.flies.webtrans.client;
 
 import java.util.ArrayList;
 
@@ -54,10 +54,11 @@ public class WestNavigationView extends Composite implements
 	
 	public WestNavigationView() {
 		Log.info("setting up LeftNavigationView");
-
 		panel = new VerticalPanel();
 		panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
 		panel.setVerticalAlignment(VerticalPanel.ALIGN_TOP);
+		panel.setSpacing(5);
+		panel.setStylePrimaryName("LeftContentNavBar");
 		initWidget(panel);
 /*		
 		// Some random contents to make the tree interesting.

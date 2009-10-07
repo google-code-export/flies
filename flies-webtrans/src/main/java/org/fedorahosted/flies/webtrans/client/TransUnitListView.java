@@ -1,7 +1,7 @@
-package org.fedorahosted.flies.webtrans.client.mvp;
+package org.fedorahosted.flies.webtrans.client;
 
-import org.fedorahosted.flies.webtrans.client.TransUnit;
-import org.fedorahosted.flies.webtrans.client.WebTransLayoutContainer;
+
+import org.fedorahosted.flies.webtrans.model.TransUnit;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.gen2.table.client.CachedTableModel;
@@ -9,11 +9,13 @@ import com.google.gwt.gen2.table.client.CellRenderer;
 import com.google.gwt.gen2.table.client.ColumnDefinition;
 import com.google.gwt.gen2.table.client.DefaultRowRenderer;
 import com.google.gwt.gen2.table.client.DefaultTableDefinition;
+import com.google.gwt.gen2.table.client.FixedWidthFlexTable;
 import com.google.gwt.gen2.table.client.FixedWidthGridBulkRenderer;
 import com.google.gwt.gen2.table.client.PagingScrollTable;
 import com.google.gwt.gen2.table.client.ScrollTable;
 import com.google.gwt.gen2.table.client.TableDefinition;
 import com.google.gwt.gen2.table.client.TableDefinition.AbstractCellView;
+import com.google.gwt.gen2.table.override.client.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -31,11 +33,8 @@ public class TransUnitListView extends Composite implements
 		setupScrollTable();
 		initWidget(panel);
 		setSize("100%", "100%");
-
+		panel.setSize("100%", "100%");
 		panel.add( pagingScrollTable );
-		
-		panel.add(new WebTransLayoutContainer());
-
 	}
 	
 	@Override
@@ -91,12 +90,27 @@ public class TransUnitListView extends Composite implements
 		pagingScrollTable.setCellPadding(3);
 		pagingScrollTable.setCellSpacing(0);
 		pagingScrollTable.setResizePolicy(ScrollTable.ResizePolicy.FILL_WIDTH);
-		//pagingScrollTable.setHeaderGenerated(true);
-		pagingScrollTable.setSize("100%", "400px");
+		pagingScrollTable.setFooterTable( createFooterTable() );
+		pagingScrollTable.setSize("100%", "100%");
+		
+	}
+	
+	@Override
+	protected void onLoad() {
+		super.onLoad();
 		pagingScrollTable.gotoFirstPage();
-		pagingScrollTable.setVisible(true);
 	}
 
+	private FixedWidthFlexTable createFooterTable() {
+		FixedWidthFlexTable footerTable = new FixedWidthFlexTable();
+
+		FlexCellFormatter headerFormatter = footerTable.getFlexCellFormatter();
+		footerTable.setHTML(0, 0, "Navigation toolbar goes here");
+		headerFormatter.setColSpan(0, 0, 2);
+		
+		return footerTable;
+	}
+	
 	private TableDefinition<TransUnit> createTableDefinition() {
 
 		// Create the table definition
