@@ -1,11 +1,23 @@
 package org.fedorahosted.flies.webtrans.client;
 
+import java.util.Set;
+
+import org.fedorahosted.flies.webtrans.model.TransUnit;
+
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
 import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.gen2.table.event.client.HasRowSelectionHandlers;
+import com.google.gwt.gen2.table.event.client.RowSelectionEvent;
+import com.google.gwt.gen2.table.event.client.RowSelectionHandler;
+import com.google.gwt.gen2.table.event.client.TableEvent.Row;
 import com.google.inject.Inject;
 
 public class TransUnitListPresenter  extends WidgetPresenter<TransUnitListPresenter.Display> {
@@ -15,7 +27,7 @@ public class TransUnitListPresenter  extends WidgetPresenter<TransUnitListPresen
 	//private final DispatchAsync dispatcher;	
 	
 	public interface Display extends WidgetDisplay {
-		
+		HasSelectionHandlers<TransUnit> getSelectionHandlers();
 	}
 
 	@Inject
@@ -30,10 +42,25 @@ public class TransUnitListPresenter  extends WidgetPresenter<TransUnitListPresen
 		return PLACE;
 	}
 
+	private TransUnit currentSelection;
+	
 	@Override
 	protected void onBind() {
+		display.getSelectionHandlers().addSelectionHandler(new SelectionHandler<TransUnit>() {
+			@Override
+			public void onSelection(SelectionEvent<TransUnit> event) {
+				if(event.getSelectedItem() != currentSelection) {
+					currentSelection = event.getSelectedItem();
+					eventBus.fireEvent(event);
+				}
+			}
+		});
 	}
 
+	public TransUnit getCurrentSelection() {
+		return currentSelection;
+	}
+	
 	@Override
 	protected void onPlaceRequest(PlaceRequest request) {
 	}
