@@ -9,20 +9,21 @@ import com.google.gwt.user.client.ui.ImageBundle;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeImages;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.ImageBundle.Resource;
 
-public class DocumentListView extends Composite implements DocumentListPresenter.Display {
+public class DocumentListView extends CaptionPanel implements DocumentListPresenter.Display {
 
 	public interface Images extends ImageBundle, TreeImages {
 
-		@Resource("org/fedorahosted/flies/webtrans/images/silk/world.png")
+		@Resource("org/fedorahosted/flies/webtrans/images/silk/folder_page_white.png")
 		AbstractImagePrototype treeOpen();
 
-		@Resource("org/fedorahosted/flies/webtrans/images/silk/world.png")
+		@Resource("org/fedorahosted/flies/webtrans/images/silk/folder_page_white.png")
 		AbstractImagePrototype treeClosed();
 
-		@Resource("org/fedorahosted/flies/webtrans/images/silk/user.png")
+		@Resource("org/fedorahosted/flies/webtrans/images/silk/page_white_text.png")
 		AbstractImagePrototype treeLeaf();
 
 	}
@@ -31,6 +32,8 @@ public class DocumentListView extends Composite implements DocumentListPresenter
 	
 	public DocumentListView() {		
 
+		super();
+		
 	    // Create a tree with a few items in it.
 	    Tree root = new Tree(images);
 	    
@@ -56,8 +59,7 @@ public class DocumentListView extends Composite implements DocumentListPresenter
 	    
 	    root.addItem(new TreeItem("item3"));
 
-	    initWidget(root);
-
+	    add(root);
 	}
 
 	@Override
