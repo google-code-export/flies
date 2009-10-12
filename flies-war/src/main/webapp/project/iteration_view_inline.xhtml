@@ -1,0 +1,44 @@
+<div id="iteration_list_view_item_#{_iteration.id}"
+   class="inline_cell_item"
+   xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:rich="http://richfaces.org/rich"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:flies="http://flies.fedorahosted.org/ui"
+   xmlns:s="http://jboss.com/products/seam/taglib">
+  <div class="list_view_header">
+    <h2>
+      <s:link view="/project/iteration.xhtml" value="#{_iteration.name}" propagation="none">
+        <f:param name="mslug" value="#{projectHome.instance.slug}/#{_iteration.slug}"/>
+      </s:link>
+    </h2>
+    <s:span rendered="#{_iteration.projectSeries.name != 'default'}" 
+            styleClass="series_name">#{_iteration.projectSeries.name}</s:span>
+    <div class="menu_items">
+      <s:link view="/project/iteration_edit.xhtml" propagation="none" rendered="#{identity.loggedIn}">
+        <f:param name="mslug" value="#{projectHome.instance.slug}/#{_iteration.slug}"/>
+        <h:graphicImage value="/img/silk/page_edit.png" />
+      </s:link>
+    </div>
+  </div>
+  <rich:dataTable width="100%" value="#{memberTribes}" 
+                  var="tribe" 
+                  styleClass="iteration_inline_tribes"
+                  rowClasses="odd,even">
+    <rich:column>#{tribe.locale.nativeName}</rich:column>
+    <rich:column>
+      <ui:param name="tstatus" value="#{projectIterationDAO.getStatisticsForContainer(_iteration.container.id, tribe.locale.localeId)}" />
+      <flies:translation-status-bar
+        title="Total: #{tstatus.total}, Translated: #{tstatus.approved}, Fuzzy #{tstatus.fuzzyMatch}"
+        translated="#{tstatus.approved}" 
+        fuzzy="0" 
+        untranslated="#{tstatus.notApproved}"/>    </rich:column>
+    <rich:column>
+      <s:link view="/translate.xhtml" propagation="none" target="_blank">
+        Translate
+        <f:param name="wid" value="#{_iteration.id}/#{tribe.locale.id}"/>
+      </s:link>    
+    </rich:column>
+  </rich:dataTable>
+</div>
