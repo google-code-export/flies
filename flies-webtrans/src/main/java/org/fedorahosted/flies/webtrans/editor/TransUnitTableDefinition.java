@@ -12,6 +12,7 @@ import com.google.gwt.gen2.table.client.RowRenderer;
 import com.google.gwt.gen2.table.client.TableDefinition.AbstractRowView;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.weborient.codemirror.client.HighlightingLabel;
 import com.weborient.codemirror.client.ParserSyntax;
 
@@ -44,10 +45,8 @@ public class TransUnitTableDefinition extends DefaultTableDefinition<TransUnit> 
 						TransUnit rowValue,
 						ColumnDefinition<TransUnit, TransUnit> columnDef,
 						AbstractCellView<TransUnit> view) {
-					Label label = new HighlightingLabel(rowValue.getSource(), ParserSyntax.MIXED);
-						label.setStylePrimaryName("webtrans-editor-content");
-						label.addStyleName("webtrans-editor-content-source");
-						view.setWidget( label );
+					SourcePanel sourcePanel = new SourcePanel(rowValue);
+					view.setWidget( sourcePanel );
 				}
 			});
 		}
@@ -81,7 +80,7 @@ public class TransUnitTableDefinition extends DefaultTableDefinition<TransUnit> 
 					view.setWidget( label );
 				}
 			});
-			setCellEditor(new InlineTransUnitCellEditor());
+			setCellEditor(new InlineTargetCellEditor());
 		}
 		
 		@Override
