@@ -26,12 +26,22 @@
     background-color: d0e4f6;
 }
 
+.gwt-ScrollTable .dataTable tr td{
+	vertical-align: top;
+}
+
 .gwt-ScrollTable .dataTable tr.highlighted td{
-  background: #C3D9FF;
+  background: #DFEFFF;
   cursor: hand;
 }
 
 .gwt-ScrollTable .dataTable tr.highlighted{
+}
+
+.gwt-ScrollTable .dataTable tr.even-row{
+	background-color: #fafaff;
+}
+.gwt-ScrollTable .dataTable tr.odd-row{
 }
 
 /*
@@ -41,8 +51,24 @@
 */
 
 .gwt-ScrollTable .dataTable tr.selected td {
-  background: #7AA5ff;
+  background: #C3D9FF;
 }
-.gwt-ScrollTable .dataTable tr.selected {
-	border: 2px solid red;
+
+.webtrans-editor-content{
+	font-size: 14px;
+	font-family: sans-serif;
+	padding: 3px;
+	margin: 2px;	
 }
+.webtrans-editor-content-source{
+	
+}
+.webtrans-editor-content-target{
+	
+}
+
+.webtrans-editor-content-editor{
+	border: none;
+}
+
+
