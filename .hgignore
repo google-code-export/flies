@@ -1,0 +1,36 @@
+syntax: glob
+
+*~
+*/target/*
+*/fliessearchindex/*
+*/test-output/*
+
+hs_err_pid*.log
+tomcat
+
+syntax: regexp
+\.jar$
+
+^\.pc/
+^.ant-targets-build.xml
+\.pages.xml.spdia$
+temp-testng-customsuite.xml$
+
+# eclipse and maven stuff
+\.classpath$
+\.project$
+\.settings/
+^target
+^flies-war/profiles.xml
+^flies-war/src/test/resources/DocumentsServiceSeamTest.tng.xml$
+\.orig$
+
+# kde related
+\.directory$
+
+#gwt related
+^flies-webtrans/war/WEB-INF/classes/
+^flies-webtrans/war/
+^flies-webtrans/tomcat
+\.gwt-tmp$
+^flies-webtrans/org.fedorahosted.flies.webtrans.Application
