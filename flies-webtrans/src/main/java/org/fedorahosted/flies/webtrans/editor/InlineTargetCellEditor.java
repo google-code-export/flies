@@ -1,6 +1,6 @@
 package org.fedorahosted.flies.webtrans.editor;
 
-import org.fedorahosted.flies.webtrans.model.TransUnit;
+import org.fedorahosted.flies.gwt.model.TransUnit;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -150,6 +150,10 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit> {
 		return !textArea.getText().equals(cellValue.getTarget());
 	}
 	
+	private boolean inEditMode() {
+		return cellValue != null;
+	}
+	
 	public void editCell(CellEditInfo cellEditInfo, TransUnit cellValue,
 			Callback<TransUnit> callback) {
 
@@ -158,10 +162,15 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit> {
 	    	callback.onCancel(cellEditInfo);
 	    	return;
 	    }
-		else{
+		
+		if( inEditMode() ){
+			if(cellEditInfo.getCellIndex() == col && cellEditInfo.getRowIndex() == row){
+				return;
+			}
 			restoreView();
 		}
 		
+		Log.debug("starting edit of cell");
 		
 		// Save the current values
 		curCallback = callback;
