@@ -1,0 +1,109 @@
+/** Add css rules here for your application. */
+
+.LeftContentNavBar {
+  background-color: #f8f8fb;
+}
+
+
+.gwt-HeadingPanel .topLeftInner, .gwt-HeadingPanel .topRightInner {
+	height:40px;
+	width:5px;
+	background-color: d0e4f6;
+}
+.gwt-HeadingPanel .topCenterInner{
+	height: 40px;
+	background-color: d0e4f6;
+}
+
+.gwt-HeadingPanelTitle {
+	font-size: 15px;
+	color: grey;
+}
+
+.gwt-CaptionPanel-Heading {
+    font-style: bold;
+    width: 100%;
+    background-color: d0e4f6;
+    padding-bottom: 5px;
+}
+
+.gwt-CaptionPanel tr.middle td.middleCenter {
+    width: 100%;
+}
+
+.gwt-ProgressBar-shell {
+  border: 2px solid #faf9f7;
+  border-right: 2px solid #848280;
+  border-bottom: 2px solid #848280;
+  background-color: #AAAAAA;
+  height: 14pt;
+  width: 100%;
+}
+.gwt-ProgressBar-shell .gwt-ProgressBar-bar {
+  background-color: #67A7E3;
+}
+.gwt-ProgressBar-shell .gwt-ProgressBar-text {
+  padding: 0px;
+  margin: 0px;
+  color: white;
+
+}
+
+.gwt-ScrollTable .dataTable tr td{
+	vertical-align: top;
+}
+
+.gwt-ScrollTable .dataTable tr.highlighted td{
+  background: #DFEFFF;
+  cursor: hand;
+}
+
+.gwt-ScrollTable .dataTable tr.highlighted{
+}
+
+.gwt-ScrollTable .dataTable tr.even-row{
+	background-color: #fafaff;
+}
+.gwt-ScrollTable .dataTable tr.odd-row{
+}
+
+/*
+.gwt-ScrollTable .dataTable td.highlighted {
+  background: inherit;
+}
+*/
+
+.gwt-ScrollTable .dataTable tr.selected td {
+  background: #C3D9FF;
+}
+
+.webtrans-editor-status{
+	background-color: yellow;
+}
+
+.webtrans-editor-content{
+	font-size: 14px;
+	font-family: sans-serif;
+	padding: 3px;
+	margin: 2px;	
+}
+.webtrans-editor-content-source{
+	
+}
+.webtrans-editor-content-target{
+	
+}
+
+.webtrans-editor-content-editor{
+	border: none;
+}
+
+.Severity-Error {
+	background-color: #ffcccc; 
+}
+.Severity-Info {
+	background-color: #eeeeff; 
+}
+.Severity-Warning {
+	background-color: #ffffcc; 
+}
