@@ -6,6 +6,10 @@ import org.fedorahosted.flies.webtrans.client.ui.HasTreeNodes;
 import org.fedorahosted.flies.webtrans.client.ui.TreeImpl;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasKeyUpHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -46,10 +50,29 @@ public class DocumentListView extends CaptionPanel
 	    treePanel.setHeight("150px");
 	    treePanel.add(tree);
 	    
-	    addHead("Documents");
+	    setTitle("Documents");
+	    filterTextBox.setText("search");
+	    filterTextBox.setWidth("100%");
 	    addBody(filterTextBox);
 	    addBody(treePanel);
-	    initPanel();
+	    
+	    filterTextBox.addFocusHandler(new FocusHandler() {
+
+			@Override
+			public void onFocus(FocusEvent event) {
+				filterTextBox.setText("");
+			}
+	    	
+	    });
+	    
+	    filterTextBox.addBlurHandler(new BlurHandler() {
+
+			@Override
+			public void onBlur(BlurEvent event) {
+				filterTextBox.setText("search");
+			}
+	    	
+	    });
 	}
 
 	@Override
