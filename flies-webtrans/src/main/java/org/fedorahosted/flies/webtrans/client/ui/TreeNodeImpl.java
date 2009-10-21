@@ -12,7 +12,7 @@ public class TreeNodeImpl<T> extends TreeItem implements TreeNode<T> {
 		super(new Label(name));
 	}
 	
-	private Label getLabel() {
+	public Label getLabel() {
 		return (Label) super.getWidget();
 	}
 
