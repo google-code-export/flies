@@ -12,8 +12,6 @@ import org.fedorahosted.flies.webtrans.client.DocumentListView;
 import org.fedorahosted.flies.webtrans.client.FlatFolderDocNameMapper;
 import org.fedorahosted.flies.webtrans.client.LoginPanel;
 import org.fedorahosted.flies.webtrans.client.LoginPresenter;
-import org.fedorahosted.flies.webtrans.client.TransUnitInfoPresenter;
-import org.fedorahosted.flies.webtrans.client.TransUnitInfoView;
 import org.fedorahosted.flies.webtrans.client.WestNavigationPresenter;
 import org.fedorahosted.flies.webtrans.client.WestNavigationView;
 import org.fedorahosted.flies.webtrans.client.WorkspaceUsersPresenter;
@@ -35,6 +33,10 @@ import org.fedorahosted.flies.webtrans.editor.WebTransEditorPresenter;
 import org.fedorahosted.flies.webtrans.editor.WebTransEditorView;
 import org.fedorahosted.flies.webtrans.editor.WebTransScrollTable;
 import org.fedorahosted.flies.webtrans.editor.WebTransTableModel;
+import org.fedorahosted.flies.webtrans.editor.filter.FilterPresenter;
+import org.fedorahosted.flies.webtrans.editor.filter.FilterView;
+import org.fedorahosted.flies.webtrans.editor.filter.PhraseFilterPresenter;
+import org.fedorahosted.flies.webtrans.editor.filter.PhraseFilterWidget;
 
 import com.google.inject.Singleton;
 
@@ -52,14 +54,12 @@ public class WebTransClientModule extends AbstractPresenterModule {
 		bind(CachedWebTransTableModel.class).in(Singleton.class);
 		bind(TransUnitTableDefinition.class).in(Singleton.class);
 		bind(WebTransScrollTable.class).in(Singleton.class);
-		bind(WebTransEditorHeader.class).in(Singleton.class);
-		bind(WebTransEditorFooter.class).in(Singleton.class);
-		bind(Pager.class).in(Singleton.class);
 		
 		bind(StatusBar.class).in(Singleton.class);
 		
 		bindPresenter(DocumentListPresenter.class, DocumentListPresenter.Display.class, DocumentListView.class);
-		bindPresenter(TransUnitInfoPresenter.class, TransUnitInfoPresenter.Display.class, TransUnitInfoView.class);
+		bindPresenter(FilterPresenter.class, FilterPresenter.Display.class, FilterView.class);
+		bindPresenter(PhraseFilterPresenter.class, PhraseFilterPresenter.Display.class, PhraseFilterWidget.class);
 		bindPresenter(TransUnitListPresenter.class, TransUnitListPresenter.Display.class, WebTransScrollTable.class);
 		bindPresenter(WestNavigationPresenter.class, WestNavigationPresenter.Display.class, WestNavigationView.class);
 		bindPresenter(WorkspaceUsersPresenter.class, WorkspaceUsersPresenter.Display.class, WorkspaceUsersView.class);
