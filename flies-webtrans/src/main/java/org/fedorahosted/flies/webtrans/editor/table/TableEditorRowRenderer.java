@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.editor;
+package org.fedorahosted.flies.webtrans.editor.table;
 
 import net.customware.gwt.presenter.client.EventBus;
 
@@ -10,7 +10,7 @@ import com.google.gwt.gen2.table.client.RowRenderer;
 import com.google.gwt.gen2.table.client.TableDefinition.AbstractRowView;
 import com.google.inject.Inject;
 
-public class TransUnitRowRenderer implements RowRenderer<TransUnit>{
+public class TableEditorRowRenderer implements RowRenderer<TransUnit>{
 	
 	private ContentFilter<TransUnit> contentFilter = null;
 	

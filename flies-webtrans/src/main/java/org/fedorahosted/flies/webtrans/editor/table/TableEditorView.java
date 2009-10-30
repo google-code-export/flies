@@ -1,19 +1,25 @@
-package org.fedorahosted.flies.webtrans.editor;
+package org.fedorahosted.flies.webtrans.editor.table;
 
 
 import org.fedorahosted.flies.gwt.model.TransUnit;
+import org.fedorahosted.flies.webtrans.editor.HasPageNavigation;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.gen2.table.client.CachedTableModel;
 import com.google.gwt.gen2.table.client.FixedWidthGridBulkRenderer;
+import com.google.gwt.gen2.table.client.MutableTableModel;
 import com.google.gwt.gen2.table.client.PagingScrollTable;
 import com.google.gwt.gen2.table.client.ScrollTable;
+import com.google.gwt.gen2.table.client.TableModel;
 import com.google.gwt.gen2.table.client.SelectionGrid.SelectionPolicy;
 import com.google.gwt.gen2.table.event.client.HasPageChangeHandlers;
 import com.google.gwt.gen2.table.event.client.HasPageCountChangeHandlers;
+import com.google.gwt.gen2.table.event.client.RowCountChangeEvent;
+import com.google.gwt.gen2.table.event.client.RowCountChangeHandler;
 import com.google.gwt.gen2.table.event.client.RowSelectionEvent;
 import com.google.gwt.gen2.table.event.client.RowSelectionHandler;
 import com.google.gwt.gen2.table.event.client.TableEvent.Row;
@@ -25,42 +31,21 @@ import com.google.inject.Inject;
 import com.weborient.codemirror.client.ParserSyntax;
 import com.weborient.codemirror.client.SyntaxToggleWidget;
 
-public class WebTransScrollTable extends PagingScrollTable<TransUnit> implements
-		TransUnitListPresenter.Display, HasSelectionHandlers<TransUnit>, HasPageNavigation{
+public class TableEditorView extends PagingScrollTable<TransUnit> implements
+		TableEditorPresenter.Display, HasSelectionHandlers<TransUnit>, HasPageNavigation{
 
-	private final CachedWebTransTableModel cachedTableModel;
+	private final TableEditorCachedTableModel cachedTableModel;
+	private final TableEditorTableModel tableModel;
 	
-	@Inject
-	public WebTransScrollTable(CachedWebTransTableModel tableModel, TransUnitTableDefinition tableDefinition) {
+	public TableEditorView(TableEditorTableModel tableModel, TableEditorTableDefinition tableDefinition) {
 		super(tableModel,tableDefinition);
-		this.cachedTableModel = tableModel;
-		Log.info("setting up TransUnitListView");
-		setupScrollTable();
-	}
-	
-	@Override
-	public Widget asWidget() {
-		return this;
-	}
-
-	@Override
-	public void startProcessing() {
-	}
-
-	@Override
-	public void stopProcessing() {
-	}
-
-	private SyntaxToggleWidget syntaxWidget;
-
-	protected void setupScrollTable() {
+		
+		this.tableModel = tableModel;
+		cachedTableModel = new TableEditorCachedTableModel(tableModel);
+		
 		setSize("100%", "100%");
-
-		syntaxWidget = new SyntaxToggleWidget(ParserSyntax.MIXED, true);
-		
-		// Create the scroll table
+		tableDefinition.setRowRenderer( new TableEditorRowRenderer());
 		setPageSize(50);
-		
 		setEmptyTableWidget(new HTML(
 				"There is no data to display"));
 
@@ -83,15 +68,41 @@ public class WebTransScrollTable extends PagingScrollTable<TransUnit> implements
 				if(!event.getSelectedRows().isEmpty()){
 					Row row = event.getSelectedRows().iterator().next();
 					TransUnit tu = getRowValue(row.getRowIndex());
-					SelectionEvent.fire(WebTransScrollTable.this, tu);
+					SelectionEvent.fire(TableEditorView.this, tu);
 				}
 			}
 		});
 		
 	}
+
+	@Inject
+	public TableEditorView(TableEditorTableModel tableModel) {
+		this(tableModel, new TableEditorTableDefinition());
+	}
 	
-	private FlowPanel toolbar;
+	@Override
+	public TableEditorTableModel getTableModel() {
+		return tableModel;
+	}
 	
+
+	@Override
+	public TableEditorCachedTableModel getCachedTableModel() {
+		return cachedTableModel;
+	}
+	@Override
+	public Widget asWidget() {
+		return this;
+	}
+
+	@Override
+	public void startProcessing() {
+	}
+
+	@Override
+	public void stopProcessing() {
+	}
+
 	@Override
 	public HandlerRegistration addSelectionHandler(
 			SelectionHandler<TransUnit> handler) {
@@ -103,11 +114,6 @@ public class WebTransScrollTable extends PagingScrollTable<TransUnit> implements
 		return this;
 	}
 	
-	@Override
-	public HasWidgets getToolbar() {
-		return toolbar;
-	}
-
 	@Override
 	public HasPageNavigation getPageNavigation() {
 		return this;
@@ -123,8 +129,5 @@ public class WebTransScrollTable extends PagingScrollTable<TransUnit> implements
 		return this;
 	}
 	
-	public CachedWebTransTableModel getCachedTableModel() {
-		return cachedTableModel;
-	}
 
 }
