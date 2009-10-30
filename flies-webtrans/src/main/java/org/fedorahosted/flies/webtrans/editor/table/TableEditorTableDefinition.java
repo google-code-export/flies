@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.editor;
+package org.fedorahosted.flies.webtrans.editor.table;
 
 import org.fedorahosted.flies.gwt.model.TransUnit;
 import org.fedorahosted.flies.webtrans.client.mvp.TextAreaCellEditor;
@@ -17,15 +17,9 @@ import com.google.inject.Inject;
 import com.weborient.codemirror.client.HighlightingLabel;
 import com.weborient.codemirror.client.ParserSyntax;
 
-public class TransUnitTableDefinition extends DefaultTableDefinition<TransUnit> {
+public class TableEditorTableDefinition extends DefaultTableDefinition<TransUnit> {
 	
-	//private final HasValue<ParserSyntax> parserSyntax;
-
-	@Inject
-	public TransUnitTableDefinition(TransUnitRowRenderer rowRenderer) {//(HasValue<ParserSyntax> parserSyntax) {
-		setRowRenderer(rowRenderer);
-		//this.parserSyntax = parserSyntax;
-
+	public TableEditorTableDefinition() {
 		addColumnDefinition(new SourceColumnDefinition());
 		addColumnDefinition(new TargetColumnDefinition());
 	}

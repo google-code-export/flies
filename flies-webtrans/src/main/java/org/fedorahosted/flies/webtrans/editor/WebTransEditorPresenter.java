@@ -1,16 +1,21 @@
 package org.fedorahosted.flies.webtrans.editor;
 
+import org.fedorahosted.flies.gwt.model.DocumentId;
+import org.fedorahosted.flies.gwt.model.TransUnit;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionEvent;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionHandler;
 import org.fedorahosted.flies.webtrans.client.ui.Pager;
+import org.fedorahosted.flies.webtrans.editor.table.TableEditorPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.gen2.table.client.MutableTableModel;
 import com.google.gwt.gen2.table.event.client.PageChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageChangeHandler;
 import com.google.gwt.gen2.table.event.client.PageCountChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageCountChangeHandler;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 import net.customware.gwt.presenter.client.EventBus;
@@ -22,20 +27,23 @@ import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPresenter.Display>{
 
 	public static final Place PLACE = new Place("WebTransEditor");
-	private final StatusBarPresenter statusbarpresenter;
+	private final TranslationStatsBarPresenter statusbarpresenter;
+	private final TableEditorPresenter webTransTablePresenter;
+	private final Pager pager;
 
 	public interface Display extends WidgetDisplay{
-		Pager getPager();
-		StatusBar getStatusBar();
-		WebTransScrollTable getScrollTable();
-		CachedWebTransTableModel getCachedTableModel();
+		HasThreeColWidgets getHeader();
+		HasThreeColWidgets getFooter();
+		void setEditor(Widget widget);
+		void setStatus(String status);
 	}
 
 	@Inject
-	public WebTransEditorPresenter(Display display, EventBus eventBus, final StatusBarPresenter statusbarpresenter) {
+	public WebTransEditorPresenter(Display display, EventBus eventBus, final TableEditorPresenter webTransTablePresenter, final TranslationStatsBarPresenter statusbarpresenter) {
 		super(display, eventBus);
+		this.webTransTablePresenter = webTransTablePresenter;
 		this.statusbarpresenter = statusbarpresenter;
-		bind();
+		this.pager = new Pager();
 	}
 
 	@Override
@@ -45,51 +53,44 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
 
 	@Override
 	protected void onBind() {
+		webTransTablePresenter.bind();
         statusbarpresenter.bind();
-		display.getPager().setVisible(false);
+        
+        display.getFooter().setMiddleWidget(pager);
+        pager.setVisible(false);
 
+        display.getFooter().setRightWidget(statusbarpresenter.getDisplay().asWidget());
+        
+		display.setEditor(webTransTablePresenter.getDisplay().asWidget());
+		
 		registerHandler(
-			eventBus.addHandler(DocumentSelectionEvent.getType(), new DocumentSelectionHandler() {
-				@Override
-				public void onDocumentSelected(DocumentSelectionEvent event) {
-					if(!event.getDocumentId().equals(display.getCachedTableModel().getTableModel().getCurrentDocumentId())) {
-						Log.info("Requested document "+ event.getDocumentId());
-						display.getCachedTableModel().getTableModel().setCurrentDocumentId(event.getDocumentId());
-						display.getCachedTableModel().clearCache();
-						display.getScrollTable().gotoPage(0, true);
-					}
-				}
-			})
-		);
-	
-		registerHandler(
-			display.getPager().addValueChangeHandler( new ValueChangeHandler<Integer>() {
+			pager.addValueChangeHandler( new ValueChangeHandler<Integer>() {
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Integer> event) {
-					display.getScrollTable().gotoPage(event.getValue()-1, false);
+					webTransTablePresenter.getDisplay().getPageNavigation().gotoPage(event.getValue()-1, false);
 				}
 			})
 		);
 		
 		// TODO this uses incubator's HandlerRegistration
-		display.getScrollTable().addPageChangeHandler( new PageChangeHandler() {
+		webTransTablePresenter.addPageChangeHandler( new PageChangeHandler() {
 			@Override
 			public void onPageChange(PageChangeEvent event) {
-				display.getPager().setValue(event.getNewPage()+1);
+				pager.setValue(event.getNewPage()+1);
 			}
 		});
 
 		// TODO this uses incubator's HandlerRegistration
-		display.getScrollTable().addPageCountChangeHandler(new PageCountChangeHandler() {
+		webTransTablePresenter.addPageCountChangeHandler(new PageCountChangeHandler() {
 			@Override
 			public void onPageCountChange(PageCountChangeEvent event) {
-				display.getPager().setPageCount(event.getNewPageCount());
-				display.getPager().setVisible(true);
+				pager.setPageCount(event.getNewPageCount());
+				pager.setVisible(true);
 			}
 		});
 		
-		display.getScrollTable().gotoFirstPage();
+		webTransTablePresenter.gotoFirstPage();
 
 	}
 
