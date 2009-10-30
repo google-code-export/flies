@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.editor;
+package org.fedorahosted.flies.webtrans.editor.table;
 
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
@@ -26,7 +26,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
-public class TransUnitListEditorTableModel extends MutableTableModel<TransUnit> {
+public class TableEditorTableModel extends MutableTableModel<TransUnit> {
 
 	private final DispatchAsync dispatcher;
 	private final EventBus eventBus;
@@ -34,7 +34,7 @@ public class TransUnitListEditorTableModel extends MutableTableModel<TransUnit> 
 	private final WorkspaceContext workspaceContext;
 	
 	@Inject
-	public TransUnitListEditorTableModel(WorkspaceContext workspaceContext, DispatchAsync dispatcher, EventBus eventBus) {
+	public TableEditorTableModel(WorkspaceContext workspaceContext, DispatchAsync dispatcher, EventBus eventBus) {
 		this.dispatcher = dispatcher;
 		this.eventBus = eventBus;
 		this.workspaceContext = workspaceContext;
