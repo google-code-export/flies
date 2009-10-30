@@ -5,6 +5,7 @@ import org.fedorahosted.flies.gwt.model.TransUnit;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionEvent;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionHandler;
 import org.fedorahosted.flies.webtrans.client.ui.Pager;
+import org.fedorahosted.flies.webtrans.editor.table.TableEditorPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -26,12 +27,10 @@ import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPresenter.Display>{
 
 	public static final Place PLACE = new Place("WebTransEditor");
-	private final StatusBarPresenter statusbarpresenter;
-	private final TransUnitListEditorPresenter webTransTablePresenter;
+	private final TranslationStatsBarPresenter statusbarpresenter;
+	private final TableEditorPresenter webTransTablePresenter;
 	private final Pager pager;
-	
-	private DocumentId currentDocumentId;
-	
+
 	public interface Display extends WidgetDisplay{
 		HasThreeColWidgets getHeader();
 		HasThreeColWidgets getFooter();
@@ -40,7 +39,7 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
 	}
 
 	@Inject
-	public WebTransEditorPresenter(Display display, EventBus eventBus, final TransUnitListEditorPresenter webTransTablePresenter, final StatusBarPresenter statusbarpresenter) {
+	public WebTransEditorPresenter(Display display, EventBus eventBus, final TableEditorPresenter webTransTablePresenter, final TranslationStatsBarPresenter statusbarpresenter) {
 		super(display, eventBus);
 		this.webTransTablePresenter = webTransTablePresenter;
 		this.statusbarpresenter = statusbarpresenter;
@@ -64,20 +63,6 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
         
 		display.setEditor(webTransTablePresenter.getDisplay().asWidget());
 		
-		registerHandler(
-			eventBus.addHandler(DocumentSelectionEvent.getType(), new DocumentSelectionHandler() {
-				@Override
-				public void onDocumentSelected(DocumentSelectionEvent event) {
-					if(!event.getDocumentId().equals(currentDocumentId)) {
-						Log.debug("Requested document "+ event.getDocumentId());
-						//display.getTableModel().setCurrentDocumentId(event.getDocumentId());
-						//display.clearCache();
-						webTransTablePresenter.getDisplay().getPageNavigation().gotoPage(0, true);
-					}
-				}
-			})
-		);
-	
 		registerHandler(
 			pager.addValueChangeHandler( new ValueChangeHandler<Integer>() {
 				
