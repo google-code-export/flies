@@ -39,7 +39,9 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
 	}
 
 	@Inject
-	public WebTransEditorPresenter(Display display, EventBus eventBus, final TableEditorPresenter webTransTablePresenter, final TranslationStatsBarPresenter statusbarpresenter) {
+	public WebTransEditorPresenter(Display display, EventBus eventBus, 
+			final TableEditorPresenter webTransTablePresenter, 
+			final TranslationStatsBarPresenter statusbarpresenter) {
 		super(display, eventBus);
 		this.webTransTablePresenter = webTransTablePresenter;
 		this.statusbarpresenter = statusbarpresenter;
@@ -68,7 +70,7 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
 				
 				@Override
 				public void onValueChange(ValueChangeEvent<Integer> event) {
-					webTransTablePresenter.getDisplay().getPageNavigation().gotoPage(event.getValue()-1, false);
+					webTransTablePresenter.getDisplay().gotoPage(event.getValue()-1, false);
 				}
 			})
 		);

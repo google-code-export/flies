@@ -34,18 +34,24 @@ import com.weborient.codemirror.client.SyntaxToggleWidget;
 public class TableEditorView extends PagingScrollTable<TransUnit> implements
 		TableEditorPresenter.Display, HasSelectionHandlers<TransUnit>, HasPageNavigation{
 
-	private final TableEditorCachedTableModel cachedTableModel;
-	private final TableEditorTableModel tableModel;
+	private final RedirectingCachedTableModel<TransUnit> cachedTableModel;
+	private int cachedPages = 2;
 	
-	public TableEditorView(TableEditorTableModel tableModel, TableEditorTableDefinition tableDefinition) {
+	public TableEditorView() {
+		this(new RedirectingTableModel<TransUnit>());
+	}
+	
+	public TableEditorView(RedirectingTableModel<TransUnit> tableModel) {
+		this(new RedirectingCachedTableModel<TransUnit>(tableModel), new TableEditorTableDefinition());
+		
+	}
+	
+	public TableEditorView(RedirectingCachedTableModel<TransUnit> tableModel, TableEditorTableDefinition tableDefinition) {
 		super(tableModel,tableDefinition);
-		
-		this.tableModel = tableModel;
-		cachedTableModel = new TableEditorCachedTableModel(tableModel);
-		
+		this.cachedTableModel = tableModel;
 		setSize("100%", "100%");
 		tableDefinition.setRowRenderer( new TableEditorRowRenderer());
-		setPageSize(50);
+		setPageSize(10);
 		setEmptyTableWidget(new HTML(
 				"There is no data to display"));
 
@@ -61,7 +67,6 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements
 		
 		getDataTable().setSelectionPolicy(SelectionPolicy.ONE_ROW);
 		getDataTable().setCellPadding(3);
-		
 		getDataTable().addRowSelectionHandler(new RowSelectionHandler() {
 			@Override
 			public void onRowSelection(RowSelectionEvent event) {
@@ -72,24 +77,15 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements
 				}
 			}
 		});
-		
 	}
 
-	@Inject
-	public TableEditorView(TableEditorTableModel tableModel) {
-		this(tableModel, new TableEditorTableDefinition());
+	@Override
+	public void setPageSize(int pageSize) {
+		super.setPageSize(pageSize);
+		cachedTableModel.setPostCachedRowCount(pageSize*cachedPages);
+		cachedTableModel.setPreCachedRowCount(pageSize*cachedPages);
 	}
 	
-	@Override
-	public TableEditorTableModel getTableModel() {
-		return tableModel;
-	}
-	
-
-	@Override
-	public TableEditorCachedTableModel getCachedTableModel() {
-		return cachedTableModel;
-	}
 	@Override
 	public Widget asWidget() {
 		return this;
@@ -97,10 +93,12 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements
 
 	@Override
 	public void startProcessing() {
+		setVisible(false);
 	}
 
 	@Override
 	public void stopProcessing() {
+		setVisible(true);
 	}
 
 	@Override
@@ -114,10 +112,6 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements
 		return this;
 	}
 	
-	@Override
-	public HasPageNavigation getPageNavigation() {
-		return this;
-	}
 	
 	@Override
 	public HasPageChangeHandlers getPageChangeHandlers() {
@@ -129,5 +123,22 @@ public class TableEditorView extends PagingScrollTable<TransUnit> implements
 		return this;
 	}
 	
+	public void setCachedPages(int cachedPages) {
+		this.cachedPages = cachedPages;
+	}
+	
+	public int getCachedPages() {
+		return cachedPages;
+	}
+
+	@Override
+	public RedirectingCachedTableModel<TransUnit> getTableModel() {
+		return cachedTableModel;
+	}
+	
+	@Override
+	public void setTableModelHandler(TableModelHandler<TransUnit> handler) {
+		cachedTableModel.getTableModel().setTableModelHandler(handler);
+	}
 
 }
