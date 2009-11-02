@@ -14,23 +14,20 @@ import org.fedorahosted.flies.gwt.rpc.GetStatusCountResult;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionEvent;
 import org.fedorahosted.flies.webtrans.client.DocumentSelectionHandler;
 import org.fedorahosted.flies.webtrans.client.WorkspaceContext;
+import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEvent;
+import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
 public class TranslationStatsBarPresenter extends WidgetPresenter<TranslationStatsBarPresenter.Display>{
 
-	private final DispatchAsync dispatcher;	
-	private final WorkspaceContext workspaceContext;
-		
 	public interface Display extends WidgetDisplay, HasTransUnitCount {
 	}
 
 	@Inject
-	public TranslationStatsBarPresenter(final WorkspaceContext workspaceContext, final Display display, final EventBus eventBus, final DispatchAsync dispatcher) {
+	public TranslationStatsBarPresenter(final Display display, final EventBus eventBus) {
 		super(display, eventBus);
-		this.dispatcher = dispatcher;
-		this.workspaceContext = workspaceContext;
 	}
 	
 	@Override
@@ -40,12 +37,6 @@ public class TranslationStatsBarPresenter extends WidgetPresenter<TranslationSta
 
 	@Override
 	protected void onBind() {
-		registerHandler(eventBus.addHandler(DocumentSelectionEvent.getType(), new DocumentSelectionHandler() {
-			@Override
-			public void onDocumentSelected(DocumentSelectionEvent event) {
-				requestStatusCount(event.getDocumentId(), workspaceContext.getLocaleId());
-			}
-		}));
 	}
 
 	@Override
@@ -62,17 +53,5 @@ public class TranslationStatsBarPresenter extends WidgetPresenter<TranslationSta
 
 	@Override
 	public void revealDisplay() {
-	}
-	
-	private void requestStatusCount(DocumentId id, LocaleId localeid) {
-		dispatcher.execute(new GetStatusCount(id, localeid), new AsyncCallback<GetStatusCountResult>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-			@Override
-			public void onSuccess(GetStatusCountResult result) {
-				display.setStatus((int) result.getFuzzy(), (int)result.getTranslated(), (int)result.getUntranslated());
-			}
-		});
 	}
 }
