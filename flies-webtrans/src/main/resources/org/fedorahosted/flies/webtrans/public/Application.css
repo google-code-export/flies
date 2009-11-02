@@ -1,0 +1,183 @@
+/** Add css rules here for your application. */
+
+.LeftContentNavBar {
+}
+
+.LeftContentNavBar .gwt-CaptionPanel {
+	margin-bottom:3px;
+}
+
+
+.gwt-HeadingPanel .topLeftInner, .gwt-HeadingPanel .topRightInner {
+	height:40px;
+	width:5px;
+	background-color: d0e4f6;
+}
+.gwt-HeadingPanel .topCenterInner{
+	height: 40px;
+	background-color: d0e4f6;
+}
+
+.gwt-HeadingPanelTitle {
+	font-size: 15px;
+	color: grey;
+}
+
+.gwt-FilterBox-Vacant {
+    font-size: 12px;
+    font-style: italic;
+    color: grey;
+    width: 100%;
+}
+
+.gwt-FilterBox-Occupied {
+    font-size: 12px;
+    font-style: plain;
+    color: black;
+    width: 100%;
+}
+
+.gwt-CaptionPanel-Heading {
+    font-weight: bold;
+    width: 100%;
+    background-color: d0e4f6;
+    padding-bottom: 5px;
+}
+
+.gwt-TreeItem-selected .gwt-Label{
+	background-color: #C3D9FF;;
+}
+.gwt-TreeItem-selected {
+	background-color: #C3D9FF;;
+}
+
+.gwt-CaptionPanel-Collapse {
+    background-color: #d5e9fa;
+    border: 1px solid #c8dbec;
+	padding: 1px;
+	margin: 0px;
+	font-family: monospace;
+}
+
+.gwt-CaptionPanel tr.middle td.middleCenter {
+    width: 100%;
+}
+
+.gwt-ProgressBar-shell {
+  border: 2px solid #faf9f7;
+  border-right: 2px solid #848280;
+  border-bottom: 2px solid #848280;
+  background-color: #AAAAAA;
+  height: 14pt;
+  width: 100%;
+}
+.gwt-ProgressBar-shell .gwt-ProgressBar-bar {
+  background-color: #67A7E3;
+}
+.gwt-ProgressBar-shell .gwt-ProgressBar-text {
+  padding: 0px;
+  margin: 0px;
+  color: white;
+
+}
+
+.WebTransEditor-Outer tr.middle td.middleCenter {
+  height: 100%;
+  width: 100%;
+}
+.WebTransEditor-Outer tr.middle td.middleCenter div.middleCenterInner {
+  height: 100%;
+  width: 100%;
+}
+
+.WebTransEditor {
+  height: 100%;
+  width: 100%;
+}
+
+.WebTransEditorMenu {
+	background-color: #D0E4F6;
+}
+
+.TableEditor tr td{
+	vertical-align: top;
+}
+
+.TableEditor tr.FuzzyStateDecoration td.TableEditorCell-Source{
+	background: url(tu_bg_fuzzy_left.png) repeat-y left;
+}
+.TableEditor tr.NewStateDecoration td.TableEditorCell-Source{
+	background: url(tu_bg_new_left.png) repeat-y left;
+}
+.TableEditor tr.ApprovedStateDecoration td.TableEditorCell-Source{
+	background: url(tu_bg_approved_left.png) repeat-y left;
+}
+.TableEditor tr.FuzzyStateDecoration td.TableEditorCell-Target{
+	background: url(tu_bg_fuzzy_right.png) repeat-y right;
+}
+.TableEditor tr.NewStateDecoration td.TableEditorCell-Target{
+	background: url(tu_bg_new_right.png) repeat-y right;
+}
+.TableEditor tr.ApprovedStateDecoration td.TableEditorCell-Target{
+	background: url(tu_bg_approved_right.png) repeat-y right;
+}
+
+td.TableEditorCell {
+}
+
+td.TableEditorCell-Source {
+}
+
+td.TableEditorCell-Target {
+}
+
+
+tr.TableEditorRow.highlighted td.TableEditorCell {
+  background-color: #f1f2f6;
+}
+
+tr.TableEditorRow.highlighted td.TableEditorCell-Source {  
+}
+tr.TableEditorRow.highlighted td.TableEditorCell-Target {
+	cursor: hand;
+}
+
+tr.TableEditorRow.even-row {
+	background-color: #fafaff;
+}
+tr.TableEditorRow.odd-row {
+	background-color: #ffffff;
+}
+
+
+tr.TableEditorRow.content-filter{
+}
+
+tr.TableEditorRow.content-filter-match{
+	background-color: light-green;
+}
+
+tr.TableEditorRow.content-filter-nomatch{
+	background-color: yellow;
+}
+
+tr.TableEditorRow.selected td {
+  background: #C3D9FF;
+}
+
+.TableEditorContent, .TableEditorContent-Edit {
+	font-size: 14px;
+	font-family: sans-serif;
+	padding: 3px;
+	margin: 2px;	
+}
+
+.Severity-Error {
+	background-color: #ffcccc; 
+}
+.Severity-Info {
+	background-color: #eeeeff; 
+}
+.Severity-Warning {
+	background-color: #ffffcc; 
+}
