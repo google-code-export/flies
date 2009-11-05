@@ -47,7 +47,7 @@ public class ProjectStatusPresenter extends TranslationStatsBarPresenter{
 			@Override
 			public void onTransUnitUpdated(TransUnitUpdatedEvent event) {
 				
-				if( event.getOffset() < latestStatusCountOffset){
+				if( event.getOffset() <= latestStatusCountOffset){
 					return;
 				}
 				
@@ -80,6 +80,7 @@ public class ProjectStatusPresenter extends TranslationStatsBarPresenter{
 				}
 				
 				getDisplay().setStatus(fuzzyCount, translatedCount, untranslatedCount);
+				
 				
 			}
 
