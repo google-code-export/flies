@@ -26,28 +26,22 @@ public class TranslationStatsBar extends Composite implements TranslationStatsBa
 	public int untranslated;
 	public int translated;
 	private final static int popupoffset = 35;
-	private final HorizontalPanel panel;
 	private final ProgressBar bar;
 	private final PopupWindow popupWindow;
 
 	private class PopupWindow extends DecoratedPopupPanel {
 		public PopupWindow() {
 			super(true);
-			this.setWidget(new Label("Status of Translation Unit"));
+			this.setWidget(new Label("Status"));
 		}
 	}
 
 	public TranslationStatsBar() {
-
-		panel = new HorizontalPanel();
-		initWidget(panel);
 		bar = new ProgressBar();
-		bar.setTextVisible(true);
 		bar.setMaxProgress(100.0);
-		bar.setWidth("200px");
+		bar.setWidth("150px");
 		refreshProgress();
-
-		panel.add(bar);
+		initWidget(bar);
 		addClickHandler(this);
 		addMouseOverHandler(this);
 		addMouseOutHandler(this);
