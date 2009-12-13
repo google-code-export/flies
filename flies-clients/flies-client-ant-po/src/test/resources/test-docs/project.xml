@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<documents xmlns="http://flies.fedorahosted.org/api/v1/" xmlns:ns2="http://flies.fedorahosted.org/api/gettext/header">
+    <document path="ja-JP/" name="Accounts_And_Subscriptions.po" xml:lang="en-US" id="ja-JP/Accounts_And_Subscriptions.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Article_Info.po" xml:lang="en-US" id="ja-JP/Article_Info.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Author_Group.po" xml:lang="en-US" id="ja-JP/Author_Group.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Contributors.po" xml:lang="en-US" id="ja-JP/Contributors.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Introduction.po" xml:lang="en-US" id="ja-JP/Introduction.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Revision_History.po" xml:lang="en-US" id="ja-JP/Revision_History.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Translating_Documentation.po" xml:lang="en-US" id="ja-JP/Translating_Documentation.po" content-type="text/plain"/>
+    <document path="ja-JP/" name="Translating_Software.po" xml:lang="en-US" id="ja-JP/Translating_Software.po" content-type="text/plain"/>
+</documents>
