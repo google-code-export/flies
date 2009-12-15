@@ -57,6 +57,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 	implements HasPageNavigation, HasPageChangeHandlers, HasPageCountChangeHandlers {
 	
 	public static final Place PLACE = new Place("TableEditor");
+	private int latestStatusCountOffset = -1;
 	
 	public interface Display extends WidgetDisplay, HasPageNavigation {
 		HasSelectionHandlers<TransUnit> getSelectionHandlers();
