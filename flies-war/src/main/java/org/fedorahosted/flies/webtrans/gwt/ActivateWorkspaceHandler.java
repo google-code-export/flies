@@ -4,8 +4,6 @@ import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
-import org.fedorahosted.flies.common.LocaleId;
-import org.fedorahosted.flies.gwt.auth.AuthenticationError;
 import org.fedorahosted.flies.gwt.model.PersonId;
 import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceAction;
 import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceResult;
@@ -21,7 +19,6 @@ import org.jboss.seam.annotations.Logger;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.Scope;
 import org.jboss.seam.log.Log;
-import org.jboss.seam.security.Identity;
 
 @Name("webtrans.gwt.ActivateWorkspaceHandler")
 @Scope(ScopeType.STATELESS)
@@ -45,7 +42,7 @@ public class ActivateWorkspaceHandler implements ActionHandler<ActivateWorkspace
 		
 		HProjectContainer hProjectContainer = (HProjectContainer) session.get(HProjectContainer.class, action.getProjectContainerId().getId());
 		
-		//Send EnterWorkspace event to client 
+		//Send EnterWorkspace event to clients
 		EnterWorkspace event = new EnterWorkspace(new PersonId(FliesIdentity.instance().getPrincipal().getName()));
 		workspace.publish(event);
 		
