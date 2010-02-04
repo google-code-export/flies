@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.fedorahosted.flies.FliesInit;
 import org.fedorahosted.flies.common.LocaleId;
 import org.fedorahosted.flies.gwt.model.PersonId;
-import org.fedorahosted.flies.gwt.rpc.EnterWorkspace;
 import org.fedorahosted.flies.gwt.rpc.ExitWorkspace;
 import org.fedorahosted.flies.security.FliesIdentity;
 import org.jboss.seam.ScopeType;
@@ -30,6 +29,8 @@ public class TranslationWorkspaceManager {
 	
 	@Logger
 	private Log log;
+//	@In(value="messageBus", scope=ScopeType.APPLICATION)
+//	private MessageBus messageBus;
 	
 	private final ConcurrentHashMap<WorkspaceKey, TranslationWorkspace> workspaceMap;
 	private final Multimap<Long, LocaleId> projectIterationLocaleMap;
