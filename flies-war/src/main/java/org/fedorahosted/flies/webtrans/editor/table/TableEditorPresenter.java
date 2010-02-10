@@ -24,6 +24,8 @@ import org.fedorahosted.flies.webtrans.client.DocumentSelectionHandler;
 import org.fedorahosted.flies.webtrans.client.NavTransUnitEvent;
 import org.fedorahosted.flies.webtrans.client.NavTransUnitHandler;
 import org.fedorahosted.flies.webtrans.client.NotificationEvent;
+import org.fedorahosted.flies.webtrans.client.VisibilityEvent;
+import org.fedorahosted.flies.webtrans.client.VisibilityHandler;
 import org.fedorahosted.flies.webtrans.client.WorkspaceContext;
 import org.fedorahosted.flies.webtrans.client.NotificationEvent.Severity;
 import org.fedorahosted.flies.webtrans.client.auth.Identity;
@@ -62,6 +64,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 	
 	public static final Place PLACE = new Place("TableEditor");
 	private int latestStatusCountOffset = -1;
+	private boolean transMemoryTabVisible = false;
 	
 	public interface Display extends WidgetDisplay, HasPageNavigation {
 		HasSelectionHandlers<TransUnit> getSelectionHandlers();
@@ -110,8 +113,18 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 				if(event.getSelectedItem() != currentSelection) {
 					currentSelection = event.getSelectedItem();
 					//startEditing(currentSelection);
+					if(transMemoryTabVisible) {
+						//Start search the Translation Memory
+					}
 					eventBus.fireEvent(event);
 				}
+			}
+		}));
+		
+		registerHandler(eventBus.addHandler(VisibilityEvent.getType(), new VisibilityHandler() {
+			@Override
+			public void onVisibilityChange(VisibilityEvent tabSelectionEvent) {
+				 //transMemoryTabVisible = tabSelectionEvent.isTranslationMemoryVisible();
 			}
 		}));
 		
