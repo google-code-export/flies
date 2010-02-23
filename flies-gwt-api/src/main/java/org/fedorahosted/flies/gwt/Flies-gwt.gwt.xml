@@ -1,0 +1,12 @@
+<module>
+  <inherits name="com.google.gwt.user.User"/>
+  <inherits name="de.novanic.eventservice.GWTEventService"/>
+<!-- 
+  <inherits name="org.jboss.errai.bus.ErraiBus"/>
+ -->
+  <inherits name="org.fedorahosted.flies.Common"/>
+  <source path="auth"/>
+  <source path="common"/>
+  <source path="model"/>
+  <source path="rpc"/>
+</module>
