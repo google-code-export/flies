@@ -1,5 +1,6 @@
 package org.fedorahosted.flies.webtrans.client;
 
+
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.place.Place;
@@ -13,17 +14,26 @@ import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceAction;
 import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceResult;
 import org.fedorahosted.flies.gwt.rpc.ExitWorkspaceAction;
 import org.fedorahosted.flies.gwt.rpc.ExitWorkspaceResult;
-import org.fedorahosted.flies.webtrans.client.Application.WindowResizeEvent;
 import org.fedorahosted.flies.webtrans.client.LoginPresenter.LoggedIn;
 import org.fedorahosted.flies.webtrans.client.auth.Identity;
 import org.fedorahosted.flies.webtrans.client.rpc.CachingDispatchAsync;
+import org.fedorahosted.flies.webtrans.client.ui.HasPager;
 import org.fedorahosted.flies.webtrans.editor.WebTransEditorPresenter;
+import org.fedorahosted.flies.webtrans.editor.filter.TransFilterPresenter;
+import org.fedorahosted.flies.webtrans.editor.table.TableEditorPresenter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.gen2.table.client.TableModel;
+import com.google.gwt.gen2.table.event.client.PageChangeEvent;
+import com.google.gwt.gen2.table.event.client.PageChangeHandler;
+import com.google.gwt.gen2.table.event.client.PageCountChangeEvent;
+import com.google.gwt.gen2.table.event.client.PageCountChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
@@ -36,21 +46,27 @@ import com.google.inject.Inject;
 public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 	
 	public interface Display extends WidgetDisplay {
-		// Note that the appearance differs depending on the
-		// order widgets are added.  This is DockPanel behaviour.
-		// TODO this is far too UI-specific!
-		public void addWest(Widget west);
-		public void addMain(Widget main);
-		public void addNorth(Widget north);
-		public void addSouth(Widget south);
+		void setDocumentListView(Widget documentListView);
+		void setEditorView(Widget editorView);
+		void setTransUnitNavigationView(Widget transUnitNavigation);
+		void setTranslationMemoryView(Widget translationMemoryView);
+		void setFilterView(Widget filterView);
+		void setWorkspaceUsersView(Widget workspaceUsersView);
+
+		void showDocumentsView();
+		void showEditorView();
+		HasPager getTableEditorPager();
 	}
 	
-	private final WestNavigationPresenter westNavigationPresenter;
-	private final WebTransEditorPresenter webTransEditorPresenter;
-	private final TopMenuPresenter topMenuPresenter;
-	private final SouthPresenter southPresenter;
+	private final TableEditorPresenter tableEditorPresenter;
+	private final DocumentListPresenter documentListPresenter;
 	private final EventProcessor eventProcessor;
 	private final LoginPresenter loginPresenter;
+	private final TransUnitNavigationPresenter transUnitNavigationPresenter;
+	private final TransMemoryPresenter transMemoryPresenter;
+	private final TransFilterPresenter transFilterPresenter;
+	private final WorkspaceUsersPresenter workspaceUsersPresenter;
+	
 	private final DispatchAsync dispatcher;
 	private String workspaceName;
 	private String localeName;
@@ -59,22 +75,26 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 	@Inject
 	public AppPresenter(Display display, EventBus eventBus,
 			    CachingDispatchAsync dispatcher,
-				final WestNavigationPresenter leftNavigationPresenter,
-				final WebTransEditorPresenter webTransEditorPresenter,
-				final TopMenuPresenter topMenuPresenter,
-				final SouthPresenter southPresenter,
+				final TableEditorPresenter tableEditorPresenter,
+				final DocumentListPresenter documentListPresenter,
 				final EventProcessor eventProcessor,
 				final LoginPresenter loginPresenter,
+				final TransMemoryPresenter transMemoryPresenter,
+				final TransUnitNavigationPresenter transUnitNavigationPresenter,
+				final TransFilterPresenter transFilterPresenter,
+				final WorkspaceUsersPresenter workspaceUsersPresenter,
 				final Identity identity) {
 		super(display, eventBus);
 		this.identity = identity;
 		this.dispatcher = dispatcher;
-		this.westNavigationPresenter = leftNavigationPresenter;
-		this.webTransEditorPresenter = webTransEditorPresenter;
-		this.topMenuPresenter = topMenuPresenter;
-		this.southPresenter = southPresenter;
+		this.tableEditorPresenter = tableEditorPresenter;
 		this.eventProcessor = eventProcessor;
 		this.loginPresenter = loginPresenter;
+		this.documentListPresenter = documentListPresenter;
+		this.transUnitNavigationPresenter = transUnitNavigationPresenter;
+		this.transMemoryPresenter = transMemoryPresenter;
+		this.transFilterPresenter = transFilterPresenter;
+		this.workspaceUsersPresenter =  workspaceUsersPresenter;
 	}
 
 	@Override
@@ -83,31 +103,7 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 	}
 
 	protected void bindApp() {
-		westNavigationPresenter.bind();
-		webTransEditorPresenter.bind();
-		topMenuPresenter.bind();
-		southPresenter.bind();
-		
-		display.addNorth(topMenuPresenter.getDisplay().asWidget());
-		Widget south = southPresenter.getDisplay().asWidget();
-//		south.setHeight("15em");
-		display.addWest(westNavigationPresenter.getDisplay().asWidget());
-		display.addSouth(south);
-		Widget mainWidget = webTransEditorPresenter.getDisplay().asWidget();
-//		mainWidget.setHeight("100%");
-		display.addMain(mainWidget);
-		// TODO refactor to presenter
-		
-		registerHandler(
-			eventBus.addHandler(WindowResizeEvent.getType(), new ResizeHandler() {
-				@Override
-				public void onResize(ResizeEvent event) {
-					display.asWidget().setHeight(event.getHeight() + "px");
-					display.asWidget().setWidth(event.getWidth() + "px");
-				}
-			})
-		);
-		
+
 		registerHandler(
 			eventBus.addHandler(NotificationEvent.getType(), new NotificationEventHandler() {
 				
@@ -116,7 +112,7 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 					PopupPanel popup = new PopupPanel(true);
 					popup.addStyleDependentName("Notification");
 					popup.addStyleName("Severity-"+ event.getSeverity().name());
-					Widget center = webTransEditorPresenter.getDisplay().asWidget();
+					Widget center = tableEditorPresenter.getDisplay().asWidget();
 					popup.setWidth(center.getOffsetWidth()-40 + "px");
 					popup.setWidget(new Label(event.getMessage()));
 					popup.setPopupPosition(center.getAbsoluteLeft()+20, center.getAbsoluteTop()+30);
@@ -143,33 +139,63 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 			}
 		});
 
-		// Hook the window resize event, so that we can adjust the UI.
-		Window.addResizeHandler( new ResizeHandler() {
+		Window.enableScrolling(false);
+		
+		documentListPresenter.bind();
+		tableEditorPresenter.bind();
+		transUnitNavigationPresenter.bind();
+		
+		display.setDocumentListView(documentListPresenter.getDisplay().asWidget());
+		display.setEditorView(tableEditorPresenter.getDisplay().asWidget());
+		display.setTransUnitNavigationView(transUnitNavigationPresenter.getDisplay().asWidget());
+		
+		registerHandler(
+				eventBus.addHandler(DocumentSelectionEvent.getType(), new DocumentSelectionHandler() {
+					@Override
+					public void onDocumentSelected(DocumentSelectionEvent event) {
+						display.showEditorView();
+					}
+				})
+			);
+		
+		registerHandler(
+				display.getTableEditorPager().addValueChangeHandler( new ValueChangeHandler<Integer>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<Integer> event) {
+						tableEditorPresenter.cancelEdit();
+						tableEditorPresenter.gotoPage(event.getValue()-1, false);
+					}
+				})
+			);
+			
+		// TODO this uses incubator's HandlerRegistration
+		tableEditorPresenter.addPageChangeHandler( new PageChangeHandler() {
 			@Override
-			public void onResize(ResizeEvent event) {
-				eventBus.fireEvent( new WindowResizeEvent(event));
+			public void onPageChange(PageChangeEvent event) {
+				display.getTableEditorPager().setValue(event.getNewPage()+1);
 			}
 		});
 
-		Window.enableScrolling(false);
-		Window.setMargin("0px");
-		
-		
-		
-		// Call the window resized handler to get the initial sizes setup. Doing
-		// this in a deferred command causes it to occur after all widgets'
-		// sizes
-		// have been computed by the browser.
-		DeferredCommand.addCommand(new Command() {
-			public void execute() {
-				eventBus.fireEvent( new WindowResizeEvent(Window.getClientWidth(), Window
-						.getClientHeight()));
+		// TODO this uses incubator's HandlerRegistration
+		tableEditorPresenter.addPageCountChangeHandler(new PageCountChangeHandler() {
+			@Override
+			public void onPageCountChange(PageCountChangeEvent event) {
+				display.getTableEditorPager().setPageCount(event.getNewPageCount());
 			}
 		});
+
+		transMemoryPresenter.bind();
+		display.setTranslationMemoryView(transMemoryPresenter.getDisplay().asWidget());
 		
+		transFilterPresenter.bind();
+		display.setFilterView(transFilterPresenter.getDisplay().asWidget());
+		
+		workspaceUsersPresenter.bind();
+		display.setWorkspaceUsersView(workspaceUsersPresenter.getDisplay().asWidget());
 		
 	}
-	
+
 	private static LocaleId findLocaleId() {
 		String localeId = Window.Location.getParameter("localeId");
 		return localeId == null ? null : new LocaleId(localeId);
@@ -243,6 +269,8 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 //				activateWorkspace.onSuccess(null);
 			}
 		});
+		
+		
 	}
 
 	private void setWorkspaceName(String workspaceName) {
@@ -267,8 +295,8 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display> {
 
 	@Override
 	protected void onUnbind() {
-		westNavigationPresenter.unbind();
-		webTransEditorPresenter.unbind();
+		tableEditorPresenter.unbind();
+		// TODO impl
 	}
 
 	@Override
