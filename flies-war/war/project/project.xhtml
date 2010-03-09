@@ -1,0 +1,63 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../layout/template.xhtml">
+
+<ui:define name="center_content">
+    <rich:jQuery selector="#tab_projects" query="addClass('ui-tabs-selected')" />
+
+    <h1>#{projectHome.instance.name}</h1>
+
+    <s:formattedText id="project-home-content" value="#{projectHome.instance.homeContent}"></s:formattedText>
+    
+    <h:outputText value="#{projectHome.instance.description}" rendered="#{empty projectHome.instance.homeContent}"/>
+    <s:fragment rendered="#{projectHome.retiredIterations.size > 0}">
+      <h2>Active Iterations</h2>
+    </s:fragment>
+    <rich:dataGrid columns="2" 
+                   value="#{projectHome.activeIterations}" 
+                   var="_iteration" 
+                   columnClasses="grid_col_one_third_width"
+                   >
+      <ui:include src="./iteration_view_inline.xhtml" />
+    </rich:dataGrid>
+
+    <s:fragment rendered="#{projectHome.retiredIterations.size > 0}">
+      <h2>Retired Iterations</h2>
+      <rich:dataGrid columns="2" 
+                     value="#{projectHome.retiredIterations}" 
+                     var="_iteration" 
+                     columnClasses="grid_col_one_third_width">
+        <ui:include src="./iteration_view_inline.xhtml" />
+      </rich:dataGrid>
+    </s:fragment>    
+</ui:define>
+
+<ui:define name="left_content">
+  
+  <rich:panel rendered="#{identity.loggedIn}">
+    <f:facet name="header">Actions</f:facet>
+    <s:link styleClass="action_link" rendered="#{s:hasRole('admin')}" value="Edit Project" view="/project/edit.xhtml" propagation="none">
+      <f:param name="slug" value="#{projectHome.instance.slug}"/>
+    </s:link>
+    <s:link styleClass="action_link" rendered="#{s:hasRole('admin')}" view="/project/add_iteration.xhtml" value="Add Iteration" propagation="none">
+    	<f:param name="projectSlug" value="#{projectHome.instance.slug}"/>
+    </s:link>
+  </rich:panel>
+  
+  <rich:panel>
+    <f:facet name="header">Maintainers</f:facet>
+    <h:outputText rendered="#{empty projectHome.instance.maintainers}">(No maintainers defined)</h:outputText>
+    <rich:dataList value="#{projectHome.instance.maintainers.toArray()}" var="maintainer">
+      <h:outputText value="#{maintainer.name}"/>
+    </rich:dataList>
+  </rich:panel>
+  
+</ui:define>
+
+</ui:composition>
