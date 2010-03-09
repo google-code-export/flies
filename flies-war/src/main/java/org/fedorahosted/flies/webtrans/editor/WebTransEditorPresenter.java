@@ -37,36 +37,23 @@ import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPresenter.Display>{
 
 	public static final Place PLACE = new Place("WebTransEditor");
-	private final DocumentStatusPresenter documentStatusPresenter;
-	private final ProjectStatusPresenter projectStatusPresenter;
-	private final TableEditorPresenter webTransTablePresenter;
-	//private final ToolBoxPresenter toolBoxPresenter;
-	private final Pager pager;
-	private final DispatchAsync dispatcher;
 
+	private final DocumentStatusPresenter documentStatusPresenter;
+	private final TableEditorPresenter webTransTablePresenter;
 	
 	public interface Display extends WidgetDisplay{
-		HasThreeColWidgets getHeader();
-		HasThreeColWidgets getFooter();
 		void setEditor(Widget widget);
 		void setToolBox(Widget toolbox);
-		void setStatus(String status);
 	}
 
 	@Inject
 	public WebTransEditorPresenter(Display display, EventBus eventBus,
 			final CachingDispatchAsync dispatcher,
 			final TableEditorPresenter webTransTablePresenter,
-			final DocumentStatusPresenter documentStatsBarPresenter,
-			//final ToolBoxPresenter toolBoxPresenter,
-			final ProjectStatusPresenter projectStatusPresenter) {
+			final DocumentStatusPresenter documentStatsBarPresenter) {
 		super(display, eventBus);
-		this.dispatcher = dispatcher;
 		this.webTransTablePresenter = webTransTablePresenter;
-		this.pager = new Pager();
 		this.documentStatusPresenter = documentStatsBarPresenter;
-		this.projectStatusPresenter = projectStatusPresenter;
-		//this.toolBoxPresenter = toolBoxPresenter;
 	}
 
 	@Override
@@ -77,46 +64,12 @@ public class WebTransEditorPresenter extends WidgetPresenter<WebTransEditorPrese
 	@Override
 	protected void onBind() {
 		webTransTablePresenter.bind();
-		projectStatusPresenter.bind();
 		documentStatusPresenter.bind();
-		//toolBoxPresenter.bind();
-        //display.setToolBox(toolBoxPresenter.getDisplay().asWidget());
-        display.getFooter().setMiddleWidget(pager);
-        pager.setVisible(false);
 
-        display.getFooter().setRightWidget(documentStatusPresenter.getDisplay().asWidget());
-        
 		display.setEditor(webTransTablePresenter.getDisplay().asWidget());
 		
-		registerHandler(
-			pager.addValueChangeHandler( new ValueChangeHandler<Integer>() {
-				
-				@Override
-				public void onValueChange(ValueChangeEvent<Integer> event) {
-					webTransTablePresenter.cancelEdit();
-					webTransTablePresenter.getDisplay().gotoPage(event.getValue()-1, false);
-				}
-			})
-		);
-		
-		// TODO this uses incubator's HandlerRegistration
-		webTransTablePresenter.addPageChangeHandler( new PageChangeHandler() {
-			@Override
-			public void onPageChange(PageChangeEvent event) {
-				pager.setValue(event.getNewPage()+1);
-			}
-		});
-
-		// TODO this uses incubator's HandlerRegistration
-		webTransTablePresenter.addPageCountChangeHandler(new PageCountChangeHandler() {
-			@Override
-			public void onPageCountChange(PageCountChangeEvent event) {
-				pager.setPageCount(event.getNewPageCount());
-				pager.setVisible(true);
-			}
-		});
-	
 		webTransTablePresenter.gotoFirstPage();
+		
 	}
 
 	
