@@ -14,16 +14,13 @@ import org.fedorahosted.flies.webtrans.client.GlossaryPresenter;
 import org.fedorahosted.flies.webtrans.client.GlossaryView;
 import org.fedorahosted.flies.webtrans.client.LoginView;
 import org.fedorahosted.flies.webtrans.client.LoginPresenter;
+import org.fedorahosted.flies.webtrans.client.Resources;
 import org.fedorahosted.flies.webtrans.client.SouthPresenter;
 import org.fedorahosted.flies.webtrans.client.SouthView;
-import org.fedorahosted.flies.webtrans.client.TopMenuPresenter;
-import org.fedorahosted.flies.webtrans.client.TopMenuView;
 import org.fedorahosted.flies.webtrans.client.TransMemoryPresenter;
 import org.fedorahosted.flies.webtrans.client.TransMemoryView;
 import org.fedorahosted.flies.webtrans.client.TransUnitNavigationPresenter;
 import org.fedorahosted.flies.webtrans.client.TransUnitNavigationView;
-import org.fedorahosted.flies.webtrans.client.WestNavigationPresenter;
-import org.fedorahosted.flies.webtrans.client.WestNavigationView;
 import org.fedorahosted.flies.webtrans.client.WorkspaceUsersPresenter;
 import org.fedorahosted.flies.webtrans.client.WorkspaceUsersView;
 import org.fedorahosted.flies.webtrans.client.auth.Identity;
@@ -58,6 +55,7 @@ public class WebTransClientModule extends AbstractPresenterModule {
 		bind(EventBus.class).to(DefaultEventBus.class).in(Singleton.class);
 		bind(PlaceManager.class).in(Singleton.class);
 		bind(EventProcessor.class).in(Singleton.class);
+		bind(Resources.class).in(Singleton.class);
 		
 		bindPresenter(AppPresenter.class, AppPresenter.Display.class, AppView.class);
 		bindPresenter(DocumentListPresenter.class, DocumentListPresenter.Display.class, DocumentListView.class);
@@ -65,12 +63,10 @@ public class WebTransClientModule extends AbstractPresenterModule {
 		bindPresenter(OperatorFilterPresenter.class, OperatorFilterPresenter.Display.class, OperatorFilterView.class);
 		bindPresenter(TransFilterPresenter.class, TransFilterPresenter.Display.class, TransFilterView.class);
 		bindPresenter(TableEditorPresenter.class, TableEditorPresenter.Display.class, TableEditorView.class);
-		bindPresenter(WestNavigationPresenter.class, WestNavigationPresenter.Display.class, WestNavigationView.class);
 		bindPresenter(SouthPresenter.class, SouthPresenter.Display.class, SouthView.class);
 		bindPresenter(WorkspaceUsersPresenter.class, WorkspaceUsersPresenter.Display.class, WorkspaceUsersView.class);
 		bindPresenter(WebTransEditorPresenter.class, WebTransEditorPresenter.Display.class, WebTransEditorView.class);
 		bindPresenter(LoginPresenter.class, LoginPresenter.Display.class, LoginView.class);
-		bindPresenter(TopMenuPresenter.class, TopMenuPresenter.Display.class, TopMenuView.class);
 		bindPresenter(TransMemoryPresenter.class, TransMemoryPresenter.Display.class, TransMemoryView.class);
 		bindPresenter(GlossaryPresenter.class, GlossaryPresenter.Display.class, GlossaryView.class);
 		bindPresenter(TransUnitNavigationPresenter.class, TransUnitNavigationPresenter.Display.class, TransUnitNavigationView.class);

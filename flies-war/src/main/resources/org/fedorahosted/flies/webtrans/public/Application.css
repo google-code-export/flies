@@ -1,7 +1,18 @@
 /** Add css rules here for your application. */
 
 body {
-	background-color: #f6f6f6;
+	background-color: #ffffff;
+}
+
+
+/*
+Removes some of the styling on the page-level splitters
+*/
+.PageSplitLayoutPanel>div>div.gwt-SplitLayoutPanel-HDragger {
+	background: none;
+}
+.PageSplitLayoutPanel>div>div.gwt-SplitLayoutPanel-VDragger {
+	background: none;
 }
 
 .CenterDiv {
