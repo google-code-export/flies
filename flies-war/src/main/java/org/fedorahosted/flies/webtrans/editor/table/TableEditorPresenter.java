@@ -38,6 +38,7 @@ import org.fedorahosted.flies.webtrans.client.events.TransUnitEditEventHandler;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEvent;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
 import org.fedorahosted.flies.webtrans.client.rpc.CachingDispatchAsync;
+import org.fedorahosted.flies.webtrans.client.ui.Pager;
 import org.fedorahosted.flies.webtrans.editor.DocumentEditorPresenter;
 import org.fedorahosted.flies.webtrans.editor.HasPageNavigation;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
@@ -51,6 +52,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
 import com.google.gwt.gen2.table.client.TableModel;
 import com.google.gwt.gen2.table.client.TableModel.Callback;
@@ -58,7 +61,9 @@ import com.google.gwt.gen2.table.client.TableModelHelper.Request;
 import com.google.gwt.gen2.table.client.TableModelHelper.SerializableResponse;
 import com.google.gwt.gen2.table.event.client.HasPageChangeHandlers;
 import com.google.gwt.gen2.table.event.client.HasPageCountChangeHandlers;
+import com.google.gwt.gen2.table.event.client.PageChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageChangeHandler;
+import com.google.gwt.gen2.table.event.client.PageCountChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageCountChangeHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
@@ -95,6 +100,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 	private final DispatchAsync dispatcher;
 	private final WorkspaceContext workspaceContext;
 	private final Identity identity;
+	private TransUnit selectedTransUnit;
+	
 
 	@Inject
 	public TableEditorPresenter(final Display display, final EventBus eventBus, final CachingDispatchAsync dispatcher,final Identity identity, final WorkspaceContext workspaceContext) {
@@ -109,8 +116,6 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		return PLACE;
 	}
 
-	private TransUnit selectedTransUnit;
-	
 	@Override
 	protected void onBind() {
 		display.setTableModelHandler(tableModelHandler);
@@ -300,6 +305,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		
 		display.gotoFirstPage();
 
+		
+		
 	}
 
 	public Integer getRowOffset(TransUnitId transUnitId) {
