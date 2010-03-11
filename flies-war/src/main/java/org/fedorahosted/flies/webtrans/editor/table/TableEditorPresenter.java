@@ -38,6 +38,7 @@ import org.fedorahosted.flies.webtrans.client.events.TransUnitEditEventHandler;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEvent;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
 import org.fedorahosted.flies.webtrans.client.rpc.CachingDispatchAsync;
+import org.fedorahosted.flies.webtrans.client.ui.Pager;
 import org.fedorahosted.flies.webtrans.editor.DocumentEditorPresenter;
 import org.fedorahosted.flies.webtrans.editor.HasPageNavigation;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
@@ -47,10 +48,13 @@ import org.fedorahosted.flies.webtrans.editor.filter.FilterEnabledEvent;
 import org.fedorahosted.flies.webtrans.editor.filter.FilterEnabledEventHandler;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.gen2.event.shared.HandlerRegistration;
 import com.google.gwt.gen2.table.client.TableModel;
 import com.google.gwt.gen2.table.client.TableModel.Callback;
@@ -58,7 +62,9 @@ import com.google.gwt.gen2.table.client.TableModelHelper.Request;
 import com.google.gwt.gen2.table.client.TableModelHelper.SerializableResponse;
 import com.google.gwt.gen2.table.event.client.HasPageChangeHandlers;
 import com.google.gwt.gen2.table.event.client.HasPageCountChangeHandlers;
+import com.google.gwt.gen2.table.event.client.PageChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageChangeHandler;
+import com.google.gwt.gen2.table.event.client.PageCountChangeEvent;
 import com.google.gwt.gen2.table.event.client.PageCountChangeHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Event.NativePreviewEvent;
@@ -86,6 +92,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		TransUnit getTransUnitValue(int row);
 		InlineTargetCellEditor getTargetCellEditor();
 		List<TransUnit> getRowValues();
+		boolean isFirstPage();
+		boolean isLastPage();
 		int getCurrentPage();
 		int getPageSize();
 	}
@@ -95,6 +103,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 	private final DispatchAsync dispatcher;
 	private final WorkspaceContext workspaceContext;
 	private final Identity identity;
+	private TransUnit selectedTransUnit;
+	
 
 	@Inject
 	public TableEditorPresenter(final Display display, final EventBus eventBus, final CachingDispatchAsync dispatcher,final Identity identity, final WorkspaceContext workspaceContext) {
@@ -109,8 +119,6 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		return PLACE;
 	}
 
-	private TransUnit selectedTransUnit;
-	
 	@Override
 	protected void onBind() {
 		display.setTableModelHandler(tableModelHandler);
@@ -267,39 +275,45 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		Event.addNativePreviewHandler(new NativePreviewHandler() {
 			@Override
 			public void onPreviewNativeEvent(NativePreviewEvent event) {
-		    	 //Only when the Table is showed, the keyboard event will be processed. 
-				 if(display.asWidget().isVisible()) {
-		    		  //Alt+Right arrow key
-					  if(event.getNativeEvent().getType().equals("keyup") && event.getNativeEvent().getAltKey() && event.getNativeEvent().getKeyCode()==KeyCodes.KEY_RIGHT) {
-						  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
-		    			  display.gotoNextPage();
-		    			  event.cancel();
-		    		  }
-		    		  //Alt+Left arrow key
-					  if(event.getNativeEvent().getType().equals("keyup") && event.getNativeEvent().getAltKey() && event.getNativeEvent().getKeyCode()==KeyCodes.KEY_LEFT) {
-		    			  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
-		    			  display.gotoPreviousPage();
-		    			  event.cancel();
-		    		  }
-					  //Shift+Home
-					  if(event.getNativeEvent().getType().equals("keyup") && event.getNativeEvent().getShiftKey() && event.getNativeEvent().getKeyCode()==KeyCodes.KEY_HOME) {
-		    			  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
-		    			  display.gotoFirstPage();
-		    			  event.cancel();
-		    		  }
-					  //Shift+End
-					  if(event.getNativeEvent().getType().equals("keyup") && event.getNativeEvent().getShiftKey() && event.getNativeEvent().getKeyCode()==KeyCodes.KEY_END) {
-		    			  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
-		    			  display.gotoLastPage();
-		    			  event.cancel();
-		    		  }
-		    		  
+		    	 //Only when the Table is showed and editor is closed, the keyboard event will be processed. 
+				 if(display.asWidget().isVisible() && !display.getTargetCellEditor().isFocused()) {
+					 NativeEvent nativeEvent =  event.getNativeEvent();
+					 String nativeEventType = nativeEvent.getType();
+					 int keyCode = nativeEvent.getKeyCode();
+					 if(nativeEventType.equals("keypress")) {
+						  //PageDown key
+						  if (keyCode ==KeyCodes.KEY_PAGEDOWN) {
+						
+							  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
+							  if(!display.isLastPage())
+								  gotoNextPage();
+							  event.cancel();
+						  }
+						  //PageUp key
+						  if(keyCode ==KeyCodes.KEY_PAGEUP) {
+							  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
+							  if(!display.isFirstPage())
+								  gotoPreviousPage();
+							  event.cancel();
+						  }
+						  //Home
+						  if(keyCode ==KeyCodes.KEY_HOME) {
+							  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
+							  display.gotoFirstPage();
+							  event.cancel();
+						  }
+						  //End
+						  if(keyCode ==KeyCodes.KEY_END) {
+							  Log.info("fired event of type " + event.getAssociatedType().getClass().getName());
+							  display.gotoLastPage();
+							  event.cancel();
+						  }
+					  }	  
 		    	  }
 			}
 		});
 		
 		display.gotoFirstPage();
-
 	}
 
 	public Integer getRowOffset(TransUnitId transUnitId) {
@@ -395,11 +409,43 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 		}
 
 		@Override
-		public void gotoRow(int row) {
-			selectedTransUnit = display.getTransUnitValue(row);
-			display.gotoRow(row);
+		public void gotoNextRow(int row) {
+			int nextRow = row+1;
+			Log.info("Next Row"+nextRow);
+			if(nextRow <= MAX_PAGE_ROW && nextRow >= 0) {
+				cancelEdit();
+				selectedTransUnit = display.getTransUnitValue(nextRow);
+				display.gotoRow(nextRow);
+			} 
+			if(nextRow > MAX_PAGE_ROW) {
+				if(!display.isLastPage()) {
+					cancelEdit();
+					display.gotoNextPage();
+					selectedTransUnit = display.getTransUnitValue(nextRow);
+					display.gotoRow(0);
+				} 
+			}
 		}
 
+		@Override
+		public void gotoPrevRow(int row) {
+			int prevRow = row-1;
+			Log.info("Prev Row"+prevRow);
+			if(prevRow < MAX_PAGE_ROW && prevRow > 0) {
+				cancelEdit();
+				selectedTransUnit = display.getTransUnitValue(prevRow);
+				display.gotoRow(prevRow);
+			} 
+			if(prevRow < 0) {
+				if(!display.isFirstPage()) {
+					cancelEdit();
+					display.gotoPreviousPage();
+					selectedTransUnit = display.getTransUnitValue(MAX_PAGE_ROW);
+					display.gotoRow(MAX_PAGE_ROW);
+				}
+			}
+		}
+		
 		@Override
 		public void gotoNextFuzzy(int row, ContentState state) {
 			nextFuzzy(row, state);

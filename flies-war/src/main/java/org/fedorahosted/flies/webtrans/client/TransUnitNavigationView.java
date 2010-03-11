@@ -13,6 +13,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -29,6 +30,10 @@ public class TransUnitNavigationView extends Composite implements TransUnitNavig
 	private static final String nextFuzzyText = "Next Fuzzy";
 	private static final String prevUntranslatedText = "Prev Untranslated";
 	private static final String nextUntranslatedText = "Next Untranslated";
+	private static final String prevPageText = "Prev Page";
+	private static final String nextPageText = "Next Page";
+	private static final String firstPageText = "First Page";
+	private static final String lastPageText = "Last Page";
 	private static final String prevEntryShortcut = NavigationConsts.PREV;
 	private static final String nextEntryShortcut = NavigationConsts.NEXT;
 	private static final String prevFuzzyShortcut = NavigationConsts.PREV_FUZZY;
@@ -44,7 +49,7 @@ public class TransUnitNavigationView extends Composite implements TransUnitNavig
 	}
 
 	@UiField
-	Button nextEntryButton, prevEntryButton, nextFuzzyButton, prevFuzzyButton,
+	Anchor nextEntryButton, prevEntryButton, nextFuzzyButton, prevFuzzyButton,
 			nextUntranslatedButton, prevUntranslatedButton;
 
 	@UiField
@@ -78,6 +83,10 @@ public class TransUnitNavigationView extends Composite implements TransUnitNavig
 		shortcutListPanel.add(new Label(nextFuzzyText + " - " + nextFuzzyShortcut));
 		shortcutListPanel.add(new Label(prevUntranslatedText + " - " + prevUntranslatedShortcut));
 		shortcutListPanel.add(new Label(nextUntranslatedText + " - " + nextUntranslatedShortcut));
+		shortcutListPanel.add(new Label(prevPageText + " - " + NavigationConsts.PREV_PAGE));
+		shortcutListPanel.add(new Label(nextPageText + " - " + NavigationConsts.NEXT_PAGE));
+		shortcutListPanel.add(new Label(firstPageText + " - " + NavigationConsts.FIRST_PAGE));
+		shortcutListPanel.add(new Label(lastPageText + " - " + NavigationConsts.LAST_PAGE));
 		shortcutListPanel.add(new Label(NavigationConsts.EDIT_SAVE_DESC + " - " + NavigationConsts.EDIT_SAVE_SHORTCUT));
 		shortcutListPanel.add(new Label(NavigationConsts.EDIT_CANCEL_DESC + " - " + NavigationConsts.EDIT_CANCEL_SHORTCUT));
 
