@@ -18,7 +18,13 @@
     <module>flies-war</module>
     <module>thirdparty/gwt-codemirror</module>
   </modules>
+  <scm>
+    <connection>scm:hg:http://flies.googlecode.com/hg/</connection>
+    <developerConnection>scm:hg:https://flies.googlecode.com/hg/</developerConnection>
+    <url>http://code.google.com/p/flies/source/browse/</url>
+  </scm>
   <properties>
+    <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.drools>5.0.1</version.drools>
     <version.gwt>2.0.3</version.gwt>
@@ -178,6 +184,12 @@
 	      <groupId>de.novanic</groupId>
 	      <artifactId>gwteventservice</artifactId>
 	      <version>1.1</version>
+	  </dependency>
+
+	  <dependency>
+	      <groupId>com.google.gwt.inject</groupId>
+	      <artifactId>gin</artifactId>
+	      <version>1.0</version>
 	  </dependency>
 
 	  <dependency>
