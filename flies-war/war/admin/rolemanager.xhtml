@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"    
+    xmlns:rich="http://richfaces.org/rich" 
+    xmlns:s="http://jboss.com/products/seam/taglib">
+
+  <ui:composition template="../layout/template.xhtml">
+   
+    <ui:define name="left_content">
+        <s:link action="#{roleAction.createRole}" 
+          rendered="#{s:hasPermission('seam.account', 'create', null)}"
+          value="Create Role"
+        />
+    </ui:define>
+   
+    <ui:define name="center_content">
+        
+      <script type="text/javascript">
+        function confirmDelete()
+        {
+          return confirm("Are you sure you wish to delete this role? This action cannot be undone.");
+        }
+      </script>
+      <rich:panel>
+        <f:facet name="header">Role Manager</f:facet>
+
+        <h:dataTable 
+            id="threads"
+            value="#{roles}" 
+            var="role"
+            cellspacing="0"
+            headerClass="columnHeader"
+            rowClasses="odd,even"
+            columnClasses=",,enabled,action"
+            styleClass="fullwidth">
+
+          <h:column width="auto">
+            <f:facet name="header">Role</f:facet>
+            #{role}
+          </h:column>
+          <h:column width="auto">
+            <f:facet name="header">Member Of</f:facet>
+            #{roleSearch.getRoleGroups(role)}
+          </h:column>
+          <h:column width="auto">
+            <f:facet name="header">Action</f:facet>          
+            <s:fragment rendered="#{s:hasPermission('seam.role', 'update')}">
+              <s:link value="Edit" action="#{roleAction.editRole(roleSearch.selectedRole)}"/><span> | </span>
+            </s:fragment>
+            <s:link value="Delete" action="#{identityManager.deleteRole(roleSearch.selectedRole)}"
+                    rendered="#{s:hasPermission('seam.role', 'delete')}"
+                    onclick="return confirmDelete()"/>              
+          </h:column>
+  	    </h:dataTable>
+      </rich:panel>
+    </ui:define>
+    
+  </ui:composition>
+</html>
