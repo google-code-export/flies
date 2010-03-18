@@ -2,11 +2,13 @@ package org.fedorahosted.flies.webtrans.client;
 
 import org.fedorahosted.flies.webtrans.client.ui.HasPager;
 import org.fedorahosted.flies.webtrans.client.ui.Pager;
+import org.fedorahosted.flies.webtrans.editor.HasTransUnitCount;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.gen2.logging.shared.Log;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -55,19 +57,23 @@ public class AppView extends Composite implements AppPresenter.Display {
 	@UiField(provided=true) 
 	Pager pager;
 	
-	@UiField
-	StatusBar statusBar;
+	@UiField(provided=true)
+	TransUnitCountBar transUnitCountBar;
 	
 	private Widget documentListView;
 	private Widget editorView;
 	private Widget filterView;
 	private Widget workspaceUsersView;
 	
+	final WebTransMessages messages;
+	
 	@Inject
-	public AppView(Resources resources, SidePanel sidePanel) {
+	public AppView(Resources resources, WebTransMessages messages, SidePanel sidePanel) {
 		this.resources = resources;
-		pager = new Pager(resources);
-		this.sidePanel = sidePanel; 
+		this.messages = messages;
+		this.sidePanel = sidePanel;
+		this.pager = new Pager(resources);
+		this.transUnitCountBar = new TransUnitCountBar(messages);
 
 		initWidget(uiBinder.createAndBindUi(this));
 		mainSplitPanel.setWidgetMinSize(sidePanel, 200);
@@ -95,41 +101,21 @@ public class AppView extends Composite implements AppPresenter.Display {
 	}
 
 	@Override
-	public void showDocumentsView() {
-		editor.setWidgetTopBottom(documentListView, 0, Unit.PX, 0, Unit.PX);
-		editor.setWidgetTopHeight(editorView, 0, Unit.PX, 0, Unit.PX);
-		pager.setVisible(false);
-		transUnitNavigation.setVisible(false);
-		statusBar.setStatus((int)(100*Math.random()),(int)(100*Math.random()),(int)(100*Math.random()));
-	}
-	
-	@Override
-	public void showEditorView() {
-		editor.setWidgetTopBottom(editorView, 0, Unit.PX, 0, Unit.PX);
-		editor.setWidgetTopHeight(documentListView, 0, Unit.PX, 0, Unit.PX);
-		pager.setVisible(true);
-		transUnitNavigation.setVisible(true);
-	}
-	
-	@UiHandler("signOutLink")
-	void handleSignOutClick(ClickEvent e) {
-		Log.info("sign out clicked");
-	}
-
-	@UiHandler("leaveLink")
-	void handleLeaveClick(ClickEvent e) {
-		Log.info("leave clicked");
-	}
-
-	@UiHandler("helpLink")
-	void handleHelpClick(ClickEvent e) {
-		Log.info("help clicked");
-	}
-
-	@UiHandler("documentsLink")
-	void handleDocumentsClick(ClickEvent e) {
-		Log.info("documents clicked");
-		showDocumentsView();
+	public void showInMainView(MainView view) {
+		switch(view) {
+		case Documents:
+			editor.setWidgetTopBottom(documentListView, 0, Unit.PX, 0, Unit.PX);
+			editor.setWidgetTopHeight(editorView, 0, Unit.PX, 0, Unit.PX);
+			pager.setVisible(false);
+			transUnitNavigation.setVisible(false);
+			break;
+		case Editor:
+			editor.setWidgetTopBottom(editorView, 0, Unit.PX, 0, Unit.PX);
+			editor.setWidgetTopHeight(documentListView, 0, Unit.PX, 0, Unit.PX);
+			pager.setVisible(true);
+			transUnitNavigation.setVisible(true);
+			break;
+		}
 	}
 
 	@Override
@@ -166,4 +152,33 @@ public class AppView extends Composite implements AppPresenter.Display {
 		sidePanel.setFilterView(filterView);
 	}
 
+	@Override
+	public HasTransUnitCount getTransUnitCountBar() {
+		return transUnitCountBar;
+	}
+	
+	@Override
+	public HasClickHandlers getHelpLink() {
+		return helpLink;
+	}
+	
+	@Override
+	public HasClickHandlers getLeaveWorkspaceLink() {
+		return leaveLink;
+	}
+	
+	@Override
+	public HasClickHandlers getSignOutLink() {
+		return signOutLink;
+	}
+	
+	@Override
+	public void setTableEditorPagerVisible(boolean visible) {
+		pager.setVisible(visible);
+	}
+	
+	@Override
+	public void setTransUnitCountBarVisible(boolean visible) {
+		transUnitCountBar.setVisible(visible);
+	}
 }
