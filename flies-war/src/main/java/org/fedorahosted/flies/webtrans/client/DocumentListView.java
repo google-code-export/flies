@@ -47,13 +47,18 @@ public class DocumentListView extends Composite implements
 	@UiField
 	TextBox filterTextBox;
 	
+	private ContentFilter<DocName> filter;
+	
 	private DocumentNode currentSelection;
 	
 	private HashMap<DocumentId, DocumentNode> nodes;
 	
+	final WebTransMessages messages;
+	
 	@Inject
-	public DocumentListView(Resources resources) {
+	public DocumentListView(Resources resources, WebTransMessages messages) {
 		this.resources = resources;
+		this.messages = messages;
 		nodes = new HashMap<DocumentId, DocumentNode>();
 		initWidget( uiBinder.createAndBindUi(this) );
 	}
@@ -97,17 +102,20 @@ public class DocumentListView extends Composite implements
 		clear();
 		for(int i=0;i<sortedList.size();i++) {
 			DocName doc = sortedList.get(i);
+			DocumentNode node;
 			if(doc.getPath() == null || doc.getPath().isEmpty()){
-				DocumentNode node = new DocumentNode(resources, doc, translateButtonClickHandler); 
+				node = new DocumentNode(resources, messages, doc, translateButtonClickHandler);
 				add(node);
-				nodes.put(doc.getId(), node);
 			}
 			else{
 				FolderNode folder = new FolderNode(resources, doc);
-				DocumentNode node = new DocumentNode(resources, doc, translateButtonClickHandler);
+				node = new DocumentNode(resources, messages, doc, translateButtonClickHandler);
 				folder.addChild(node);
-				nodes.put(doc.getId(), node);
 				add(folder);
+			}
+			nodes.put(doc.getId(), node);
+			if(filter != null) {
+				node.setVisible( filter.accept(doc));
 			}
 		}
 	}
@@ -167,7 +175,8 @@ public class DocumentListView extends Composite implements
 	}
 	
 	@Override
-	public void applyFilter(ContentFilter<DocName> filter) {
+	public void setFilter(ContentFilter<DocName> filter) {
+		this.filter = filter;
 		for(DocumentNode docNode : nodes.values() ){
 			docNode.setVisible(filter.accept(docNode.getDataItem()));
 		}
