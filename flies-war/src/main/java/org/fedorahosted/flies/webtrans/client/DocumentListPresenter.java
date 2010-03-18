@@ -27,9 +27,6 @@ import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEvent;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
 import org.fedorahosted.flies.webtrans.client.rpc.CachingDispatchAsync;
 import org.fedorahosted.flies.webtrans.client.ui.HasFilter;
-import org.fedorahosted.flies.webtrans.client.ui.HasTreeNodes;
-import org.fedorahosted.flies.webtrans.client.ui.TreeNode;
-import org.fedorahosted.flies.webtrans.editor.ProjectStatusPresenter;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -61,13 +58,12 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 		void setSelection(DocumentId documentId);
 		void ensureSelectionVisible();
 		HasDocumentSelectionHandlers getDocumentSelectionHandler();
-		void applyFilter(ContentFilter<DocName> filter);
+		void setFilter(ContentFilter<DocName> filter);
 		void removeFilter();
 		HasValue<String> getFilterTextBox();
 	}
 
 	private final DispatchAsync dispatcher;
-    private final ProjectStatusPresenter prStatusPresenter;
     private final WorkspaceContext workspaceContext;
     private final ProjectContainerId projectContainerId;
 	private final Map<DocumentId, DocumentStatus> statuscache = new HashMap<DocumentId, DocumentStatus>();
@@ -77,13 +73,11 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	@Inject
 	public DocumentListPresenter(Display display, EventBus eventBus,
 			WorkspaceContext workspaceContext,
-			CachingDispatchAsync dispatcher,
-			ProjectStatusPresenter prStatusPresenter) {
+			CachingDispatchAsync dispatcher) {
 		super(display, eventBus);
 		this.workspaceContext = workspaceContext;
 		this.projectContainerId = workspaceContext.getProjectContainerId();
 		this.dispatcher = dispatcher;
-		this.prStatusPresenter = prStatusPresenter;
 		Log.info("DocumentListPresenter()");
 		loadDocsList();
 	}
@@ -95,7 +89,6 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 
 	@Override
 	protected void onBind() {
-		prStatusPresenter.bind();
 		
 		registerHandler(display.getDocumentSelectionHandler().addDocumentSelectionHandler(new DocumentSelectionHandler() {
 			
@@ -150,7 +143,7 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 				}
 				else {
 					basicContentFilter.setPattern(event.getValue());
-					display.applyFilter(basicContentFilter);
+					display.setFilter(basicContentFilter);
 				}
 			}
 		}));
@@ -198,7 +191,6 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	@Override
 	public void refreshDisplay() {
 		loadDocsList();
-		prStatusPresenter.refreshDisplay();
 	}
 
 	@Override
