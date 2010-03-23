@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import java.util.List;
 
@@ -12,6 +12,9 @@ import org.fedorahosted.flies.core.model.StatusCount;
 import org.fedorahosted.flies.gwt.rpc.GetStatusCount;
 import org.fedorahosted.flies.gwt.rpc.GetStatusCountResult;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspace;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspaceManager;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -22,7 +25,8 @@ import org.jboss.seam.log.Log;
 
 @Name("webtrans.gwt.GetStatusCountHandler")
 @Scope(ScopeType.STATELESS)
-public class GetStatusCountHandler implements ActionHandler<GetStatusCount, GetStatusCountResult> {
+@ActionHandlerFor(GetStatusCount.class)
+public class GetStatusCountHandler extends AbstractActionHandler<GetStatusCount, GetStatusCountResult> {
 
 	@Logger Log log;
 	
@@ -42,7 +46,7 @@ public class GetStatusCountHandler implements ActionHandler<GetStatusCount, GetS
 		        "  and tft.locale = :locale "+ 
 				"group by tft.state"
 			).setParameter("id", action.getDocumentId().getValue())
-			 .setParameter("locale", action.getLocaleId() )
+			 .setParameter("locale", action.getWorkspaceId().getLocaleId() )
 			 .list();
 		
 		
@@ -56,17 +60,11 @@ public class GetStatusCountHandler implements ActionHandler<GetStatusCount, GetS
 		}
 		
 		stat.set(ContentState.New, totalCount.intValue() - stat.get(ContentState.Approved)-stat.get(ContentState.NeedReview));
-		TranslationWorkspace workspace = translationWorkspaceManager.getWorkspace(action.getProjectContainerId().getId(), action.getLocaleId() );
+		TranslationWorkspace workspace = translationWorkspaceManager.getWorkspace(action.getWorkspaceId() );
 		
 		return new GetStatusCountResult(
 				action.getDocumentId(), stat);
 
-	}
-
-	@Override
-	public Class<GetStatusCount> getActionType() {
-		// TODO Auto-generated method stub
-		return GetStatusCount.class;
 	}
 
 	@Override

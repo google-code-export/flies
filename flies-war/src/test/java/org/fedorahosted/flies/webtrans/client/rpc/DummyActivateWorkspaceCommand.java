@@ -1,5 +1,14 @@
 package org.fedorahosted.flies.webtrans.client.rpc;
 
+import java.util.HashSet;
+
+import org.fedorahosted.flies.gwt.auth.Identity;
+import org.fedorahosted.flies.gwt.auth.Permission;
+import org.fedorahosted.flies.gwt.auth.Role;
+import org.fedorahosted.flies.gwt.auth.SessionId;
+import org.fedorahosted.flies.gwt.common.WorkspaceContext;
+import org.fedorahosted.flies.gwt.model.Person;
+import org.fedorahosted.flies.gwt.model.PersonId;
 import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceAction;
 import org.fedorahosted.flies.gwt.rpc.ActivateWorkspaceResult;
 
@@ -19,8 +28,16 @@ public class DummyActivateWorkspaceCommand implements Command {
 
 	@Override
 	public void execute() {
+		WorkspaceContext context = 
+			new WorkspaceContext(action.getWorkspaceId(), "Dummy Workspace", "Mock Sweedish");
+		
+		Identity identity = new Identity(
+				new SessionId("123456"), 
+				new Person( new PersonId("bob"), "Bob The Builder"), 
+				new HashSet<Permission>(),
+				new HashSet<Role>() );
 		callback.onSuccess(
-				new ActivateWorkspaceResult("DummyWorkspace"+action.getProjectContainerId().getId(), "zz"));
+				new ActivateWorkspaceResult(context, identity));
 	}
 
 }
