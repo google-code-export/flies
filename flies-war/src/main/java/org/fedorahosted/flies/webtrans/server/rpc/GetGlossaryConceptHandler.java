@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +23,7 @@ import org.fedorahosted.flies.repository.model.HDocument;
 import org.fedorahosted.flies.repository.model.HProjectContainer;
 import org.fedorahosted.flies.repository.model.HTermEntry;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -33,7 +34,8 @@ import org.jboss.seam.log.Log;
 
 @Name("webtrans.gwt.GetGlossaryConceptHandler")
 @Scope(ScopeType.STATELESS)
-public class GetGlossaryConceptHandler implements ActionHandler<GetGlossaryConcept, GetGlossaryConceptResult> {
+@ActionHandlerFor(GetGlossaryConcept.class)
+public class GetGlossaryConceptHandler extends AbstractActionHandler<GetGlossaryConcept, GetGlossaryConceptResult> {
 
 		@Logger Log log;
 		
@@ -70,12 +72,6 @@ public class GetGlossaryConceptHandler implements ActionHandler<GetGlossaryConce
 			results.add(new Concept("black hole", desc, "", deEntry));
 			
 			return new GetGlossaryConceptResult(results);
-		}
-
-		@Override
-		public Class<GetGlossaryConcept> getActionType() {
-			// TODO Auto-generated method stub
-			return GetGlossaryConcept.class;
 		}
 
 		@Override

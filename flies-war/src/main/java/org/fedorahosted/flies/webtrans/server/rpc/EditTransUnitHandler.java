@@ -1,13 +1,17 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
+import org.fedorahosted.flies.gwt.model.ProjectContainerId;
 import org.fedorahosted.flies.gwt.rpc.EditingTranslationAction;
 import org.fedorahosted.flies.gwt.rpc.EditingTranslationResult;
 import org.fedorahosted.flies.repository.model.HTextFlow;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspace;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspaceManager;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -18,7 +22,8 @@ import org.jboss.seam.log.Log;
 
 @Name("webtrans.gwt.EditTransUnitHandler")
 @Scope(ScopeType.STATELESS)
-public class EditTransUnitHandler implements ActionHandler<EditingTranslationAction, EditingTranslationResult> {
+@ActionHandlerFor(EditingTranslationAction.class)
+public class EditTransUnitHandler extends AbstractActionHandler<EditingTranslationAction, EditingTranslationResult> {
 
 	@Logger Log log;
 	
@@ -32,8 +37,10 @@ public class EditTransUnitHandler implements ActionHandler<EditingTranslationAct
 		FliesIdentity.instance().checkLoggedIn();
 		HTextFlow hTextFlow = (HTextFlow) session.get(HTextFlow.class, action.getTransUnitId().getValue());
 		
+		ProjectContainerId projectContainerId = new ProjectContainerId(hTextFlow.getDocument().getProject().getId());
+		
 		TranslationWorkspace workspace = translationWorkspaceManager.getOrRegisterWorkspace(
-				hTextFlow.getDocument().getProject().getId(), action.getLocaleId() );
+				action.getWorkspaceId() );
 		
 		//If TransUnit is not editing, you can start editing now.
 //		if(!workspace.containTransUnit(action.getTransUnitId()) && action.getEditState().equals(EditState.StartEditing)) {
@@ -58,11 +65,6 @@ public class EditTransUnitHandler implements ActionHandler<EditingTranslationAct
 //		}
 		
 		return new EditingTranslationResult(true);
-	}
-
-	@Override
-	public Class<EditingTranslationAction> getActionType() {
-		return EditingTranslationAction.class;
 	}
 
 	@Override

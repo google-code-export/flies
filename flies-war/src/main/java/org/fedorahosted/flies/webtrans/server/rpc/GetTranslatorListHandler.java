@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import java.util.ArrayList;
 
@@ -12,6 +12,9 @@ import org.fedorahosted.flies.gwt.model.PersonId;
 import org.fedorahosted.flies.gwt.rpc.GetTranslatorList;
 import org.fedorahosted.flies.gwt.rpc.GetTranslatorListResult;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspace;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspaceManager;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -24,7 +27,8 @@ import com.google.common.collect.ImmutableSet;
 
 @Name("webtrans.gwt.GetTranslatorListHandler")
 @Scope(ScopeType.STATELESS)
-public class GetTranslatorListHandler implements ActionHandler<GetTranslatorList, GetTranslatorListResult> {
+@ActionHandlerFor(GetTranslatorList.class)
+public class GetTranslatorListHandler extends AbstractActionHandler<GetTranslatorList, GetTranslatorListResult> {
 
 	@Logger Log log;
 	
@@ -41,8 +45,7 @@ public class GetTranslatorListHandler implements ActionHandler<GetTranslatorList
 		FliesIdentity.instance().checkLoggedIn();
 		
 		TranslationWorkspace translationWorkspace = 
-			translationWorkspaceManager.getOrRegisterWorkspace(action.getProjectContainerId().getId(), 
-					action.getLocaleId() );
+			translationWorkspaceManager.getOrRegisterWorkspace(action.getWorkspaceId() );
 		
 		ImmutableSet<PersonId> personIdlist = translationWorkspace.getUsers();
 
@@ -54,11 +57,6 @@ public class GetTranslatorListHandler implements ActionHandler<GetTranslatorList
 		}
 		
 		return new GetTranslatorListResult(translators);
-	}
-
-	@Override
-	public Class<GetTranslatorList> getActionType() {
-		return GetTranslatorList.class;
 	}
 
 	@Override

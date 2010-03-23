@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +24,7 @@ import org.fedorahosted.flies.repository.model.HTextFlow;
 import org.fedorahosted.flies.repository.model.HTextFlowTarget;
 import org.fedorahosted.flies.security.FliesIdentity;
 import org.fedorahosted.flies.util.ShortString;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
 import org.hibernate.Session;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
@@ -36,7 +37,8 @@ import org.jboss.seam.log.Log;
 
 @Name("webtrans.gwt.GetTransMemoryHandler")
 @Scope(ScopeType.STATELESS)
-public class GetTransMemoryHandler implements ActionHandler<GetTranslationMemory, GetTranslationMemoryResult> {
+@ActionHandlerFor(GetTranslationMemory.class)
+public class GetTransMemoryHandler extends AbstractActionHandler<GetTranslationMemory, GetTranslationMemoryResult> {
 
 	private static final int MAX_RESULTS = 10;
 
@@ -148,11 +150,6 @@ public class GetTransMemoryHandler implements ActionHandler<GetTranslationMemory
         Query luceneQuery = parser.parse(searchText);
         return entityManager.createFullTextQuery(luceneQuery, HTextFlow.class);
     }
-
-	@Override
-	public Class<GetTranslationMemory> getActionType() {
-		return GetTranslationMemory.class;
-	}
 
 	@Override
 	public void rollback(GetTranslationMemory action,

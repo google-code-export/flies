@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
@@ -13,6 +13,9 @@ import org.fedorahosted.flies.gwt.rpc.ExitWorkspaceAction;
 import org.fedorahosted.flies.gwt.rpc.ExitWorkspaceResult;
 import org.fedorahosted.flies.repository.model.HProjectContainer;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspace;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspaceManager;
 import org.hibernate.Session;
 import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.In;
@@ -24,8 +27,10 @@ import org.jboss.seam.log.Log;
 
 @Name("webtrans.gwt.ExitWorkspaceHandler")
 @Scope(ScopeType.STATELESS)
-public class ExitWorkspaceHandler implements ActionHandler<ExitWorkspaceAction, ExitWorkspaceResult> {
-@Logger Log log;
+@ActionHandlerFor(ExitWorkspaceAction.class)
+public class ExitWorkspaceHandler extends AbstractActionHandler<ExitWorkspaceAction, ExitWorkspaceResult> {
+	
+	@Logger Log log;
 	
 	@In Session session;
 	
@@ -37,7 +42,7 @@ public class ExitWorkspaceHandler implements ActionHandler<ExitWorkspaceAction, 
 		
 		FliesIdentity.instance().checkLoggedIn();
 
-		TranslationWorkspace workspace = translationWorkspaceManager.getOrRegisterWorkspace(action.getProjectContainerId().getId(), action.getLocaleId());
+		TranslationWorkspace workspace = translationWorkspaceManager.getOrRegisterWorkspace(action.getWorkspaceId());
 			
 		//Send ExitWorkspace event to client 
 		if(workspace.removeTranslator(action.getPersonId())) {
@@ -47,11 +52,6 @@ public class ExitWorkspaceHandler implements ActionHandler<ExitWorkspaceAction, 
 		}
 
 		return new ExitWorkspaceResult(action.getPersonId().toString());
-	}
-
-	@Override
-	public Class<ExitWorkspaceAction> getActionType() {
-		return ExitWorkspaceAction.class;
 	}
 
 	@Override

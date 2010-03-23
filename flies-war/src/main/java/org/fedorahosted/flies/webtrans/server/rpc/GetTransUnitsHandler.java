@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.webtrans.server;
+package org.fedorahosted.flies.webtrans.server.rpc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,7 @@ import net.customware.gwt.dispatch.shared.ActionException;
 import org.fedorahosted.flies.FliesInit;
 import org.fedorahosted.flies.common.ContentState;
 import org.fedorahosted.flies.common.EditState;
+import org.fedorahosted.flies.gwt.model.ProjectContainerId;
 import org.fedorahosted.flies.gwt.model.TransUnit;
 import org.fedorahosted.flies.gwt.model.TransUnitId;
 import org.fedorahosted.flies.gwt.rpc.GetTransUnits;
@@ -20,6 +21,9 @@ import org.fedorahosted.flies.repository.model.HTextFlow;
 import org.fedorahosted.flies.repository.model.HTextFlowTarget;
 import org.fedorahosted.flies.rest.dto.TextFlowTarget;
 import org.fedorahosted.flies.security.FliesIdentity;
+import org.fedorahosted.flies.webtrans.server.ActionHandlerFor;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspace;
+import org.fedorahosted.flies.webtrans.server.TranslationWorkspaceManager;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,7 +40,8 @@ import org.jboss.seam.security.Identity;
 
 @Name("webtrans.gwt.GetTransUnitHandler")
 @Scope(ScopeType.STATELESS)
-public class GetTransUnitsHandler implements ActionHandler<GetTransUnits, GetTransUnitsResult> {
+@ActionHandlerFor(GetTransUnits.class)
+public class GetTransUnitsHandler extends AbstractActionHandler<GetTransUnits, GetTransUnitsResult> {
 
 	@Logger Log log;
 	@In Session session;
@@ -68,12 +73,13 @@ public class GetTransUnitsHandler implements ActionHandler<GetTransUnits, GetTra
 		for(HTextFlow textFlow : textFlows) {
 			
 			TransUnitId tuId = new TransUnitId(textFlow.getId());
+			ProjectContainerId projectContainerId = new ProjectContainerId(textFlow.getDocument().getProject().getId());
 			TranslationWorkspace workspace = translationWorkspaceManager.getOrRegisterWorkspace(
-					textFlow.getDocument().getProject().getId(), action.getLocaleId() );
+					action.getWorkspaceId() );
 
 			//EditState editstate = workspace.getTransUnitStatus(tuId);
-			TransUnit tu = new TransUnit(tuId, action.getLocaleId(), textFlow.getContent(), toString(textFlow.getComment()), "", ContentState.New);
-			HTextFlowTarget target = textFlow.getTargets().get(action.getLocaleId());
+			TransUnit tu = new TransUnit(tuId, action.getWorkspaceId().getLocaleId(), textFlow.getContent(), toString(textFlow.getComment()), "", ContentState.New);
+			HTextFlowTarget target = textFlow.getTargets().get(action.getWorkspaceId().getLocaleId());
 			if(target != null) {
 				tu.setTarget(target.getContent());
 				tu.setStatus( target.getState() );
@@ -89,11 +95,6 @@ public class GetTransUnitsHandler implements ActionHandler<GetTransUnits, GetTra
 			return null;
 		else
 			return comment.getComment();
-	}
-
-	@Override
-	public Class<GetTransUnits> getActionType() {
-		return GetTransUnits.class;
 	}
 
 	@Override
