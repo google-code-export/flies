@@ -14,12 +14,14 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 import org.fedorahosted.flies.common.ContentState;
-import org.fedorahosted.flies.gwt.model.DocName;
+import org.fedorahosted.flies.gwt.common.WorkspaceContext;
+import org.fedorahosted.flies.gwt.common.WorkspaceId;
+import org.fedorahosted.flies.gwt.model.DocumentInfo;
 import org.fedorahosted.flies.gwt.model.DocumentId;
 import org.fedorahosted.flies.gwt.model.DocumentStatus;
 import org.fedorahosted.flies.gwt.model.ProjectContainerId;
-import org.fedorahosted.flies.gwt.rpc.GetDocsList;
-import org.fedorahosted.flies.gwt.rpc.GetDocsListResult;
+import org.fedorahosted.flies.gwt.rpc.GetDocumentList;
+import org.fedorahosted.flies.gwt.rpc.GetDocumentListResult;
 import org.fedorahosted.flies.gwt.rpc.GetProjectStatusCount;
 import org.fedorahosted.flies.gwt.rpc.GetProjectStatusCountResult;
 import org.fedorahosted.flies.webtrans.client.NotificationEvent.Severity;
@@ -53,21 +55,20 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	
 	public interface Display extends WidgetDisplay {
 
-		void setList(ArrayList<DocName> sortedList);
+		void setList(ArrayList<DocumentInfo> sortedList);
 		void clearSelection();
-		void setSelection(DocumentId documentId);
+		void setSelection(DocumentInfo document);
 		void ensureSelectionVisible();
 		HasDocumentSelectionHandlers getDocumentSelectionHandler();
-		void setFilter(ContentFilter<DocName> filter);
+		void setFilter(ContentFilter<DocumentInfo> filter);
 		void removeFilter();
 		HasValue<String> getFilterTextBox();
 	}
 
 	private final DispatchAsync dispatcher;
     private final WorkspaceContext workspaceContext;
-    private final ProjectContainerId projectContainerId;
 	private final Map<DocumentId, DocumentStatus> statuscache = new HashMap<DocumentId, DocumentStatus>();
-	private DocumentId currentDoc;
+	private DocumentInfo currentDocument;
     
 	
 	@Inject
@@ -76,10 +77,9 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 			CachingDispatchAsync dispatcher) {
 		super(display, eventBus);
 		this.workspaceContext = workspaceContext;
-		this.projectContainerId = workspaceContext.getProjectContainerId();
 		this.dispatcher = dispatcher;
 		Log.info("DocumentListPresenter()");
-		loadDocsList();
+		loadDocumentList();
 	}
 	
 	@Override
@@ -94,8 +94,8 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 			
 			@Override
 			public void onDocumentSelected(DocumentSelectionEvent event) {
-				display.setSelection(event.getDocumentId());
-				setValue(event.getDocumentId(), true);
+				display.setSelection(event.getDocument());
+				setValue(event.getDocument(), true);
 			}
 		}));
 		
@@ -150,11 +150,11 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 		
 	}
 
-	final class BasicContentFilter implements ContentFilter<DocName> {
+	final class BasicContentFilter implements ContentFilter<DocumentInfo> {
 		private String pattern = "";
 		
 		@Override
-		public boolean accept(DocName value) {
+		public boolean accept(DocumentInfo value) {
 			return value.getName().contains(pattern);
 		}
 		
@@ -190,7 +190,7 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 
 	@Override
 	public void refreshDisplay() {
-		loadDocsList();
+		loadDocumentList();
 	}
 
 	@Override
@@ -200,11 +200,11 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	}
 
 
-	public void setValue(DocumentId value, boolean fireEvents) {
-		DocumentId oldValue = currentDoc;
-		currentDoc = value;
-		if (oldValue != currentDoc) {
-			fireEvent(new DocumentSelectionEvent(currentDoc));
+	public void setValue(DocumentInfo value, boolean fireEvents) {
+		DocumentInfo oldValue = currentDocument;
+		currentDocument = value;
+		if (oldValue != currentDocument) {
+			fireEvent(new DocumentSelectionEvent(currentDocument));
 		}
 	}
 
@@ -219,12 +219,12 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 		eventBus.fireEvent(event);
 	}
 
-	public void setDocNameList(ArrayList<DocName> docNames) {
-		ArrayList<DocName> sortedList = new ArrayList<DocName>(docNames);
+	public void setDocumentList(ArrayList<DocumentInfo> documents) {
+		ArrayList<DocumentInfo> sortedList = new ArrayList<DocumentInfo>(documents);
 		
-		Collections.sort(sortedList, new Comparator<DocName>() {
+		Collections.sort(sortedList, new Comparator<DocumentInfo>() {
 			@Override
-			public int compare(DocName o1, DocName o2) {
+			public int compare(DocumentInfo o1, DocumentInfo o2) {
 				String path1 = o1.getPath();
 				if(path1 == null)
 					path1 = "";
@@ -239,28 +239,28 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 		display.setList(sortedList);
 	}
 
-	private void loadDocsList() {
+	private void loadDocumentList() {
 		loadDocsStatus();
 		// switch doc list to the new project
 		dispatcher.execute(
-				new GetDocsList(projectContainerId), 
-				new AsyncCallback<GetDocsListResult>() {
+				new GetDocumentList(workspaceContext.getWorkspaceId().getProjectContainerId()), 
+				new AsyncCallback<GetDocumentListResult>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				eventBus.fireEvent( new NotificationEvent(Severity.Error, "Failed to load data from Server"));
 			}
 			@Override
-			public void onSuccess(GetDocsListResult result) {
-				final ArrayList<DocName> docNames = result.getDocNames();
-				Log.info("Received doc list for "+result.getProjectContainerId()+": "+docNames.size()+" elements");
-				setDocNameList(docNames);
+			public void onSuccess(GetDocumentListResult result) {
+				final ArrayList<DocumentInfo> documents = result.getDocuments();
+				Log.info("Received doc list for "+result.getProjectContainerId()+": "+documents.size()+" elements");
+				setDocumentList(documents);
 			}
 		});
 	}
 	
 	private void loadDocsStatus() {
 		dispatcher.execute(
-				new GetProjectStatusCount(projectContainerId , workspaceContext.getLocaleId()), 
+				new GetProjectStatusCount(), 
 				new AsyncCallback<GetProjectStatusCountResult>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -269,7 +269,7 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 			@Override
 			public void onSuccess(GetProjectStatusCountResult result) {
 				ArrayList<DocumentStatus> liststatus = result.getStatus();
-				Log.info("Received project status for "+result.getProjectContainerId()+": "+liststatus.size()+" elements");
+				Log.info("Received project status for "+liststatus.size()+" elements");
 				statuscache.clear();
 				for(DocumentStatus doc : liststatus) {
 					statuscache.put(doc.getDocumentid(), doc);

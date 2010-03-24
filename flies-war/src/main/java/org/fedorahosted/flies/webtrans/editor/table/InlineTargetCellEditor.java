@@ -60,9 +60,6 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit>{
 	private ClickHandler acceptHandler = new ClickHandler() {
 		public void onClick(ClickEvent event) {
 			acceptEdit();
-			if(curRow < MAX_PAGE_ROW && curRow >= 0) {
-				curRow = curRow +1;
-			}
 			gotoNextRow(curRow);
 		}
 	};
@@ -129,7 +126,6 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit>{
 		cancelCallback = callback;
 		editRowCallback = rowCallback;
 		textArea = new TextArea();
-		textArea.setWidth("100%");
 		textArea.setStyleName("TableEditorContent-Edit");
 		textArea.addBlurHandler(new BlurHandler() {
 			@Override
@@ -268,10 +264,14 @@ public class InlineTargetCellEditor implements CellEditor<TransUnit>{
 		cellViewWidget = table.getWidget(curRow, curCol);
 
 		int height = table.getWidget(curRow, curCol-1).getOffsetHeight();
-		Log.info("The height of the target editor "+height);
+		
 		int realHeight = height > MIN_HEIGHT ? height : MIN_HEIGHT;
 		
 		textArea.setHeight(realHeight+"px");
+		
+		int width = table.getWidget(curRow, curCol-1).getOffsetWidth() - 10;
+		textArea.setWidth(width+"px");
+		
 		table.setWidget(curRow, curCol, layoutTable);
 		textArea.setText(cellValue.getTarget());
 		
