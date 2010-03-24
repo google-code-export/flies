@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.fedorahosted.flies.gwt.model.DocName;
+import org.fedorahosted.flies.gwt.model.DocumentInfo;
 import org.fedorahosted.flies.gwt.model.DocumentId;
+import org.fedorahosted.flies.webtrans.client.ui.ClearableTextBox;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
 
 import com.google.gwt.core.client.GWT;
@@ -44,10 +45,10 @@ public class DocumentListView extends Composite implements
 	@UiField
 	ScrollPanel documentScrollPanel;
 
-	@UiField
-	TextBox filterTextBox;
+	@UiField(provided = true)
+	ClearableTextBox filterTextBox;
 	
-	private ContentFilter<DocName> filter;
+	private ContentFilter<DocumentInfo> filter;
 	
 	private DocumentNode currentSelection;
 	
@@ -59,6 +60,7 @@ public class DocumentListView extends Composite implements
 	public DocumentListView(Resources resources, WebTransMessages messages) {
 		this.resources = resources;
 		this.messages = messages;
+		filterTextBox = new ClearableTextBox(resources);
 		nodes = new HashMap<DocumentId, DocumentNode>();
 		initWidget( uiBinder.createAndBindUi(this) );
 	}
@@ -98,18 +100,18 @@ public class DocumentListView extends Composite implements
 	}
 	
 	@Override
-	public void setList(ArrayList<DocName> sortedList) {
+	public void setList(ArrayList<DocumentInfo> sortedList) {
 		clear();
 		for(int i=0;i<sortedList.size();i++) {
-			DocName doc = sortedList.get(i);
+			DocumentInfo doc = sortedList.get(i);
 			DocumentNode node;
 			if(doc.getPath() == null || doc.getPath().isEmpty()){
-				node = new DocumentNode(resources, messages, doc, translateButtonClickHandler);
+				node = new DocumentNode(resources, messages, doc, documentNodeClickHandler);
 				add(node);
 			}
 			else{
 				FolderNode folder = new FolderNode(resources, doc);
-				node = new DocumentNode(resources, messages, doc, translateButtonClickHandler);
+				node = new DocumentNode(resources, messages, doc, documentNodeClickHandler);
 				folder.addChild(node);
 				add(folder);
 			}
@@ -123,13 +125,12 @@ public class DocumentListView extends Composite implements
 	/**
 	 * Common click-handler for all 'translate' links
 	 */
-	private final ClickHandler translateButtonClickHandler = new ClickHandler() {
+	private final ClickHandler documentNodeClickHandler = new ClickHandler() {
 		@Override
 		public void onClick(ClickEvent event) {
-			DocumentId selectionId = new DocumentId( Long.valueOf(
-					event.getRelativeElement().getId().substring(19)));
-			if(currentSelection == null || !currentSelection.getDataItem().getId().equals(selectionId)) {
-				DocumentSelectionEvent docSelectionEvent = new DocumentSelectionEvent(selectionId);
+			DocumentNode node = (DocumentNode) event.getSource();
+			if(currentSelection != node) {
+				DocumentSelectionEvent docSelectionEvent = new DocumentSelectionEvent(node.getDataItem());
 				fireEvent(docSelectionEvent);
 			}
 		}
@@ -145,12 +146,12 @@ public class DocumentListView extends Composite implements
 	}
 	
 	@Override
-	public void setSelection(final DocumentId documentId) {
-		if(currentSelection != null && currentSelection.getDataItem().getId().equals(documentId)) {
+	public void setSelection(final DocumentInfo document) {
+		if(currentSelection != null && currentSelection.getDataItem() == document) {
 			return;
 		}
 		clearSelection();
-		DocumentNode node = nodes.get(documentId);
+		DocumentNode node = nodes.get(document.getId());
 		if(node != null) {
 			node.setSelected( true ) ;
 			currentSelection = node;
@@ -175,7 +176,7 @@ public class DocumentListView extends Composite implements
 	}
 	
 	@Override
-	public void setFilter(ContentFilter<DocName> filter) {
+	public void setFilter(ContentFilter<DocumentInfo> filter) {
 		this.filter = filter;
 		for(DocumentNode docNode : nodes.values() ){
 			docNode.setVisible(filter.accept(docNode.getDataItem()));
@@ -191,7 +192,7 @@ public class DocumentListView extends Composite implements
 	
 	@Override
 	public HasValue<String> getFilterTextBox() {
-		return filterTextBox;
+		return filterTextBox.getTextBox();
 	}
 	
 }

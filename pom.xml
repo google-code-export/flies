@@ -15,13 +15,21 @@
     <module>flies-clients</module>
     <module>flies-gwt-api</module>
     <module>flies-war</module>
-    <module>thirdparty/gwt-codemirror</module>
   </modules>
   <scm>
     <connection>scm:hg:http://flies.googlecode.com/hg/</connection>
     <developerConnection>scm:hg:https://flies.googlecode.com/hg/</developerConnection>
     <url>http://code.google.com/p/flies/source/browse/</url>
   </scm>
+  
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License v2 or later</name>
+      <url>http://www.fsf.org/licensing/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
   <properties>
     <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

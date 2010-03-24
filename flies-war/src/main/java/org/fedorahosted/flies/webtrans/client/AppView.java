@@ -1,5 +1,6 @@
 package org.fedorahosted.flies.webtrans.client;
 
+import org.fedorahosted.flies.gwt.model.DocumentInfo;
 import org.fedorahosted.flies.webtrans.client.ui.HasPager;
 import org.fedorahosted.flies.webtrans.client.ui.Pager;
 import org.fedorahosted.flies.webtrans.editor.HasTransUnitCount;
@@ -25,7 +26,7 @@ import com.google.inject.Inject;
 
 public class AppView extends Composite implements AppPresenter.Display {
 
-	interface AppViewUiBinder extends UiBinder<DockLayoutPanel, AppView> {
+	interface AppViewUiBinder extends UiBinder<LayoutPanel, AppView> {
 	}
 
 	private static AppViewUiBinder uiBinder = GWT.create(AppViewUiBinder.class);
@@ -34,7 +35,7 @@ public class AppView extends Composite implements AppPresenter.Display {
 	Anchor signOutLink, leaveLink, helpLink, documentsLink;
 
 	@UiField
-	SpanElement user, workspaceName, workspaceLocale;
+	SpanElement user, workspaceName, workspaceLocale, selectedDocumentSpan;
 
 	@UiField
 	LayoutPanel editor;
@@ -85,6 +86,9 @@ public class AppView extends Composite implements AppPresenter.Display {
 		workspaceLocale.setInnerText("German");
 		pager.setVisible(false);
 		transUnitNavigation.setVisible(false);
+		
+		helpLink.setHref( messages.hrefHelpLink() );
+		helpLink.setTarget("_BLANK");
 	}
 
 	@Override
@@ -185,5 +189,25 @@ public class AppView extends Composite implements AppPresenter.Display {
 	@Override
 	public void setTransUnitCountBarVisible(boolean visible) {
 		transUnitCountBar.setVisible(visible);
+	}
+	
+	@Override
+	public void setUserLabel(String userLabel) {
+		user.setInnerText(userLabel);
+	}
+	
+	@Override
+	public void setWorkspaceNameLabel(String workspaceNameLabel) {
+		workspaceName.setInnerText(workspaceNameLabel);
+	}
+	
+	@Override
+	public void setLocaleLabel(String localeLabel) {
+		workspaceLocale.setInnerText(localeLabel);
+	}
+	
+	@Override
+	public void setSelectedDocument(DocumentInfo document) {
+		selectedDocumentSpan.setInnerText(document.getName());
 	}
 }
