@@ -8,11 +8,15 @@ import java.util.Map;
 import org.fedorahosted.flies.gwt.model.DocumentInfo;
 import org.fedorahosted.flies.gwt.model.DocumentId;
 import org.fedorahosted.flies.webtrans.client.ui.ClearableTextBox;
+import org.fedorahosted.flies.webtrans.editor.HasTransUnitCount;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class DocumentListView extends Composite implements
-		DocumentListPresenter.Display, HasDocumentSelectionHandlers {
+		DocumentListPresenter.Display, HasSelectionHandlers<DocumentInfo> {
 
 	private static DocumentListViewUiBinder uiBinder = GWT
 			.create(DocumentListViewUiBinder.class);
@@ -45,6 +49,9 @@ public class DocumentListView extends Composite implements
 	@UiField
 	ScrollPanel documentScrollPanel;
 
+	@UiField(provided=true)
+	TransUnitCountBar transUnitCountBar;
+	
 	@UiField(provided = true)
 	ClearableTextBox filterTextBox;
 	
@@ -62,6 +69,7 @@ public class DocumentListView extends Composite implements
 		this.messages = messages;
 		filterTextBox = new ClearableTextBox(resources);
 		nodes = new HashMap<DocumentId, DocumentNode>();
+		transUnitCountBar = new TransUnitCountBar(messages);
 		initWidget( uiBinder.createAndBindUi(this) );
 	}
 
@@ -129,10 +137,7 @@ public class DocumentListView extends Composite implements
 		@Override
 		public void onClick(ClickEvent event) {
 			DocumentNode node = (DocumentNode) event.getSource();
-			if(currentSelection != node) {
-				DocumentSelectionEvent docSelectionEvent = new DocumentSelectionEvent(node.getDataItem());
-				fireEvent(docSelectionEvent);
-			}
+			SelectionEvent.fire(DocumentListView.this, node.getDataItem());
 		}
 	};
 	
@@ -163,17 +168,6 @@ public class DocumentListView extends Composite implements
 		if(currentSelection != null)
 			documentScrollPanel.ensureVisible(currentSelection);
 	}
-
-	@Override
-	public HandlerRegistration addDocumentSelectionHandler(
-			DocumentSelectionHandler handler) {
-		return addHandler(handler, DocumentSelectionEvent.getType());
-	}
-	
-	@Override
-	public HasDocumentSelectionHandlers getDocumentSelectionHandler() {
-		return this;
-	}
 	
 	@Override
 	public void setFilter(ContentFilter<DocumentInfo> filter) {
@@ -194,5 +188,22 @@ public class DocumentListView extends Composite implements
 	public HasValue<String> getFilterTextBox() {
 		return filterTextBox.getTextBox();
 	}
+	
+	@Override
+	public HasTransUnitCount getTransUnitCountBar() {
+		return transUnitCountBar;
+	}
+
+	@Override
+	public HasSelectionHandlers<DocumentInfo> getDocumentList() {
+		return this;
+	}
+	
+	@Override
+	public HandlerRegistration addSelectionHandler(
+			SelectionHandler<DocumentInfo> handler) {
+		return addHandler(handler, SelectionEvent.getType());
+	}
+	
 	
 }
