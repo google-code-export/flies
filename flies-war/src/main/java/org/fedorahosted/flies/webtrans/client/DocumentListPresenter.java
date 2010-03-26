@@ -14,6 +14,7 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 import org.fedorahosted.flies.common.ContentState;
+import org.fedorahosted.flies.common.TransUnitCount;
 import org.fedorahosted.flies.gwt.common.WorkspaceContext;
 import org.fedorahosted.flies.gwt.common.WorkspaceId;
 import org.fedorahosted.flies.gwt.model.DocumentInfo;
@@ -29,12 +30,14 @@ import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEvent;
 import org.fedorahosted.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
 import org.fedorahosted.flies.webtrans.client.rpc.CachingDispatchAsync;
 import org.fedorahosted.flies.webtrans.client.ui.HasFilter;
+import org.fedorahosted.flies.webtrans.editor.HasTransUnitCount;
 import org.fedorahosted.flies.webtrans.editor.filter.ContentFilter;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.HasSelectionHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -59,16 +62,18 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 		void clearSelection();
 		void setSelection(DocumentInfo document);
 		void ensureSelectionVisible();
-		HasDocumentSelectionHandlers getDocumentSelectionHandler();
 		void setFilter(ContentFilter<DocumentInfo> filter);
 		void removeFilter();
 		HasValue<String> getFilterTextBox();
+		HasTransUnitCount getTransUnitCountBar();
+		HasSelectionHandlers<DocumentInfo> getDocumentList();
 	}
 
 	private final DispatchAsync dispatcher;
     private final WorkspaceContext workspaceContext;
 	private final Map<DocumentId, DocumentStatus> statuscache = new HashMap<DocumentId, DocumentStatus>();
 	private DocumentInfo currentDocument;
+	private final TransUnitCount projectCount = new TransUnitCount();
     
 	
 	@Inject
@@ -90,12 +95,12 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	@Override
 	protected void onBind() {
 		
-		registerHandler(display.getDocumentSelectionHandler().addDocumentSelectionHandler(new DocumentSelectionHandler() {
-			
+		registerHandler( display.getDocumentList().addSelectionHandler(new SelectionHandler<DocumentInfo>() {
 			@Override
-			public void onDocumentSelected(DocumentSelectionEvent event) {
-				display.setSelection(event.getDocument());
-				setValue(event.getDocument(), true);
+			public void onSelection(SelectionEvent<DocumentInfo> event) {
+				currentDocument = event.getSelectedItem();
+				display.setSelection(currentDocument);
+				fireEvent(new DocumentSelectionEvent(currentDocument));
 			}
 		}));
 		
@@ -148,6 +153,32 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 			}
 		}));
 		
+		
+		registerHandler(eventBus.addHandler(TransUnitUpdatedEvent.getType(), new TransUnitUpdatedEventHandler() {
+			@Override
+			public void onTransUnitUpdated(TransUnitUpdatedEvent event) {
+				projectCount.decrement(event.getPreviousStatus());
+				projectCount.increment(event.getNewStatus());
+				getDisplay().getTransUnitCountBar().setCount(projectCount);
+			}
+		}));
+		
+		dispatcher.execute(new GetProjectStatusCount(), new AsyncCallback<GetProjectStatusCountResult>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+			@Override
+			public void onSuccess(GetProjectStatusCountResult result) {
+				ArrayList<DocumentStatus> liststatus = result.getStatus();
+				for(DocumentStatus doc : liststatus) {
+					projectCount.add(doc.getCount());
+				}
+				display.getTransUnitCountBar().setCount(projectCount);
+				
+			}
+		});
+		
+		
 	}
 
 	final class BasicContentFilter implements ContentFilter<DocumentInfo> {
@@ -197,15 +228,6 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 	public void revealDisplay() {
 		// TODO Auto-generated method stub
 		
-	}
-
-
-	public void setValue(DocumentInfo value, boolean fireEvents) {
-		DocumentInfo oldValue = currentDocument;
-		currentDocument = value;
-		if (oldValue != currentDocument) {
-			fireEvent(new DocumentSelectionEvent(currentDocument));
-		}
 	}
 
 	@Override
