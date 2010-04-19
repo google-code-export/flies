@@ -29,23 +29,25 @@ public class PropWriter {
 			parentFile.mkdirs();
 	}
 
-	public static void write(final Document doc, final File baseDir)
+	public static void write(final Document doc, final File baseDir, boolean exportRoot)
 			throws IOException {
 		File docDir = new File(baseDir, doc.getPath());
 		File baseFile = new File(docDir, doc.getName());
 		makeParentDirs(baseFile);
 
-		logVerbose("Creating base file " + baseFile);
-		Properties props = new Properties();
-		for (TextFlow textFlow : doc.getResources(true)) {
-			props.setProperty(textFlow.getId(), textFlow.getContent());
-			if (textFlow.hasComment() && textFlow.getComment().getValue() != null)
-				props.setComment(textFlow.getId(), textFlow.getComment().getValue());
+		if (exportRoot) {
+			logVerbose("Creating base file " + baseFile);
+			Properties props = new Properties();
+			for (TextFlow textFlow : doc.getResources(true)) {
+				props.setProperty(textFlow.getId(), textFlow.getContent());
+				if (textFlow.hasComment() && textFlow.getComment().getValue() != null)
+					props.setComment(textFlow.getId(), textFlow.getComment().getValue());
+			}
+			// props.store(System.out, null);
+			PrintStream out = new PrintStream(new FileOutputStream(baseFile));
+			props.store(out, null);
 		}
-		// props.store(System.out, null);
-		PrintStream out = new PrintStream(new FileOutputStream(baseFile));
-		props.store(out, null);
-
+		
 		String baseName = baseFile.getName();
 		String bundleName = baseName.substring(0, baseName.length()
 				- ".properties".length());
