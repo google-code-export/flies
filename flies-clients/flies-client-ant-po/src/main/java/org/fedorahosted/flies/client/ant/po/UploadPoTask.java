@@ -57,7 +57,7 @@ public class UploadPoTask extends Task implements Subcommand {
 		}
 		ArgumentProcessor<UploadPoTask> argProcessor = ArgumentProcessor.newInstance(UploadPoTask.class);
 		argProcessor.process(args, this);
-		if (help) {
+		if (help || globals.getHelp()) {
 			help(System.out);
 			System.exit(0);
 		}
@@ -156,7 +156,7 @@ public class UploadPoTask extends Task implements Subcommand {
 				String basename = StringUtil.removeFileExtension(potFile.getName(), ".pot");
 				Document doc = new Document(basename, ContentType.TextPlain);
 				InputSource potInputSource = new InputSource(potFile.toURI().toString());
-				System.out.println(potFile.toURI().toString());
+//				System.out.println(potFile.toURI().toString());
 				potInputSource.setEncoding("utf8");
 				poReader.extractTemplate(doc, potInputSource, new LocaleId(sourceLang));
 				docList.add(doc);
@@ -172,7 +172,7 @@ public class UploadPoTask extends Task implements Subcommand {
 						if (poFile.exists()) {
 		//					progress.update(i++, files.length);
 							InputSource inputSource = new InputSource(poFile.toURI().toString());
-							System.out.println(poFile.toURI().toString());
+//							System.out.println(poFile.toURI().toString());
 							inputSource.setEncoding("utf8");
 							poReader.extractTarget(doc, inputSource, new LocaleId(localeDir.getName()));
 						}
@@ -215,6 +215,8 @@ public class UploadPoTask extends Task implements Subcommand {
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
 	}
+
+	// TODO make --dst optional, and provide --flies, --proj, --iter options
 
 	@Option(name = "d", longName = "dst", required = true, description = "Destination URL for upload, eg http://flies.example.com/seam/resource/restv1/projects/p/myProject/iterations/i/myIter/documents")
 	public void setDst(String dst) {
