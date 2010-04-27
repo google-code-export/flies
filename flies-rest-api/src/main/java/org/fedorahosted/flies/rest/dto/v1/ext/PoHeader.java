@@ -1,4 +1,4 @@
-package org.fedorahosted.flies.rest.dto.po;
+package org.fedorahosted.flies.rest.dto.v1.ext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,16 +9,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.fedorahosted.flies.rest.dto.SimpleComment;
+import org.fedorahosted.flies.rest.dto.po.HeaderEntry;
+import org.fedorahosted.flies.rest.dto.v1.Extension;
 
-
-@XmlType(name="headerType", namespace=PoHeader.NAMESPACE, propOrder={"comment", "entries"})
-@XmlRootElement(name="header", namespace=PoHeader.NAMESPACE)
-public class PoHeader {
+@XmlType(name="poHeaderExtension", namespace=PoHeader.NAMESPACE, propOrder={"comment", "entries"})
+public class PoHeader extends Extension {
 	
 	public static final String NAMESPACE = "http://flies.fedorahosted.org/api/gettext/header";
-	
+
 	private SimpleComment comment;
 	private List<HeaderEntry> entries;
+	
+	public PoHeader() {
+		super("gettext-po-header");
+	}
 	
 	@XmlElement(name="comment", namespace=NAMESPACE, required=true)
 	public SimpleComment getComment() {
@@ -43,4 +47,5 @@ public class PoHeader {
 		return entries;
 	}	
 	
+
 }
