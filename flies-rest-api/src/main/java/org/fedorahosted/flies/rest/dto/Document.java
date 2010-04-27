@@ -20,12 +20,12 @@ import org.fedorahosted.flies.rest.dto.po.PoHeader;
 import org.fedorahosted.flies.rest.dto.po.PoTargetHeaders;
 
 @XmlRootElement(name="document", namespace=Namespaces.FLIES)
-@XmlType(name="documentType", namespace=Namespaces.FLIES, propOrder={"resources", "extensions"})
+@XmlType(name="documentType", namespace=Namespaces.FLIES, propOrder={"textFlows", "extensions", "links"})
 @XmlSeeAlso({
 	PoHeader.class,
 	PoTargetHeaders.class
 })
-public class Document extends AbstractBaseResource implements IExtensible{
+public class Document implements IExtensible{
 
 	/**
 	 * An opaque id, which is the canonical id of the Document
@@ -36,6 +36,9 @@ public class Document extends AbstractBaseResource implements IExtensible{
 	 * Just the filename without the path
 	 */
 	private String name;
+
+	private Links links;
+	
 	/**
 	 * Pathname (slash-separated) for the parent folder, which may be empty
 	 * for files which are in the root
@@ -45,20 +48,13 @@ public class Document extends AbstractBaseResource implements IExtensible{
 	private Integer revision = null;
 	private LocaleId lang = LocaleId.EN_US;
 	
-	private List<TextFlow> resources;
+	private List<TextFlow> textFlows;
 	private List<Object> extensions;
 
 	protected Document() {
 		super();
 	}
 
-	public Document(Document other){
-		this.id = other.id;
-		// TODO deep copy
-		this.resources = other.resources;
-		this.extensions = other.extensions;
-	}
-	
 	public Document(String fullPath, ContentType contentType){
 		int lastSepChar =  fullPath.lastIndexOf('/');
 		switch(lastSepChar){
@@ -118,6 +114,13 @@ public class Document extends AbstractBaseResource implements IExtensible{
 		this.path = path;
 	}
 
+	@XmlElement(name="link", namespace=Namespaces.FLIES, required=false)
+	public Links getLinks() {
+		if(links == null)
+			links = new Links();
+		return links;
+	}	
+	
 	/**
 	 * Holds the current version in GET requests
 	 * 
@@ -157,32 +160,16 @@ public class Document extends AbstractBaseResource implements IExtensible{
 		this.lang = lang;
 	}
 	
-	@XmlElementWrapper(name="resources", namespace=Namespaces.FLIES, required=false)
+	@XmlElementWrapper(name="text-flows", namespace=Namespaces.FLIES, required=false)
 	@XmlElements({
 		@XmlElement(name="text-flow", type=TextFlow.class, namespace=Namespaces.FLIES)
 		})
-	/**
-	 * Returns the <b>top-level</b> resources contained in the document.  Some 
-	 * of these resources may be containers containing other resources.
-	 */
-	public List<TextFlow> getResources() {
-		return resources;
+	public List<TextFlow> getTextFlows() {
+		if(textFlows == null)
+			textFlows = new ArrayList<TextFlow>();
+		return textFlows;
 	}	
 
-	public List<TextFlow> getResources(boolean create) {
-		if(resources == null && create)
-			resources = new ArrayList<TextFlow>();
-		return resources;
-	}	
-
-	public void setResources(List<TextFlow> resources) {
-		this.resources = resources;
-	}
-	
-	public boolean hasResources() {
-		return resources != null;
-	}
-	
 	@Override
 	@XmlAnyElement(lax=true)
 	public List<Object> getExtensions() {
@@ -227,4 +214,10 @@ public class Document extends AbstractBaseResource implements IExtensible{
 		}
 		return ext;
 	}
+	
+	@Override
+	public String toString() {
+		return Utility.toXML(this);
+	}
+	
 }
