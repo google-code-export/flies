@@ -1,13 +1,9 @@
 package org.fedorahosted.flies.rest.dto.v1;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -20,13 +16,14 @@ import org.fedorahosted.flies.rest.dto.LocaleIdAdapter;
 import org.fedorahosted.flies.rest.dto.v1.ext.PoHeader;
 
 @XmlType(name="abstractTranslationResourceType", namespace=Namespaces.FLIES, propOrder={"name", "extensions"})
+@XmlSeeAlso({PoHeader.class})
 public abstract class AbstractTranslationResource {
 	
 	private String id;
 	
 	private String name;
 
-	private ContentType contentType;
+	private ContentType contentType = ContentType.TextPlain;
 	
 	private ResourceType type = ResourceType.FILE;
 	
@@ -37,15 +34,13 @@ public abstract class AbstractTranslationResource {
 	public AbstractTranslationResource() {
 	}
 
-	public AbstractTranslationResource(String id) {
+	public AbstractTranslationResource(String id, String name) {
 		this.id = id;
+		this.name = name;
 	}
 	
-	@XmlElementWrapper(name="extensions", namespace=Namespaces.FLIES, required=false)
-	@XmlElements({
-		@XmlElement(name="po-header", type=PoHeader.class, namespace=Namespaces.FLIES)
-		})
-	public Set<Extension> getExtensions() {
+	@XmlElementWrapper(name="extensions", namespace=Namespaces.FLIES, required=false, nillable=false)
+	public ExtensionSet getExtensions() {
 		if(extensions == null)
 			extensions = new ExtensionSet();
 		return extensions;
