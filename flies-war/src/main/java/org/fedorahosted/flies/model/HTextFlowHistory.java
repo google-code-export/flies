@@ -12,7 +12,8 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Type;
 
 @Entity
-public class HTextFlowHistory implements Serializable {
+@org.hibernate.annotations.Entity(mutable=false)
+public class HTextFlowHistory implements Serializable, ITextFlowHistory {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -20,6 +21,9 @@ public class HTextFlowHistory implements Serializable {
 	private Integer revision;
 	private HTextFlow textFlow;
 	private String content;
+	private boolean obsolete;
+	
+	private Integer pos;
 
 	public HTextFlowHistory() {
 	}
@@ -43,6 +47,7 @@ public class HTextFlowHistory implements Serializable {
 	}
 	
 	@NaturalId
+	@Override
 	public Integer getRevision() {
 		return revision;
 	}
@@ -63,6 +68,7 @@ public class HTextFlowHistory implements Serializable {
 	}
 	
 	@Type(type = "text")
+	@Override
 	public String getContent() {
 		return content;
 	}
@@ -70,6 +76,23 @@ public class HTextFlowHistory implements Serializable {
 	public void setContent(String content) {
 		this.content = content;
 	}
+
+	@Override
+	public Integer getPos() {
+		return pos;
+	}
 	
+	public void setPos(Integer pos) {
+		this.pos = pos;
+	}
+
+	@Override
+	public boolean isObsolete() {
+		return obsolete;
+	}
+	
+	public void setObsolete(boolean obsolete) {
+		this.obsolete = obsolete;
+	}
 	
 }
