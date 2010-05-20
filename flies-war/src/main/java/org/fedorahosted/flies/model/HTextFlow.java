@@ -47,7 +47,7 @@ import org.hibernate.validator.NotNull;
 @Entity
 @Indexed
 @FullTextFilterDef(name="translated", impl=TranslatedFilterFactory.class)
-public class HTextFlow implements Serializable {
+public class HTextFlow implements Serializable, ITextFlowHistory {
 
 	private static final long serialVersionUID = 3023080107971905435L;
 
@@ -102,6 +102,7 @@ public class HTextFlow implements Serializable {
 	// we can't use @NotNull because the position isn't set until the object has been persisted
 	@Column(insertable=false, updatable=false, nullable=false)
 //	@Column(insertable=false, updatable=false)
+	@Override
 	public Integer getPos() {
 		return pos;
 	}
@@ -123,6 +124,7 @@ public class HTextFlow implements Serializable {
 	}
 
 	@NotNull
+	@Override
 	public Integer getRevision() {
 		return revision;
 	}
@@ -131,6 +133,7 @@ public class HTextFlow implements Serializable {
 		this.revision = revision;
 	}
 
+	@Override
 	public boolean isObsolete() {
 		return obsolete;
 	}
@@ -168,6 +171,7 @@ public class HTextFlow implements Serializable {
 	@NotNull
 	@Type(type = "text")
 	@Field(index=Index.TOKENIZED, analyzer=@Analyzer(impl=DefaultNgramAnalyzer.class))
+	@Override
 	public String getContent() {
 		return content;
 	}
@@ -176,7 +180,7 @@ public class HTextFlow implements Serializable {
 		this.content = content;
 	}
 	
-	@OneToMany(cascade=CascadeType.ALL, mappedBy="textFlow")
+	@OneToMany(cascade=CascadeType.REMOVE, mappedBy="textFlow")
 	@MapKey(name="revision")
 	public Map<Integer, HTextFlowHistory> getHistory() {
 		return history;
@@ -226,7 +230,6 @@ public class HTextFlow implements Serializable {
 				}
 				textFlowTarget.setContent(hTextFlowTarget.getContent());
 				textFlowTarget.setResourceRevision(hTextFlowTarget.getTextFlowRevision());
-				textFlowTarget.setRevision(hTextFlowTarget.getRevision());
 				textFlowTarget.setState(hTextFlowTarget.getState());
 				textFlow.addTarget(textFlowTarget);
 			}
@@ -262,15 +265,4 @@ public class HTextFlow implements Serializable {
 			")";
 	}
 	
-	@PreUpdate
-	public void onUpdate() {
-		if(getDocument() != null) {
-			if(getDocument().getRevision() > this.revision ) {
-				setRevision(getDocument().getRevision());
-			}
-		}
-		else {
-			this.revision++;
-		}
-	}
 }

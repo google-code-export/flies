@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PreUpdate;
 
 import org.fedorahosted.flies.common.ContentState;
 import org.fedorahosted.flies.common.LocaleId;
@@ -25,6 +26,8 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.validator.NotNull;
+import org.jboss.seam.Component;
+import org.jboss.seam.ScopeType;
 
 /**
  * Represents a flow of text that should be processed as a
@@ -35,19 +38,17 @@ import org.hibernate.validator.NotNull;
  */
 @Entity
 @TypeDef(name="localeId", typeClass=LocaleIdType.class)
-public class HTextFlowTarget implements Serializable{
+public class HTextFlowTarget extends AbstractFliesEntity implements ITextFlowTargetHistory {
 
 	private static final long serialVersionUID = 302308010797605435L;
 
-	private Long id;
-	
 	private HTextFlow textFlow;
 	private LocaleId locale;
 	
 	private String content;
 	private ContentState state = ContentState.New;
 	private Integer textFlowRevision;
-	private Integer revision = 1;
+	private HPerson lastModifiedBy;
 	
 	private HSimpleComment comment;
 	
@@ -64,7 +65,6 @@ public class HTextFlowTarget implements Serializable{
 		this.content = target.getContent();
 		this.locale = target.getLang();
 		this.textFlowRevision = target.getResourceRevision();
-		this.revision = target.getRevision();
 		this.state = target.getState();
 //		setTextFlow(target.getTextFlow);
 //		setComment(target.comment);
@@ -84,7 +84,6 @@ public class HTextFlowTarget implements Serializable{
 	public void copy(TextFlowTarget tfTarget){
 		this.content = tfTarget.getContent();
 		this.state = tfTarget.getState();
-		this.revision = tfTarget.getRevision();
 	}
 	
 	@NaturalId
@@ -107,6 +106,7 @@ public class HTextFlowTarget implements Serializable{
 	@FieldBridge(
 			impl=ContentStateBridge.class
 	)
+	@Override
 	public ContentState getState() {
 		return state;
 	}
@@ -117,6 +117,7 @@ public class HTextFlowTarget implements Serializable{
 
 	@NotNull
 	@Column(name="tf_revision")
+	@Override
 	public Integer getTextFlowRevision() {
 		return textFlowRevision;
 	}
@@ -125,13 +126,15 @@ public class HTextFlowTarget implements Serializable{
 		this.textFlowRevision = textFlowRevision;
 	}
 	
-	@NotNull
-	public Integer getRevision() {
-		return revision;
+	@ManyToOne
+	@JoinColumn(name="last_modified_by_id", nullable=true)
+	@Override
+	public HPerson getLastModifiedBy() {
+		return lastModifiedBy;
 	}
 	
-	public void setRevision(Integer revision) {
-		this.revision = revision;
+	protected void setLastModifiedBy(HPerson lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
 	}
 	
 	@NaturalId
@@ -150,6 +153,7 @@ public class HTextFlowTarget implements Serializable{
 	@NotNull
 	@Type(type = "text")
 //	@Field(index=Index.NO) // no searching on target text yet
+	@Override
 	public String getContent() {
 		return content;
 	}
@@ -177,9 +181,16 @@ public class HTextFlowTarget implements Serializable{
 			"content:"+getContent()+
 			"locale:"+getLocale()+
 			"state:"+getState()+
-			"revision:"+getRevision()+
 			"comment:"+getComment()+
 			"textflow:"+getTextFlow().getContent()+
 			")";
 	}
+	
+	@PreUpdate
+	public void onUpdate() {
+		HPerson person = (HPerson) Component.getInstance("authenticatedPerson", ScopeType.SESSION);
+		setLastModifiedBy(person);
+	}
+	
+	
 }
