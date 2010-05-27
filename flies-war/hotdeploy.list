@@ -1,0 +1,8 @@
+# By default, we hot deploy all Action classes
+#**/action/*Action.class
+
+# RestEasy endpoints
+**/rest/service/*Service.class
+
+# GWT action handlers
+**webtrans/gwt/*Handler.class
