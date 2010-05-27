@@ -34,7 +34,7 @@ public class TransMemoryView extends Composite implements TransMemoryPresenter.D
 	private static final int HEADER_ROW = 0;
 	private static final int SOURCE_COL = 0;
 	private static final int TARGET_COL = 1;
-	private static final int SCORE_COL = 2;
+	private static final int SIMILARITY_COL = 2;
 	private static final int ACTION_COL = 3;
 
 	private static TransMemoryViewUiBinder uiBinder = GWT
@@ -120,7 +120,7 @@ public class TransMemoryView extends Composite implements TransMemoryPresenter.D
 		clearResults();
 		addColumn("Source", SOURCE_COL);
 		addColumn("Target", TARGET_COL);
-		addColumn("Score", SCORE_COL);
+		addColumn("Similarity", SIMILARITY_COL);
 		addColumn("Action", ACTION_COL);
 		
 		int row = HEADER_ROW;
@@ -128,13 +128,15 @@ public class TransMemoryView extends Composite implements TransMemoryPresenter.D
 			++row;
 			final String sourceMessage = memory.getSource();
 			final String targetMessage = memory.getMemory();
-			final String sourceComment = memory.getSourceComment();
-			final String targetComment = memory.getTargetComment();
+//			final String sourceComment = memory.getSourceComment();
+//			final String targetComment = memory.getTargetComment();
 			final String docID = memory.getDocID();
+//			final float score = memory.getRelevanceScore();
+			final int similarity = memory.getSimilarityPercent();
 
 			resultTable.setWidget(row, SOURCE_COL, new HighlightingLabel(sourceMessage));
 			resultTable.setWidget(row, TARGET_COL, new HighlightingLabel(targetMessage));
-			resultTable.setText(row, SCORE_COL, String.valueOf(memory.getRelevanceScore()));
+			resultTable.setText(row, SIMILARITY_COL, similarity + "%");
 
 			final Anchor copyLink = new Anchor("Copy");
 			copyLink.addClickHandler(new ClickHandler() {
@@ -155,8 +157,8 @@ public class TransMemoryView extends Composite implements TransMemoryPresenter.D
 			resultTable.getWidget(row, SOURCE_COL).setTitle(suppInfo);				
 			resultTable.getWidget(row, TARGET_COL).setTitle(suppInfo);
 			resultTable.getWidget(row, ACTION_COL).setTitle("Copy \"" + targetMessage + "\" to the editor.");	
-			}
-			resultTable.setCellPadding(CELL_PADDING);
+		}
+		resultTable.setCellPadding(CELL_PADDING);
 	}
 	
 	private void addColumn(String columnHeading, int pos) {
