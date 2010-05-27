@@ -24,12 +24,13 @@
     <!-- the id on the containing div determines the page width. -->
     <!-- #doc = 750px; #doc2 = 950px; #doc3 = 100%; #doc4 = 974px -->
     <div id="doc4" class="yui-t2">
-      <div id="hd">
+      <div id="header">
         <div id="headerlogo">
           <s:link view="/home.xhtml" propagation="none">
-            <img src="#{request.contextPath}/img/flies_banner.png" />
+            <img src="#{request.contextPath}/img/flies_logo.png" />
           </s:link>
         </div>
+        <div id="flies_name">Flies - The Future of Localization</div>
         <div id="header_top_right">
           <h:outputText rendered="#{identity.loggedIn}"
             value="#{authenticatedPerson == null ? identity.username : authenticatedPerson.name} " />
@@ -75,7 +76,7 @@
     <div id="ft">
       <div id="footer">Copyright 2008 
         <a href="http://www.redhat.com/">Red Hat</a> and Others. 
-        Powered by <a href="http://jboss.com/products/seam">Seam</a>.
+        Powered by <a href="http://fedorahosted.org/flies/">Flies</a>.
         <br />Running version #{fliesInit.version} (#{fliesInit.buildTimestamp}).
       </div>
     </div>
