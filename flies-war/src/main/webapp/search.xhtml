@@ -1,0 +1,26 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="layout/template.xhtml">
+    
+    <ui:define name="breadcrumbs">
+     Search Result
+    </ui:define>
+    
+    <ui:define name="center_content">
+         <rich:tabPanel id="searchPanel" switchType="client" >
+			<rich:tab  id="projects_tab" label="Project (#{projectSearch.resultSize})" styleClass="bold" >
+        			 <ui:include src="/projecttable.xhtml" />
+     		</rich:tab>
+            <rich:tab  id="communities_tab" label="Community (#{communitySearch.resultSize})" styleClass="bold" >
+					<ui:include src="/communitytable.xhtml" />
+        	</rich:tab>
+     	</rich:tabPanel>
+    </ui:define>
+    
+</ui:composition>
