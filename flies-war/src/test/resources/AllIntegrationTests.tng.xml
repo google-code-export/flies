@@ -1,0 +1,17 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="Flies Integration Tests" verbose="1">
+
+	<parameter name="database" value="hsql" />
+	<parameter name="datasourceJndiName" value="java:/fliesDatasource" />
+	<parameter name="binaryDir" value="" />
+
+	<test name="Seam Tests">
+		<classes>
+			<class name="org.fedorahosted.flies.rest.service.DocumentsServiceSeamTest"/>
+			<class name="org.fedorahosted.flies.rest.service.ProjectServiceRawSeamTest"/>
+			<class name="org.fedorahosted.flies.rest.service.ProjectServiceSeamTest"/>
+			<class name="org.fedorahosted.flies.rest.service.ProjectsServiceSeamTest"/>
+		</classes>
+	</test>
+
+</suite>
