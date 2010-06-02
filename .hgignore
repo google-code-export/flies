@@ -1,0 +1,64 @@
+syntax: glob
+
+*~
+*.patch
+*.sedbak
+*/target/*
+fliessearchindex/
+*/fliessearchindex/*
+*/test-output/*
+
+hs_err_pid*.log
+tomcat
+bin
+localDB.log
+localDB.properties
+
+syntax: regexp
+\.jar$
+
+^\.pc/
+^.ant-targets-build.xml
+\.pages.xml.spdia$
+temp-testng-customsuite.xml$
+^flies-war/src/test/resources/bootstrap/data
+^flies-war/src/test/jboss-embedded-bootstrap/data
+
+# eclipse and maven stuff
+\.classpath$
+\.project$
+\.settings/
+^target
+^flies-war/profiles.xml
+^flies-war/src/test/resources/DocumentsServiceSeamTest.tng.xml$
+\.orig$
+
+# kde related
+\.directory$
+
+#gwt related
+^flies-war/src/main/webapp/WEB-INF/classes/
+^flies-war/tomcat
+\.gwt-tmp$
+^flies-war/org.fedorahosted.flies.webtrans.Application
+^flies-war/src/main/webapp/org.fedorahosted.flies.webtrans.Application
+
+# vim
+.swp
+
+# CMake
+/CMakeFiles/
+CMakeCache.txt
+/src/test/Makefile
+/src/test/Testing/
+.*\.cmake$
+
+# Generated tests
+/samples/
+/results/
+/src/test/resources/.*/[1-9]-.*\.html$
+/src/test/resources/.*/SignInNormal.html$
+/src/test/resources/.*/SignInAdmin.html$
+/src/test/resources/.*/SignOut.html$
+hudson_test_wrap.sh
+
