@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.ws.rs.core.EntityTag;
-
 import org.fedorahosted.flies.common.ContentState;
 import org.fedorahosted.flies.common.LocaleId;
 import org.fedorahosted.flies.common.TransUnitCount;
@@ -13,17 +11,16 @@ import org.fedorahosted.flies.model.HDocument;
 import org.fedorahosted.flies.model.HProjectIteration;
 import org.fedorahosted.flies.model.HTextFlow;
 import org.fedorahosted.flies.model.StatusCount;
-import org.fedorahosted.flies.model.po.HPoHeader;
-import org.fedorahosted.flies.rest.StringSet;
-import org.fedorahosted.flies.rest.dto.v1.ext.PoHeader;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
-import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 
 @Name("documentDAO")
 @AutoCreate
+@Scope(ScopeType.STATELESS)
 public class DocumentDAO extends AbstractDAOImpl<HDocument, Long>{
 
 	public DocumentDAO() {
@@ -32,25 +29,6 @@ public class DocumentDAO extends AbstractDAOImpl<HDocument, Long>{
 	
 	public DocumentDAO(Session session) {
 		super(HDocument.class, session);
-	}
-
-	public EntityTag getETag(HProjectIteration iteration, String id, StringSet extensions) {
-		HDocument doc = getByDocId(iteration, id);
-		if( doc == null ) 
-			return null;
-		Integer hashcode = 1;
-		hashcode += doc.getRevision() * 37;
-		
-		int extHash = 0;
-		if( extensions.contains(PoHeader.ID) ) {
-			HPoHeader header = doc.getPoHeader();
-			if(header != null) {
-				extHash =  header.getVersionNum();
-			}
-		}
-		hashcode += extHash * 37;
-		
-		return EntityTag.valueOf( String.valueOf( hashcode) );
 	}
 	
 	public HDocument getByDocId(HProjectIteration iteration, String id){
@@ -65,6 +43,7 @@ public class DocumentDAO extends AbstractDAOImpl<HDocument, Long>{
 	}
 
 	public Set<LocaleId> getTargetLocales(HDocument hDoc) {
+		@SuppressWarnings("unchecked")
 		List<LocaleId> locales = (List<LocaleId>) getSession().createQuery(
 				"select tft.locale from HTextFlowTarget tft where tft.textFlow.document = :document")
 			.setParameter("document", hDoc).list();
@@ -72,6 +51,7 @@ public class DocumentDAO extends AbstractDAOImpl<HDocument, Long>{
 	}
 	
 	public TransUnitCount getStatistics(long docId, LocaleId localeId) {
+		@SuppressWarnings("unchecked")
 		List<StatusCount> stats = getSession().createQuery(
 				"select new org.fedorahosted.flies.model.StatusCount(tft.state, count(tft)) " +
 				"from HTextFlowTarget tft " +
@@ -111,6 +91,5 @@ public class DocumentDAO extends AbstractDAOImpl<HDocument, Long>{
 			textFlow.setRevision(revision);
 		}
 	}
-	
-	
+
 }
