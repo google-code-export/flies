@@ -11,11 +11,17 @@
     >
     
     <ui:define name="left_content">
-      <rich:panel>
-        <f:facet name="header">Actions</f:facet>
-        <a href="#" class="action_link">Edit Profile</a>
-        <a href="#" class="action_link">Change Password</a>
-      </rich:panel>
+      <s:fragment rendered="#{identity.loggedIn}">
+        <rich:panel>
+          <f:facet name="header">Actions</f:facet>
+          <s:link styleClass="action_link" view="/editprofile.xhtml" propagation="none">
+            Edit Profile
+          </s:link>
+          <s:link rendered="false" styleClass="action_link" view="/admin/changepassword.xhtml" propagation="none">
+            Change Password
+          </s:link>
+        </rich:panel>
+      </s:fragment>
     </ui:define>
     
     <ui:define name="center_content">

@@ -1,7 +1,5 @@
 package org.fedorahosted.flies.model;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PreUpdate;
+import javax.persistence.Transient;
 
 import org.fedorahosted.flies.common.ContentState;
 import org.fedorahosted.flies.common.LocaleId;
@@ -26,9 +24,6 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.validator.NotNull;
-import org.jboss.seam.Component;
-import org.jboss.seam.ScopeType;
-import org.jboss.seam.contexts.Contexts;
 
 /**
  * Represents a flow of text that should be processed as a
@@ -127,14 +122,14 @@ public class HTextFlowTarget extends AbstractFliesEntity implements ITextFlowTar
 		this.textFlowRevision = textFlowRevision;
 	}
 	
-	@ManyToOne
+	@ManyToOne(cascade={CascadeType.MERGE})
 	@JoinColumn(name="last_modified_by_id", nullable=true)
 	@Override
 	public HPerson getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 	
-	protected void setLastModifiedBy(HPerson lastModifiedBy) {
+	public void setLastModifiedBy(HPerson lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 	
@@ -187,13 +182,12 @@ public class HTextFlowTarget extends AbstractFliesEntity implements ITextFlowTar
 			")";
 	}
 	
-	@PreUpdate
-	public void onUpdate() {
-		if(Contexts.isSessionContextActive() ) {
-			HPerson person = (HPerson) Component.getInstance("authenticatedPerson", ScopeType.SESSION);
-			setLastModifiedBy(person);
-		}
+	@Transient
+	public void clear() {
+		setContent("");
+		setState(ContentState.New);
+		setComment(null);
+		setLastModifiedBy(null);
 	}
-	
 	
 }

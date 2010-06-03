@@ -11,29 +11,34 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.fedorahosted.flies.common.LocaleId;
 import org.fedorahosted.flies.rest.dto.po.HeaderEntry;
-import org.fedorahosted.flies.rest.dto.v1.Extension;
 
-@XmlType(name="poTargetHeader", namespace=PoHeader.NAMESPACE, propOrder={"comment", "entries"})
+@XmlType(name="poTargetHeaderEntry", namespace=PoHeader.NAMESPACE, propOrder={"comment", "entries"})
 @XmlRootElement(name="po-target-header", namespace=PoHeader.NAMESPACE)
-public class PoTargetHeader extends Extension {
+public class PoTargetHeaderEntry {
 
-	public static final String ID = "gettext-target-header";
-	public static final String VERSION = PoHeader.VERSION;
-	public static final String NAMESPACE = PoHeader.NAMESPACE;
+	private LocaleId locale;
 	
 	private String comment;
 	private List<HeaderEntry> entries;
 	
-	public PoTargetHeader() {
-		super(ID,VERSION);
+	public PoTargetHeaderEntry() {
 	}
 	
-	public PoTargetHeader(String comment, HeaderEntry ... entries) {
-		super(ID,VERSION);
+	public PoTargetHeaderEntry(LocaleId locale, String comment, HeaderEntry ... entries) {
+		this.locale = locale;
 		setComment(comment);
 		for (int i = 0; i < entries.length; i++) {
 			getEntries().add(entries[i]);
 		}
+	}
+	
+	@XmlAttribute(name="locale", required=true)
+	public LocaleId getLocale() {
+		return locale;
+	}
+	
+	public void setLocale(LocaleId locale) {
+		this.locale = locale;
 	}
 	
 	@XmlElement(name="comment", namespace=PoHeader.NAMESPACE, required=true)

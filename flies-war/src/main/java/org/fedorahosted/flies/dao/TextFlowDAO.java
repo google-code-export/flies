@@ -9,11 +9,14 @@ import org.fedorahosted.flies.model.HTextFlow;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.seam.ScopeType;
 import org.jboss.seam.annotations.AutoCreate;
 import org.jboss.seam.annotations.Name;
+import org.jboss.seam.annotations.Scope;
 
 @Name("textFlowDAO")
 @AutoCreate
+@Scope(ScopeType.STATELESS)
 public class TextFlowDAO extends AbstractDAOImpl<HTextFlow, Long>{
 
 	public TextFlowDAO() {
@@ -60,6 +63,7 @@ public class TextFlowDAO extends AbstractDAOImpl<HTextFlow, Long>{
 	    .uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Long> getIdsByTargetState(LocaleId locale, ContentState state) {
 		Query q = getSession().createQuery(
 			"select tft.textFlow.id from HTextFlowTarget tft where tft.locale=:locale and tft.state=:state");

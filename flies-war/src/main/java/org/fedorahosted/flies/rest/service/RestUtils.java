@@ -12,6 +12,7 @@ import javax.ws.rs.ext.MessageBodyReader;
 
 import org.hibernate.validator.ClassValidator;
 import org.hibernate.validator.InvalidValue;
+import org.jboss.resteasy.spi.NoLogWebApplicationException;
 import org.jboss.seam.resteasy.SeamResteasyProviderFactory;
 
 public class RestUtils {
@@ -27,6 +28,7 @@ public class RestUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Serializable> void validateEntity(T entity) {
+		@SuppressWarnings("rawtypes")
 		ClassValidator<T> validator = new ClassValidator(entity.getClass());
 		if(validator.hasValidationRules() ) {
 			InvalidValue[] invalidValues = validator.getInvalidValues(entity);
@@ -41,13 +43,13 @@ public class RestUtils {
 					message.append(invalidValue.getMessage());
 					message.append("\n");
 				}
-				throw new WebApplicationException(
+				throw new NoLogWebApplicationException (
 						Response.status(Status.BAD_REQUEST).entity(message.toString()).build());
 			}
 		}
 	}
 	
-	public  static <T> T unmarshall(Class<T> entityClass, InputStream is, MediaType requestContentType, MultivaluedMap<String,String> requestHeaders) {
+	public  static <T extends Serializable> T unmarshall(Class<T> entityClass, InputStream is, MediaType requestContentType, MultivaluedMap<String,String> requestHeaders) {
 		MessageBodyReader<T> reader = SeamResteasyProviderFactory.getInstance()
 				.getMessageBodyReader(entityClass, entityClass,
 						entityClass.getAnnotations(), requestContentType);
@@ -64,6 +66,8 @@ public class RestUtils {
 			throw new WebApplicationException(
 					Response.status(Status.BAD_REQUEST).entity("Unable to read request body").build());
 		}
+
+		validateEntity(entity);
 		
 		return entity;
 	}
