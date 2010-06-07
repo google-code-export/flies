@@ -28,10 +28,7 @@ import org.fedorahosted.flies.model.HProject;
 import org.fedorahosted.flies.model.HProjectIteration;
 import org.fedorahosted.flies.model.validator.SlugValidator;
 import org.fedorahosted.flies.rest.MediaTypes;
-import org.fedorahosted.flies.rest.dto.AbstractMiniProjectIteration;
-import org.fedorahosted.flies.rest.dto.AbstractProjectIteration;
 import org.fedorahosted.flies.rest.dto.ProjectIteration;
-import org.fedorahosted.flies.rest.dto.ProjectIterationRes;
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
@@ -116,7 +113,7 @@ public class ProjectIterationService {
 		HProjectIteration hProjectIteration = projectIterationDAO
 				.getBySlug(projectSlug, iterationSlug);
 
-		ProjectIterationRes it = new ProjectIterationRes();
+		ProjectIteration it = new ProjectIteration();
 		transfer(hProjectIteration, it);
 		
 		return Response.ok(it).tag(etag).build();
@@ -193,13 +190,9 @@ public class ProjectIterationService {
 		
 	}
 	
-	public static void transfer(HProjectIteration from, AbstractMiniProjectIteration to) {
+	public static void transfer(HProjectIteration from, ProjectIteration to) {
 		to.setId(from.getSlug());
 		to.setName(from.getName());
-	}
-	
-	public static void transfer(HProjectIteration from, AbstractProjectIteration to) {
-		transfer(from, (AbstractMiniProjectIteration)to);
 		to.setDescription(from.getDescription());
 	}
 

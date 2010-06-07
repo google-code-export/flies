@@ -17,6 +17,13 @@
     <to last="true" type="temporary-redirect">/robots.txt</to>
   </rule>
 
+  <!-- Admin Rules -->
+
+  <rule>
+    <from casesensitive="true">^/admin/server_configuration</from>
+    <to last="true">/admin/server_configuration.seam</to>
+  </rule>
+
   <!-- Community Rules -->
 
   <rule>
@@ -94,6 +101,16 @@
     <from casesensitive="true">^/account/activate(.+)?$</from>
     <to last="true">/account/activate.seam$1</to>
   </rule>
+ 
+  <rule>
+    <from casesensitive="true">^/account/changepassword(.+)?$</from>
+    <to last="true">/account/changepassword.seam$1</to>
+  </rule>  
+
+  <rule>
+    <from casesensitive="true">^/editprofile(.+)?$</from>
+    <to last="true">/editprofile.seam$1</to>
+  </rule>  
 
   <rule>
     <from casesensitive="true">^/account/password_reset_request(.+)?$</from>
@@ -116,6 +133,10 @@
     <to>/admin/home.seam</to>
   </rule>
 
+  <outbound-rule>
+    <from>^(/.+)?/admin/server_configuration.seam</from>
+    <to>$1/admin/server_configuration</to>
+  </outbound-rule>
 
   <outbound-rule>
     <from>^(/.+)?/community/create_community.seam(.+)?$</from>
@@ -148,7 +169,7 @@
     <to>$1/project/create/$2</to>
   </outbound-rule>
   <outbound-rule>
-    <from>^(/.+)?/project/project.seam\?slug=(.+)$</from>
+    <from>^(/.+)?/project/project.seam\?slugaccount/=(.+)$</from>
     <to>$1/project/view/$2</to>
   </outbound-rule>
   <outbound-rule>
@@ -182,6 +203,14 @@
   <outbound-rule>
     <from>^(/.+)?/account/password_reset.seam\?key=(.+)$</from>
     <to>$1/account/password_reset/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/changepassword.seam(.+)?$</from>
+    <to>$1/account/changepassword$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/editprofile.seam(.+)?$</from>
+    <to>$1/editprofile$2</to>
   </outbound-rule>
 
   <outbound-rule>

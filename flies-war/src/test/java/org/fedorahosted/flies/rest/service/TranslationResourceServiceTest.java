@@ -22,15 +22,16 @@ import org.fedorahosted.flies.dao.TextFlowTargetDAO;
 import org.fedorahosted.flies.rest.LanguageQualifier;
 import org.fedorahosted.flies.rest.StringSet;
 import org.fedorahosted.flies.rest.client.ITranslationResources;
+import org.fedorahosted.flies.rest.dto.Person;
+import org.fedorahosted.flies.rest.dto.ResourceMeta;
+import org.fedorahosted.flies.rest.dto.ResourcesList;
+import org.fedorahosted.flies.rest.dto.SourceResource;
+import org.fedorahosted.flies.rest.dto.SourceTextFlow;
+import org.fedorahosted.flies.rest.dto.TargetResource;
+import org.fedorahosted.flies.rest.dto.TextFlowTargetWithId;
+import org.fedorahosted.flies.rest.dto.TranslationResource;
+import org.fedorahosted.flies.rest.dto.extensions.PoHeader;
 import org.fedorahosted.flies.rest.dto.po.HeaderEntry;
-import org.fedorahosted.flies.rest.dto.v1.Person;
-import org.fedorahosted.flies.rest.dto.v1.ResourcesList;
-import org.fedorahosted.flies.rest.dto.v1.SourceResource;
-import org.fedorahosted.flies.rest.dto.v1.SourceTextFlow;
-import org.fedorahosted.flies.rest.dto.v1.TargetResource;
-import org.fedorahosted.flies.rest.dto.v1.TextFlowTargetWithId;
-import org.fedorahosted.flies.rest.dto.v1.TranslationResource;
-import org.fedorahosted.flies.rest.dto.v1.ext.PoHeader;
 import org.jboss.resteasy.client.ClientResponse;
 import org.testng.annotations.Test;
 
@@ -224,8 +225,9 @@ public class TranslationResourceServiceTest extends FliesRestTest {
 		ITranslationResources client = 
 			getClientRequestFactory()
 			.createProxy(ITranslationResources.class,createBaseURI(RESOURCE_PATH));
-		ClientResponse<ResourcesList> resources = client.get();
+		ClientResponse<List<ResourceMeta>> resources = client.get();
 		assertThat(resources.getResponseStatus(), is(Status.OK));
+		
 		assertThat(resources.getEntity().size(), is(n));
 	}
 
