@@ -5,18 +5,18 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 
 import org.fedorahosted.flies.common.Namespaces;
 
 @XmlType(name="linkType", namespace=Namespaces.FLIES)
-@XmlRootElement(name="link", namespace=Namespaces.FLIES)
 public class Link {
 
 	private URI href;
 	private String rel;
 	private String type;
 	
-	private Link() {
+	protected Link() {
 	}
 	
 	public Link(URI href) {
@@ -59,12 +59,5 @@ public class Link {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	@Override
-	public String toString() {
-		return Utility.toXML(this);
-	}
-	
-	
 	
 }

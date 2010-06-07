@@ -12,8 +12,6 @@
   
     <ui:define name="center_content">
       <h1>Edit Profile</h1>
-      <h:outputText value="Sign in first." rendered="#{not identity.loggedIn}"/>
-      <s:fragment rendered="#{identity.loggedIn}">
         <h:form>
           <s:token/>
           <rich:panel>
@@ -52,7 +50,6 @@
     
           </rich:panel>
         </h:form>
-      </s:fragment>
 
     </ui:define>
     

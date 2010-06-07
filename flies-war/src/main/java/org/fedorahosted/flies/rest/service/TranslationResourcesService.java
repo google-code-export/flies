@@ -34,6 +34,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.fedorahosted.flies.common.LocaleId;
+import org.fedorahosted.flies.common.Namespaces;
 import org.fedorahosted.flies.dao.DocumentDAO;
 import org.fedorahosted.flies.dao.PersonDAO;
 import org.fedorahosted.flies.dao.ProjectIterationDAO;
@@ -43,21 +44,20 @@ import org.fedorahosted.flies.model.HPerson;
 import org.fedorahosted.flies.model.HProjectIteration;
 import org.fedorahosted.flies.model.HTextFlow;
 import org.fedorahosted.flies.model.HTextFlowTarget;
-import org.fedorahosted.flies.model.validator.SlugValidator;
 import org.fedorahosted.flies.rest.LanguageQualifier;
 import org.fedorahosted.flies.rest.NoSuchEntityException;
 import org.fedorahosted.flies.rest.StringSet;
-import org.fedorahosted.flies.rest.dto.v1.MultiTargetTextFlow;
-import org.fedorahosted.flies.rest.dto.v1.ResourceMeta;
-import org.fedorahosted.flies.rest.dto.v1.ResourcesList;
-import org.fedorahosted.flies.rest.dto.v1.SourceResource;
-import org.fedorahosted.flies.rest.dto.v1.SourceTextFlow;
-import org.fedorahosted.flies.rest.dto.v1.TargetResource;
-import org.fedorahosted.flies.rest.dto.v1.TextFlowTarget;
-import org.fedorahosted.flies.rest.dto.v1.TextFlowTargetWithId;
-import org.fedorahosted.flies.rest.dto.v1.TranslationResource;
-import org.fedorahosted.flies.rest.dto.v1.ext.PoHeader;
-import org.fedorahosted.flies.rest.dto.v1.ext.PotEntryHeader;
+import org.fedorahosted.flies.rest.dto.MultiTargetTextFlow;
+import org.fedorahosted.flies.rest.dto.ResourceMeta;
+import org.fedorahosted.flies.rest.dto.SourceResource;
+import org.fedorahosted.flies.rest.dto.SourceTextFlow;
+import org.fedorahosted.flies.rest.dto.TargetResource;
+import org.fedorahosted.flies.rest.dto.TextFlowTarget;
+import org.fedorahosted.flies.rest.dto.TextFlowTargetWithId;
+import org.fedorahosted.flies.rest.dto.TranslationResource;
+import org.fedorahosted.flies.rest.dto.extensions.PoHeader;
+import org.fedorahosted.flies.rest.dto.extensions.PotEntryHeader;
+import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
 import org.jboss.seam.annotations.security.Restrict;
@@ -147,6 +147,7 @@ public class TranslationResourcesService {
 	 * @return Response.ok with ResourcesList or Response(404) if not found 
 	 */
 	@GET
+	@Wrapped(element = "resources", namespace = Namespaces.FLIES)
 	public Response doGet() {
 		
 		HProjectIteration hProjectIteration = retrieveIteration();
@@ -158,7 +159,7 @@ public class TranslationResourcesService {
 			return response.build();
 		}
 		
-		ResourcesList resources = new ResourcesList();
+		List<ResourceMeta> resources = new ArrayList<ResourceMeta>();
 		
 		for(HDocument doc : hProjectIteration.getDocuments().values() ) {
 			if(!doc.isObsolete()) {
