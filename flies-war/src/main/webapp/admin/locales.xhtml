@@ -1,0 +1,67 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="../layout/template.xhtml">
+
+    <ui:define name="center_content">
+      <rich:jQuery selector="#tab_admin" query="addClass('ui-tabs-selected')" />
+      <h1>Locales</h1>
+      <h:outputText value="No Locales exists"
+                    rendered="#{empty localeList.resultList}"/>
+      <h:form>
+        <s:token/>
+        <rich:dataTable id="localeList" var="locale"
+                  value="#{localeList.resultList}"
+               rendered="#{not empty localeList.resultList}">
+          <rich:column sortBy="#{locale.id}">
+              <f:facet name="header">Id</f:facet>
+              <s:link id="locale"
+                   value="#{locale.id}"
+             propagation="none"
+                   view="/admin/locale.xhtml">
+                  <f:param name="id"
+                          value="#{locale.id}"/>
+              </s:link>
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.baseName}">
+              <f:facet name="header">Java Locale Id</f:facet>
+              #{locale.locale.name}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.name}">
+              <f:facet name="header">Name</f:facet>
+              #{locale.locale.displayName}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.country}">
+              <f:facet name="header">Country Code</f:facet>
+              #{locale.locale.country}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.language}">
+              <f:facet name="header">Language Code</f:facet>
+              #{locale.locale.language}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.variant}">
+              <f:facet name="header">Variant</f:facet>
+              #{locale.locale.variant}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.script}">
+              <f:facet name="header">Script</f:facet>
+              #{locale.locale.script}
+          </rich:column>
+          <rich:column sortBy="#{locale.locale.nativeName}" dir="#{locale.locale.characterOrientation == 'right-to-left' ? 'rtl' : 'ltr'}">
+              <f:facet name="header">Native Name</f:facet>
+              #{locale.nativeName}
+          </rich:column>
+        </rich:dataTable>
+      </h:form>                    
+    </ui:define>
+    
+    <ui:define name="left_content">
+    	<s:link action="#{localeList.importJavaLocales}">Import Java Locales</s:link>
+	</ui:define>    
+</ui:composition>
