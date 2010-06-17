@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages xmlns="http://jboss.com/products/seam/pages" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://jboss.com/products/seam/pages http://jboss.com/products/seam/pages-2.1.xsd"
+  no-conversation-view-id="/home.xhtml" login-view-id="/account/login.xhtml">
+
+  <page view-id="*">
+    <navigation>
+      <rule if-outcome="home">
+        <redirect view-id="/home.xhtml" />
+      </rule>
+    </navigation>
+  </page>
+
+  <page view-id="/admin/*" login-required="true">
+    <restrict>#{s:hasRole('admin')}</restrict>
+  </page>
+  
+  <page view-id="/admin/server_configuration.xhtml">
+    <navigation from-action="#{serverConfigurationBean.update}">
+      <redirect view-id="/admin/home.xhtml"/>
+    </navigation>  
+  </page>
+  
+  
+  <page view-id="/search.xhtml" action="#{projectSearch.search}">
+    <param name="q" value="#{projectSearch.searchQuery}" />
+    <param name="page" value="#{projectSearch.currentPage}" />
+  </page>
+
+  <page view-id="/project/project.xhtml">
+    <param name="slug" value="#{projectHome.slug}" />
+    <action execute="#{projectHome.validateSuppliedId}" />
+  </page>
+
+  <page view-id="/project/create_project.xhtml">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <navigation from-action="#{projectHome.persist}">
+      <rule if="#{projectHome.managed}">
+        <redirect view-id="/project/project.xhtml">
+          <param name="slug" value="#{projectHome.instance.slug}" />
+        </redirect>
+      </rule>
+    </navigation>
+
+    <navigation from-action="#{projectHome.cancel}">
+      <redirect view-id="/project/home.xhtml" />
+    </navigation>
+  </page>
+
+  <page view-id="/project/edit.xhtml" login-required="true">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <param name="slug" value="#{projectHome.slug}" />
+
+    <navigation from-action="#{projectHome.update}">
+      <redirect view-id="/project/project.xhtml">
+        <param name="slug" value="#{projectHome.slug}" />
+      </redirect>
+    </navigation>
+
+    <navigation from-action="#{projectHome.cancel}">
+      <redirect view-id="/project/project.xhtml">
+        <param name="slug" value="#{projectHome.slug}" />
+      </redirect>
+    </navigation>
+
+  </page>
+
+  <page view-id="/project/add_iteration.xhtml">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <param name="projectSlug" value="#{projectIterationHome.projectSlug}" />
+    <action execute="#{projectIterationHome.validateProjectSlug}" />
+
+    <navigation from-action="#{projectIterationHome.persist}">
+      <rule if="#{projectIterationHome.managed}">
+        <redirect view-id="/project/project.xhtml">
+          <param name="slug" value="#{projectIterationHome.projectSlug}" />
+        </redirect>
+      </rule>
+    </navigation>
+
+    <navigation from-action="#{projectIterationHome.cancel}">
+      <redirect view-id="/project/project.xhtml">
+        <param name="slug" value="#{projectIterationHome.projectSlug}" />
+      </redirect>
+    </navigation>
+  </page>
+
+  <page view-id="/project/iteration_edit.xhtml">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <param name="slug" value="#{projectIterationHome.slug}" />
+    <param name="projectSlug" value="#{projectIterationHome.projectSlug}" />
+
+    <action execute="#{projectIterationHome.validateSuppliedId}" />
+
+    <navigation from-action="#{projectIterationHome.update}">
+      <redirect view-id="/project/project.xhtml">
+        <param name="slug" value="#{projectIterationHome.projectSlug}" />
+      </redirect>
+    </navigation>
+
+    <navigation from-action="#{projectIterationHome.cancel}">
+      <redirect view-id="/project/project.xhtml">
+        <param name="slug" value="#{projectIterationHome.projectSlug}" />
+      </redirect>
+    </navigation>
+  </page>
+
+  <page view-id="/community/community.xhtml">
+    <param name="slug" value="#{communityHome.id}" />
+    <action execute="#{communityHome.validateSuppliedId}" />
+  </page>
+
+  <page view-id="/community/create_community.xhtml">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <navigation from-action="#{communityHome.persist}">
+      <rule if="#{communityHome.managed}">
+        <redirect view-id="/community/community.xhtml">
+          <param name="slug" value="#{communityHome.instance.slug}" />
+        </redirect>
+      </rule>
+    </navigation>
+    <navigation from-action="#{communityHome.cancel}">
+      <redirect view-id="/community/home.xhtml" />
+    </navigation>
+  </page>
+
+  <page view-id="/community/edit.xhtml">
+    <restrict>#{s:hasRole('admin')}</restrict>
+    <param name="slug" value="#{communityHome.id}" />
+
+    <navigation from-action="#{communityHome.update}">
+      <redirect view-id="/community/community.xhtml"
+        include-page-params="true" />
+    </navigation>
+
+    <navigation from-action="#{communityHome.cancel}">
+      <redirect view-id="/community/community.xhtml"
+        include-page-params="true" />
+    </navigation>
+  </page>
+
+  <page view-id="/tribe/tribe.xhtml">
+    <param name="id" value="#{tribeHome.id}" />
+    <action execute="#{tribeHome.validateSuppliedId}" />
+  </page>
+
+  <page view-id="/account/activate.xhtml">
+    <param name="key" value="#{activate.activationKey}" />
+    <action execute="#{activate.validateActivationKey}" />
+    <action execute="#{activate.activate}" />
+  </page>
+
+  <page view-id="/account/password_reset.xhtml">
+    <restrict>#{not identityStore.nukesActive}</restrict>
+    <param name="key" value="#{passwordReset.activationKey}" />
+    <action execute="#{passwordReset.validateActivationKey}" />
+  </page>
+
+  <page view-id="/profile/edit.xhtml" login-required="true" />
+  <page view-id="/profile/view.xhtml" login-required="true" />
+  
+  <page view-id="/account/changepassword.xhtml" login-required="true">
+    <restrict>#{not identityStore.nukesActive}</restrict>
+  </page>
+
+  <exception class="org.fedorahosted.flies.security.KeyNotFoundException" log-level="debug">
+    <redirect view-id="/error.xhtml">
+      <message severity="error">Invalid Activation Key</message>
+    </redirect>
+  </exception>
+
+  <exception class="org.jboss.seam.framework.EntityNotFoundException" log-level="debug">
+    <redirect view-id="/error.xhtml">
+      <message severity="warn">Record not found</message>
+    </redirect>
+  </exception>
+
+  <exception class="javax.persistence.EntityNotFoundException" log-level="debug">
+    <redirect view-id="/error.xhtml">
+      <message severity="warn">Record not found</message>
+    </redirect>
+  </exception>
+
+  <exception class="javax.persistence.EntityExistsException">
+    <redirect view-id="/error.xhtml">
+      <message severity="warn">Duplicate record</message>
+    </redirect>
+  </exception>
+
+  <exception class="javax.persistence.OptimisticLockException">
+    <end-conversation />
+    <redirect view-id="/error.xhtml">
+      <message severity="warn">Another user changed the same data, please try again</message>
+    </redirect>
+  </exception>
+
+  <exception class="org.jboss.seam.security.AuthorizationException" log-level="debug">
+    <redirect view-id="/error.xhtml">
+      <message severity="error">You don't have permission to access this resource</message>
+    </redirect>
+  </exception>
+
+  <exception class="org.jboss.seam.security.NotLoggedInException" log-level="debug">
+    <redirect view-id="/account/login.xhtml">
+      <message severity="warn">#{messages['org.jboss.seam.NotLoggedIn']}</message>
+    </redirect>
+  </exception>
+
+  <exception class="javax.faces.application.ViewExpiredException" log-level="debug">
+    <redirect view-id="/error.xhtml">
+      <message severity="warn">Your session has timed out, please try again</message>
+    </redirect>
+  </exception>
+
+  <exception class="org.jboss.seam.ConcurrentRequestTimeoutException" log-level="trace">
+    <http-error error-code="503" />
+  </exception>
+
+  <exception>
+    <redirect view-id="/error.xhtml">
+      <message severity="error">Unexpected error, please try again</message>
+    </redirect>
+  </exception>
+
+</pages>
