@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:rich="http://richfaces.org/rich"       
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:a4j="http://richfaces.org/a4j">
+    
+
+  <ui:composition template="../WEB-INF/layout/template.xhtml">
+  
+    <ui:define name="center_content">
+      <h1>Edit Profile</h1>
+        <h:form>
+          <s:token allowMultiplePosts="true" />
+          <rich:panel>
+            <f:facet name="header">Account Details</f:facet>
+              
+            <s:decorate id="nameField" template="../WEB-INF/layout/edit.xhtml">
+              <ui:define name="label">Name</ui:define>
+              <h:inputText id="name" value="#{personHome.instance.name}" required="true">
+                <a4j:support event="onblur" reRender="nameField" ajaxSingle="true"/>
+              </h:inputText>
+              <h:graphicImage id="nameHelp" value="../img/msginfo.png" styleClass="input_help">
+                <rich:toolTip>
+                  Must be lowercase blah blah and so on...
+                </rich:toolTip>
+              </h:graphicImage>
+            </s:decorate>
+                
+            <s:decorate id="emailField" template="../WEB-INF/layout/edit.xhtml">
+              <ui:define name="label">Email</ui:define>
+              <h:inputText id="email" value="#{personHome.instance.email}" required="true">
+                  <a4j:support event="onblur" reRender="emailField" ajaxSingle="true"/>
+              </h:inputText>
+              <h:graphicImage id="usernameHelp" value="../img/msginfo.png" styleClass="input_help">
+                <rich:toolTip>
+                  Must be lowercase blah blah and so on...
+                </rich:toolTip>
+              </h:graphicImage>
+            </s:decorate>
+                      
+            <div style="clear:both"/>
+
+            <div class="actionButtons">
+              <h:commandButton value="Save" action="#{personHome.update}"/>
+              <s:button view="/profile/view.xhtml" value="Cancel" propagation="end"/>
+            </div>
+    
+          </rich:panel>
+        </h:form>
+
+    </ui:define>
+    
+  </ui:composition>
+</html>
