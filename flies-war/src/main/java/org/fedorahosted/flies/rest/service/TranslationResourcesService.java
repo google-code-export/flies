@@ -56,7 +56,7 @@ import org.fedorahosted.flies.rest.dto.resource.TranslationsResource;
 import org.jboss.resteasy.annotations.providers.jaxb.Wrapped;
 import org.jboss.seam.annotations.In;
 import org.jboss.seam.annotations.Name;
-import org.jboss.seam.annotations.security.Restrict;
+import org.jboss.seam.annotations.security.Admin;
 
 import com.google.common.collect.Sets;
 
@@ -170,7 +170,7 @@ public class TranslationResourcesService {
 	}
 	
 	@POST
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doPost(InputStream messageBody) {
 
 		HProjectIteration hProjectIteration = retrieveIteration();
@@ -249,7 +249,7 @@ public class TranslationResourcesService {
 
 	@PUT
 	@Path(RESOURCE_SLUG_TEMPLATE) // /r/{id}
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doResourcePut(
 			@PathParam("id") String id, 
 			InputStream messageBody) {
@@ -312,7 +312,7 @@ public class TranslationResourcesService {
 
 	@DELETE
 	@Path(RESOURCE_SLUG_TEMPLATE) // /r/{id}
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doResourceDelete(@PathParam("id") String id) {
 		HProjectIteration hProjectIteration = retrieveIteration();
 		
@@ -360,7 +360,7 @@ public class TranslationResourcesService {
 	
 	@PUT
 	@Path(RESOURCE_SLUG_TEMPLATE + "/meta") // /r/{id}/meta
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doResourceMetaPut(
 			@PathParam("id") String id, 
 			InputStream messageBody) {
@@ -442,7 +442,7 @@ public class TranslationResourcesService {
 	
 	@DELETE
 	@Path(RESOURCE_SLUG_TEMPLATE + "/translations/{locale}") // /r/{id}/translations/{locale}
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doTranslationsDelete(
 		@PathParam("id") String id,
 		@PathParam("locale") LocaleId locale) {
@@ -477,7 +477,7 @@ public class TranslationResourcesService {
 	
 	@PUT
 	@Path(RESOURCE_SLUG_TEMPLATE + "/translations/{locale}") // /r/{id}/translations/{locale}
-	@Restrict("#{s:hasRole('admin')}")
+	@Admin
 	public Response doTranslationsPut(
 		@PathParam("id") String id,
 		@PathParam("locale") LocaleId locale,

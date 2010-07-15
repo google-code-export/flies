@@ -187,6 +187,24 @@ public class HPerson extends AbstractFliesEntity implements Serializable {
 		return true;
 	}
 
+
+	@Override
+	public String toString() {
+		return super.toString()+"[name="+name+"]";
+	}
 	
+	
+	@Transient
+	public boolean isMaintainer(HProject proj)
+	{
+		// TODO consider implementing business key equality and using getMaintainerProjects().contains(proj)
+		for (HProject maintProj: getMaintainerProjects())
+		{
+			if (maintProj.getId().equals(proj.getId()))
+				return true;
+		}
+
+		return false;
+	}
 	
 }

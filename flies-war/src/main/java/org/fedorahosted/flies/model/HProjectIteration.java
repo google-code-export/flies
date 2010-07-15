@@ -1,6 +1,5 @@
 package org.fedorahosted.flies.model;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +15,10 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Where;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
+import org.jboss.seam.annotations.security.Restrict;
 
 @Entity
+@Restrict
 public class HProjectIteration extends AbstractSlugEntity {
 
 	private String name;
@@ -114,6 +115,12 @@ public class HProjectIteration extends AbstractSlugEntity {
 	
 	public void setDocuments(Map<String, HDocument> documents) {
 		this.documents = documents;
+	}
+	
+
+	@Override
+	public String toString() {
+		return super.toString()+"[name="+name+",project="+project+"]";
 	}
 	
 }
