@@ -1,0 +1,40 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    template="../WEB-INF/layout/template.xhtml">
+
+  <ui:define name="left_content">
+    <rich:panel rendered="#{identity.loggedIn}">
+      <f:facet name="header">#{messages['jsf.Actions']}</f:facet>
+      <s:link styleClass="action_link"
+      				rendered="#{s:hasPermission(projectHome.instance, 'insert')}" 
+      				value="#{messages['jsf.CreateProject']}" 
+                    view="/project/create_project.xhtml"
+                    propagation="none"/>
+    </rich:panel>
+  </ui:define>  
+  <ui:define name="center_content">
+    <rich:jQuery selector="#tab_projects" query="addClass('ui-tabs-selected')" />
+
+    <h:outputText value="#{messages['jsf.NoProjectExists']}"
+               rendered="#{empty latestProjects}"/>
+
+    <s:fragment rendered="#{not empty projects}">
+      <h1>#{messages['jsf.Projects']}</h1>
+      <rich:dataGrid columns="3" 
+                     value="#{latestProjects}" 
+                     var="project" 
+                     columnClasses="grid_col"
+                     styleClass="grid_style" 
+                     rendered="#{not empty projects}">
+        <ui:include src="../WEB-INF/layout/project_view_inline.xhtml" />
+      </rich:dataGrid>
+    </s:fragment>
+  </ui:define>
+
+</ui:composition>
