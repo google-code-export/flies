@@ -12,6 +12,8 @@ import javax.xml.bind.JAXBException;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Sean Flanigan <sflaniga@redhat.com>
@@ -19,15 +21,28 @@ import org.kohsuke.args4j.CmdLineParser;
  */
 public class ArgsUtil
 {
+   private static final Logger log = LoggerFactory.getLogger(ArgsUtil.class);
 
-   public static void processArgs(FliesCommand cmd, String[] args, GlobalOptions globals) throws IOException, JAXBException, MalformedURLException, URISyntaxException
+   public static void processArgs(FliesCommand cmd, String[] args, BasicOptions globals) throws IOException, JAXBException, MalformedURLException, URISyntaxException
    {
       CmdLineParser parser = new CmdLineParser(cmd);
 
-      if (globals.getHelp())
-         cmd.setHelp(true);
+      if (globals.getDebug())
+      {
+         cmd.setDebug(true);
+      }
       if (globals.getErrors())
+      {
          cmd.setErrors(true);
+      }
+      if (globals.getHelp())
+      {
+         cmd.setHelp(true);
+      }
+      if (globals.getQuiet())
+      {
+         cmd.setQuiet(true);
+      }
 
       try
       {
@@ -61,13 +76,62 @@ public class ArgsUtil
 
       try
       {
+         // while loading config, we use the global logging options
+         setLogLevels(globals);
          cmd.initConfig();
+      }
+      catch (Exception e)
+      {
+         handleException(e, globals.getErrors());
+      }
+      try
+      {
+         // just in case the logging options were changed by a config file:
+         setLogLevels(cmd);
+         if (cmd.getErrors())
+         {
+            log.info("Error stacktraces are turned on.");
+         }
          cmd.run();
       }
       catch (Exception e)
       {
          handleException(e, cmd.getErrors());
       }
+   }
+
+   private static void setLogLevels(BasicOptions opts)
+   {
+      if (opts.getDebug())
+      {
+         enableDebugLogging();
+      }
+      else if (opts.getQuiet())
+      {
+         enableQuietLogging();
+      }
+   }
+
+   /**
+    * Maven's --debug/-X flag sets the Maven LoggerManager to LEVEL_DEBUG. The
+    * slf4j framework doesn't provide any way of doing this, so we have to go to
+    * the underlying framework (assumed to be log4j).
+    */
+   private static void enableDebugLogging()
+   {
+      org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+      root.setLevel(org.apache.log4j.Level.DEBUG);
+   }
+
+   /**
+    * Maven's --quiet/-q flag sets the Maven LoggerManager to LEVEL_ERROR. The
+    * slf4j framework doesn't provide any way of doing this, so we have to go to
+    * the underlying framework (assumed to be log4j).
+    */
+   private static void enableQuietLogging()
+   {
+      org.apache.log4j.Logger root = org.apache.log4j.Logger.getRootLogger();
+      root.setLevel(org.apache.log4j.Level.ERROR);
    }
 
    private static void printHelp(FliesCommand cmd, PrintStream output) throws IOException
@@ -79,14 +143,14 @@ public class ArgsUtil
 
    public static void handleException(Exception e, boolean outputErrors)
    {
-      System.err.println("Execution failed: " + e.getMessage());
       if (outputErrors)
       {
-         e.printStackTrace();
+         log.error("Execution failed: ", e);
       }
       else
       {
-         System.err.println("Use -e/--errors for full stack trace (or when reporting bugs)");
+         log.error("Execution failed: " + e.getMessage());
+         log.error("Use -e/--errors for full stack trace (or when reporting bugs)");
       }
       System.exit(1);
    }

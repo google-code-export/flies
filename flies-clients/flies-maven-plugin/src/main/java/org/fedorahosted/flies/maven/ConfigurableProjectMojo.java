@@ -27,8 +27,8 @@ public abstract class ConfigurableProjectMojo<C extends ConfigurableProjectComma
    /**
     * Project configuration file for Flies client.
     * 
-    * @parameter expression="${flies.project.config}"
-    *            default-value="${basedir}/src/main/config/flies.xml"
+    * @parameter expression="${flies.projectConfig}"
+    *            default-value="${basedir}/flies.xml"
     */
    @SuppressWarnings("unused")
    private File projectConfig;
@@ -36,18 +36,18 @@ public abstract class ConfigurableProjectMojo<C extends ConfigurableProjectComma
    /**
     * Project slug (id) within Flies server.
     * 
-    * @parameter expression="${flies.project.slug}"
+    * @parameter expression="${flies.project}"
     */
    @SuppressWarnings("unused")
-   private File projectSlug;
+   private String project;
 
    /**
     * Project version slug (id) within Flies server.
     * 
-    * @parameter expression="${flies.version.slug}"
+    * @parameter expression="${flies.projectVersion}"
     */
    @SuppressWarnings("unused")
-   private File versionSlug;
+   private String projectVersion;
 
    public ConfigurableProjectMojo(C command)
    {
@@ -56,17 +56,17 @@ public abstract class ConfigurableProjectMojo<C extends ConfigurableProjectComma
 
    public void setProjectConfig(File projectConfig)
    {
-      getCommand().setProjectConfig(projectConfig);
+      getCommand().setProjectConfig(projectConfig.getPath());
    }
 
-   public void setProjectSlug(String projectSlug)
+   public void setProject(String projectSlug)
    {
-      getCommand().setProjectSlug(projectSlug);
+      getCommand().setProject(projectSlug);
    }
 
-   public void setVersionSlug(String versionSlug)
+   public void setProjectVersion(String versionSlug)
    {
-      getCommand().setVersionSlug(versionSlug);
+      getCommand().setProjectVersion(versionSlug);
    }
 
 }
