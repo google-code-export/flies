@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.fedorahosted.flies.client.commands.ArgsUtil;
 import org.fedorahosted.flies.client.commands.FliesCommand;
-import org.fedorahosted.flies.client.commands.GlobalOptions;
+import org.fedorahosted.flies.client.commands.BasicOptions;
 import org.fedorahosted.flies.client.commands.ListRemoteCommand;
 import org.fedorahosted.flies.client.commands.PutProjectCommand;
 import org.kohsuke.args4j.Argument;
@@ -16,10 +16,12 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
-public class FliesClient implements GlobalOptions
+public class FliesClient implements BasicOptions
 {
-   private boolean help;
+   private boolean debug;
    private boolean errors;
+   private boolean help;
+   private boolean quiet;
    private boolean version;
 
    @Argument(index = 1, multiValued = true)
@@ -130,7 +132,7 @@ public class FliesClient implements GlobalOptions
       }
    }
 
-   private GlobalOptions getGlobalOptions()
+   private BasicOptions getGlobalOptions()
    {
       return this;
    }
@@ -149,15 +151,39 @@ public class FliesClient implements GlobalOptions
    }
 
    @Override
+   public boolean getDebug()
+   {
+      return debug;
+   }
+
+   @Option(name = "--debug", aliases = { "-X" }, usage = "Enable debug logging")
+   public void setDebug(boolean debug)
+   {
+      this.debug = debug;
+   }
+
+   @Override
    public boolean getErrors()
    {
       return errors;
    }
 
-   @Option(name = "--errors", aliases = { "-e" }, usage = "Output full execution error messages")
+   @Option(name = "--errors", aliases = { "-e" }, usage = "Output full execution error messages (stacktraces)")
    public void setErrors(boolean exceptionTrace)
    {
       this.errors = exceptionTrace;
+   }
+
+   @Override
+   public boolean getQuiet()
+   {
+      return quiet;
+   }
+
+   @Option(name = "--quiet", aliases = { "-q" }, usage = "Quiet mode - error messages only")
+   public void setQuiet(boolean quiet)
+   {
+      this.quiet = quiet;
    }
 
    @Option(name = "--version", aliases = { "-v" }, usage = "Output version information and exit")
