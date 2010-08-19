@@ -4,37 +4,36 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fedorahosted.flies.client.commands.ArgsUtil;
-import org.fedorahosted.flies.client.commands.GlobalOptions;
+import org.fedorahosted.flies.client.commands.BasicOptions;
 import org.fedorahosted.flies.rest.client.ClientUtility;
 import org.fedorahosted.flies.rest.client.FliesClientRequestFactory;
 import org.fedorahosted.flies.rest.client.IProjectResource;
 import org.fedorahosted.flies.rest.dto.Project;
+import org.jboss.resteasy.client.ClientResponse;
 import org.kohsuke.args4j.Option;
 
-@Deprecated
+/**
+ * @deprecated See PutProjectCommand
+ */
 public class CreateProjectTask extends FliesTask
 {
 
    private String user;
    private String apiKey;
    private String fliesUrl;
-   private boolean debug;
-   private boolean help;
-   private boolean errors;
    private String proj;
    private String name;
    private String desc;
 
-   public static void main(String[] args) throws Exception
+   public static void main(String[] args)
    {
       CreateProjectTask task = new CreateProjectTask();
-      ArgsUtil.processArgs(task, args, GlobalOptions.EMPTY);
+      ArgsUtil.processArgs(task, args, BasicOptions.EMPTY);
    }
 
    @Override
@@ -54,7 +53,7 @@ public class CreateProjectTask extends FliesTask
       JAXBContext jc = JAXBContext.newInstance(Project.class);
       Marshaller m = jc.createMarshaller();
       // debug
-      if (debug)
+      if (getDebug())
          m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       Project project = new Project();
@@ -62,7 +61,7 @@ public class CreateProjectTask extends FliesTask
       project.setName(name);
       project.setDescription(desc);
 
-      if (debug)
+      if (getDebug())
       {
          m.marshal(project, System.out);
       }
@@ -74,7 +73,7 @@ public class CreateProjectTask extends FliesTask
       FliesClientRequestFactory factory = new FliesClientRequestFactory(base, user, apiKey);
       IProjectResource projResource = factory.getProject(proj);
       URI uri = factory.getProjectURI(proj);
-      Response response = projResource.put(project);
+      ClientResponse response = projResource.put(project);
       ClientUtility.checkResult(response, uri);
    }
 
@@ -113,36 +112,5 @@ public class CreateProjectTask extends FliesTask
    {
       this.desc = desc;
    }
-
-   @Option(name = "--debug", aliases = { "-x" }, usage = "Enable debug mode")
-   public void setDebug(boolean debug)
-   {
-      this.debug = debug;
-   }
-
-   @Override
-   public boolean getHelp()
-   {
-      return this.help;
-   }
-
-   @Option(name = "--help", aliases = { "-h", "-help" }, usage = "Display this help and exit")
-   public void setHelp(boolean help)
-   {
-      this.help = help;
-   }
-
-   @Override
-   public boolean getErrors()
-   {
-      return this.errors;
-   }
-
-   @Option(name = "--errors", aliases = { "-e" }, usage = "Output full execution error messages")
-   public void setErrors(boolean errors)
-   {
-      this.errors = errors;
-   }
-
 
 }

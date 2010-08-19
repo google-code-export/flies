@@ -7,19 +7,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fedorahosted.flies.client.commands.ArgsUtil;
-import org.fedorahosted.flies.client.commands.GlobalOptions;
+import org.fedorahosted.flies.client.commands.BasicOptions;
 import org.fedorahosted.flies.rest.client.ClientUtility;
 import org.fedorahosted.flies.rest.client.FliesClientRequestFactory;
 import org.fedorahosted.flies.rest.client.IAccountResource;
 import org.fedorahosted.flies.rest.dto.Account;
+import org.jboss.resteasy.client.ClientResponse;
 import org.kohsuke.args4j.Option;
 
+/**
+ * @deprecated See PutUserCommand
+ */
 public class PutUserTask extends FliesTask
 {
 
@@ -28,12 +31,6 @@ public class PutUserTask extends FliesTask
    private String apiKey;
 
    private String fliesURL;
-
-   private boolean debug;
-
-   private boolean help;
-
-   private boolean errors;
 
    private String name;
 
@@ -51,10 +48,10 @@ public class PutUserTask extends FliesTask
 
    private boolean disabled;
 
-   public static void main(String[] args) throws Exception
+   public static void main(String[] args)
    {
       PutUserTask task = new PutUserTask();
-      ArgsUtil.processArgs(task, args, GlobalOptions.EMPTY);
+      ArgsUtil.processArgs(task, args, BasicOptions.EMPTY);
    }
 
    @Override
@@ -74,7 +71,7 @@ public class PutUserTask extends FliesTask
       JAXBContext jc = JAXBContext.newInstance(Account.class);
       Marshaller m = jc.createMarshaller();
       // debug
-      if (debug)
+      if (getDebug())
          m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       Account account = new Account();
@@ -87,7 +84,7 @@ public class PutUserTask extends FliesTask
       account.setRoles(roles);
       account.setTribes(langs);
 
-      if (debug)
+      if (getDebug())
       {
          m.marshal(account, System.out);
       }
@@ -99,7 +96,7 @@ public class PutUserTask extends FliesTask
       FliesClientRequestFactory factory = new FliesClientRequestFactory(base, user, apiKey);
       IAccountResource iterResource = factory.getAccount(username);
       URI uri = factory.getAccountURI(username);
-      Response response = iterResource.put(account);
+      ClientResponse response = iterResource.put(account);
       ClientUtility.checkResult(response, uri);
    }
 
@@ -175,36 +172,5 @@ public class PutUserTask extends FliesTask
    {
       this.disabled = disabled;
    }
-
-   @Option(name = "--debug", aliases = { "-x" }, usage = "Enable debug mode")
-   public void setDebug(boolean debug)
-   {
-      this.debug = debug;
-   }
-
-   @Override
-   public boolean getHelp()
-   {
-      return this.help;
-   }
-
-   @Option(name = "--help", aliases = { "-h", "-help" }, usage = "Display this help and exit")
-   public void setHelp(boolean help)
-   {
-      this.help = help;
-   }
-
-   @Override
-   public boolean getErrors()
-   {
-      return this.errors;
-   }
-
-   @Option(name = "--errors", aliases = { "-e" }, usage = "Output full execution error messages")
-   public void setErrors(boolean errors)
-   {
-      this.errors = errors;
-   }
-
 
 }

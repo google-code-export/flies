@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.Response;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.fedorahosted.flies.rest.client.ClientUtility;
 import org.fedorahosted.flies.rest.client.FliesClientRequestFactory;
 import org.fedorahosted.flies.rest.client.IProjectResource;
 import org.fedorahosted.flies.rest.dto.Project;
+import org.jboss.resteasy.client.ClientResponse;
 import org.kohsuke.args4j.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Sean Flanigan <sflaniga@redhat.com>
@@ -21,9 +21,11 @@ import org.kohsuke.args4j.Option;
  */
 public class PutProjectCommand extends ConfigurableCommand
 {
-   private String proj;
-   private String name;
-   private String desc;
+   private static final Logger log = LoggerFactory.getLogger(PutProjectCommand.class);
+
+   private String projectSlug;
+   private String projectName;
+   private String projectDesc;
 
    public PutProjectCommand() throws JAXBException
    {
@@ -42,51 +44,40 @@ public class PutProjectCommand extends ConfigurableCommand
       return "Creates or updates a Flies project.";
    }
 
-   @Option(name = "--proj", metaVar = "PROJ", usage = "Flies project ID", required = true)
-   public void setProj(String id)
+   @Option(name = "--project-slug", metaVar = "PROJ", usage = "Flies project slug/ID", required = true)
+   public void setProjectSlug(String id)
    {
-      this.proj = id;
+      this.projectSlug = id;
    }
 
-   @Option(name = "--name", metaVar = "NAME", required = true, usage = "Flies project name")
-   public void setName(String name)
+   @Option(name = "--project-name", metaVar = "NAME", required = true, usage = "Flies project name")
+   public void setProjectName(String name)
    {
-      this.name = name;
+      this.projectName = name;
    }
 
-   @Option(name = "--desc", metaVar = "DESC", required = true, usage = "Flies project description")
-   public void setDesc(String desc)
+   @Option(name = "--project-desc", metaVar = "DESC", required = true, usage = "Flies project description")
+   public void setProjectDesc(String desc)
    {
-      this.desc = desc;
+      this.projectDesc = desc;
    }
 
    @Override
    public void run() throws JAXBException, URISyntaxException, IOException
    {
-      JAXBContext jc = JAXBContext.newInstance(Project.class);
-      Marshaller m = jc.createMarshaller();
-      // debug
-      if (getDebug())
-         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
       Project project = new Project();
-      project.setId(proj);
-      project.setName(name);
-      project.setDescription(desc);
+      project.setId(projectSlug);
+      project.setName(projectName);
+      project.setDescription(projectDesc);
 
-      if (getDebug())
-      {
-         m.marshal(project, System.out);
-      }
+      log.debug("{}", project);
 
-      // if (fliesUrl == null)
-      // return;
       URI base = getUrl().toURI();
       // send project to rest api
       FliesClientRequestFactory factory = new FliesClientRequestFactory(base, getUsername(), getKey());
-      IProjectResource projResource = factory.getProject(proj);
-      URI uri = factory.getProjectURI(proj);
-      Response response = projResource.put(project);
+      IProjectResource projResource = factory.getProject(projectSlug);
+      URI uri = factory.getProjectURI(projectSlug);
+      ClientResponse<?> response = projResource.put(project);
       ClientUtility.checkResult(response, uri);
    }
 }
