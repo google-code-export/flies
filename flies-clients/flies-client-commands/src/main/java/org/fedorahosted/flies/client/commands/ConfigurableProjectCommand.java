@@ -42,32 +42,37 @@ public abstract class ConfigurableProjectCommand extends ConfigurableCommand
 {
 
    private static final Logger log = LoggerFactory.getLogger(ConfigurableProjectCommand.class);
-
-   // private static final Logger log =
-   // Logger.getLogger(ConfigurableProjectCommand.class);
-
-   private JAXBContext jc = JAXBContext.newInstance(FliesConfig.class);
-
-   private Unmarshaller unmarshaller = jc.createUnmarshaller();
+   private final JAXBContext jc;
+   private final Unmarshaller unmarshaller;
 
    /**
     * Project configuration file for Flies client.
     */
-   // When used as a CLI command the default (here) is relative to CWD.
-   // ConfigurableProjectMojo specifies another default, which is relative to
-   // project's basedir.
-   protected File projectConfig = new File("src/main/config/flies.xml");
+   // When used as a CLI command, the default path (specified here) is relative
+   // to CWD. ConfigurableProjectMojo specifies another default, which is
+   // relative to project's basedir.
+   protected String projectConfig = "flies.xml";
 
-   private String projectSlug;
-   private String versionSlug;
+   private String project;
+   private String projectVersion;
 
-   public ConfigurableProjectCommand() throws JAXBException
+   public ConfigurableProjectCommand()
    {
+      try
+      {
+         jc = JAXBContext.newInstance(FliesConfig.class);
+         unmarshaller = jc.createUnmarshaller();
+      }
+      catch (JAXBException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
     * Loads the config files (controlled by the properties userConfig and
-    * projectConfig) to supply any values which haven't already been set.
+    * projectConfig) to supply any values which haven't already been set via
+    * parameters.
     * 
     * @throws Exception
     */
@@ -76,9 +81,18 @@ public abstract class ConfigurableProjectCommand extends ConfigurableCommand
    {
       if (projectConfig != null)
       {
-         if (projectConfig.exists())
+         File projectConfigFile = null;
+         String userDir = System.getProperty("user.dir");
+         File projectDir = new File(userDir);
+         while (projectDir != null && !(projectConfigFile = new File(projectDir, projectConfig)).exists())
          {
-            FliesConfig fliesConfig = (FliesConfig) unmarshaller.unmarshal(projectConfig);
+            projectDir = projectDir.getParentFile();
+         }
+
+         if (projectConfigFile.exists())
+         {
+            log.info("Loading flies project config from {}", projectConfigFile);
+            FliesConfig fliesConfig = (FliesConfig) unmarshaller.unmarshal(projectConfigFile);
             // local project config is supposed to override user's flies.ini, so
             // we
             // apply it first
@@ -86,63 +100,60 @@ public abstract class ConfigurableProjectCommand extends ConfigurableCommand
          }
          else
          {
-            // System.err.printf("Flies project config file '%s' not found; ignoring.\n",
-            // projectConfig);
-            log.warn("Flies project config file '{}' not found; ignoring.", projectConfig);
-            // log.warn("Flies project config file '" + projectConfig +
-            // "' not found; ignoring.");
+            log.warn("Flies project config file '{}' not found in '{}' or parent directories; ignoring.", projectConfig, userDir);
          }
       }
       super.initConfig();
    }
 
    /**
-    * Applies values from the project configuration
+    * Applies values from the project configuration unless they have been set
+    * directly via parameters.
     * 
     * @param config
     */
    private void applyProjectConfig(FliesConfig config)
    {
-      if (projectSlug == null)
+      if (project == null)
       {
-         projectSlug = config.getProjectSlug();
+         project = config.getProject();
       }
       if (getUrl() == null)
       {
          setUrl(config.getUrl());
       }
-      if (versionSlug == null)
+      if (projectVersion == null)
       {
-         versionSlug = config.getVersionSlug();
+         projectVersion = config.getProjectVersion();
       }
    }
 
-   public String getProjectSlug()
+   public String getProject()
    {
-      return projectSlug;
+      return project;
    }
 
-   @Option(name = "--proj", metaVar = "PROJ", usage = "Flies project ID", required = true)
-   public void setProjectSlug(String projectSlug)
+   @Option(name = "--project", metaVar = "PROJ", usage = "Flies project ID/slug.  This value is required unless specified in flies.xml.")
+   public void setProject(String projectSlug)
    {
-      this.projectSlug = projectSlug;
+      this.project = projectSlug;
    }
 
-   @Option(name = "--project-config", metaVar = "FILE", usage = "Flies project configuration, eg src/main/config/flies.xml", required = false)
-   public void setProjectConfig(File projectConfig)
+   @Option(name = "--project-config", metaVar = "FILENAME", usage = "Flies project configuration, eg flies.xml", required = false)
+   public void setProjectConfig(String projectConfig)
    {
       this.projectConfig = projectConfig;
    }
 
-   public String getVersionSlug()
+   public String getProjectVersion()
    {
-      return versionSlug;
+      return projectVersion;
    }
 
-   @Option(name = "--iter", metaVar = "ITER", usage = "Flies project iteration ID", required = true)
-   public void setVersionSlug(String versionSlug)
+   @Option(name = "--project-version", metaVar = "VER", usage = "Flies project version ID  This value is required unless specified in flies.xml.")
+   public void setProjectVersion(String versionSlug)
    {
-      this.versionSlug = versionSlug;
+      this.projectVersion = versionSlug;
    }
 
 }

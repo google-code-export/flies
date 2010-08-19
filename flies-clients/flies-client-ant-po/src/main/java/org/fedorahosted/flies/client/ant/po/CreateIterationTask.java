@@ -4,36 +4,36 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.fedorahosted.flies.client.commands.ArgsUtil;
-import org.fedorahosted.flies.client.commands.GlobalOptions;
+import org.fedorahosted.flies.client.commands.BasicOptions;
 import org.fedorahosted.flies.rest.client.ClientUtility;
 import org.fedorahosted.flies.rest.client.FliesClientRequestFactory;
 import org.fedorahosted.flies.rest.client.IProjectIterationResource;
 import org.fedorahosted.flies.rest.dto.ProjectIteration;
+import org.jboss.resteasy.client.ClientResponse;
 import org.kohsuke.args4j.Option;
 
+/**
+ * @deprecated See PutVersionCommand
+ */
 public class CreateIterationTask extends FliesTask
 {
    private String user;
    private String apiKey;
    private String fliesURL;
-   private boolean debug;
-   private boolean help;
-   private boolean errors;
    private String proj;
    private String iter;
    private String name;
    private String desc;
 
-   public static void main(String[] args) throws Exception
+   public static void main(String[] args)
    {
       CreateIterationTask task = new CreateIterationTask();
-      ArgsUtil.processArgs(task, args, GlobalOptions.EMPTY);
+      ArgsUtil.processArgs(task, args, BasicOptions.EMPTY);
    }
 
    @Override
@@ -53,7 +53,7 @@ public class CreateIterationTask extends FliesTask
       JAXBContext jc = JAXBContext.newInstance(ProjectIteration.class);
       Marshaller m = jc.createMarshaller();
       // debug
-      if (debug)
+      if (getDebug())
          m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
       ProjectIteration iteration = new ProjectIteration();
@@ -61,7 +61,7 @@ public class CreateIterationTask extends FliesTask
       iteration.setName(name);
       iteration.setDescription(desc);
 
-      if (debug)
+      if (getDebug())
       {
          m.marshal(iteration, System.out);
       }
@@ -73,7 +73,7 @@ public class CreateIterationTask extends FliesTask
       FliesClientRequestFactory factory = new FliesClientRequestFactory(base, user, apiKey);
       IProjectIterationResource iterResource = factory.getProjectIteration(proj, iter);
       URI uri = factory.getProjectIterationURI(proj, iter);
-      Response response = iterResource.put(iteration);
+      ClientResponse response = iterResource.put(iteration);
       ClientUtility.checkResult(response, uri);
    }
 
@@ -117,36 +117,6 @@ public class CreateIterationTask extends FliesTask
    public void setDesc(String desc)
    {
       this.desc = desc;
-   }
-
-   @Option(name = "--debug", aliases = { "-x" }, usage = "Enable debug mode")
-   public void setDebug(boolean debug)
-   {
-      this.debug = debug;
-   }
-
-   @Override
-   public boolean getHelp()
-   {
-      return this.help;
-   }
-
-   @Option(name = "--help", aliases = { "-h", "-help" }, usage = "Display this help and exit")
-   public void setHelp(boolean help)
-   {
-      this.help = help;
-   }
-
-   @Override
-   public boolean getErrors()
-   {
-      return this.errors;
-   }
-
-   @Option(name = "--errors", aliases = { "-e" }, usage = "Output full execution error messages")
-   public void setErrors(boolean errors)
-   {
-      this.errors = errors;
    }
 
 

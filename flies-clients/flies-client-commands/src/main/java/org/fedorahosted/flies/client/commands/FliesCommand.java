@@ -1,7 +1,8 @@
 package org.fedorahosted.flies.client.commands;
 
 
-public interface FliesCommand
+
+public interface FliesCommand extends BasicOptions
 {
 
    /**
@@ -20,6 +21,10 @@ public interface FliesCommand
     */
    public String getCommandDescription();
 
+   public boolean getDebug();
+
+   public void setDebug(boolean debug);
+
    public boolean getErrors();
 
    public void setErrors(boolean errors);
@@ -27,6 +32,10 @@ public interface FliesCommand
    public boolean getHelp();
 
    public void setHelp(boolean help);
+
+   public boolean getQuiet();
+
+   public void setQuiet(boolean quiet);
 
    /**
     * This method is called after all parameters have been set, to allow the

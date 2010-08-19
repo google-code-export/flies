@@ -22,6 +22,12 @@
         <artifactId>flies-rest-client</artifactId>
         <version>${project.version}</version>
     </dependency>
+	<dependency>
+		<groupId>org.testng</groupId>
+		<artifactId>testng</artifactId>
+		<classifier>jdk15</classifier>
+		<scope>test</scope>
+	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -37,11 +43,13 @@
         <scope>test</scope>
     </dependency>
     <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
         <groupId>args4j</groupId>
         <artifactId>args4j</artifactId>
     </dependency>
   </dependencies>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>

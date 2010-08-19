@@ -13,50 +13,50 @@ public class PutProjectMojo extends ConfigurableMojo<PutProjectCommand>
 {
 
    /**
-    * Flies project ID
+    * Flies project slug/ID
     * 
-    * @parameter expression="${flies.proj}"
+    * @parameter expression="${flies.project.slug}"
     * @required
     */
    @SuppressWarnings("unused")
-   private String proj;
+   private String projectSlug;
 
    /**
     * Flies project name
     * 
-    * @parameter expression="${flies.proj.name}"
+    * @parameter expression="${flies.project.name}"
     * @required
     */
    @SuppressWarnings("unused")
-   private String name;
+   private String projectName;
 
    /**
     * Flies project description
     * 
-    * @parameter expression="${flies.proj.desc}"
+    * @parameter expression="${flies.project.desc}"
     * @required
     */
    @SuppressWarnings("unused")
-   private String desc;
+   private String projectDesc;
 
    public PutProjectMojo() throws Exception
    {
       super(new PutProjectCommand());
    }
 
-   public void setProj(String id)
+   public void setProjectSlug(String id)
    {
-      getCommand().setProj(id);
+      getCommand().setProjectSlug(id);
    }
 
-   public void setName(String name)
+   public void setProjectName(String name)
    {
-      getCommand().setName(name);
+      getCommand().setProjectName(name);
    }
 
-   public void setDesc(String desc)
+   public void setProjectDesc(String desc)
    {
-      getCommand().setDesc(desc);
+      getCommand().setProjectDesc(desc);
    }
 
 }

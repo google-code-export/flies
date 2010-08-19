@@ -15,14 +15,6 @@ public class RetrieveCommand extends ConfigurableProjectCommand
    }
 
    @Override
-   public void run()
-   {
-      // TODO remove this
-      System.out.println("retrieve");
-      // TODO needs DocSet support
-   }
-
-   @Override
    public String getCommandName()
    {
       return "retrieve";
@@ -31,7 +23,15 @@ public class RetrieveCommand extends ConfigurableProjectCommand
    @Override
    public String getCommandDescription()
    {
-      return "Retrieves translated text from a Flies project version.";
+      return "Fetches translated text from Flies.";
+   }
+
+   @Override
+   public void run()
+   {
+      // TODO remove this
+      System.out.println("retrieve");
+      // TODO needs DocSet support
    }
 
 }

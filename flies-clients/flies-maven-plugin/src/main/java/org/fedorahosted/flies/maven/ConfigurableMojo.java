@@ -35,14 +35,14 @@ public abstract class ConfigurableMojo<C extends ConfigurableCommand> extends Ab
    /**
     * Client configuration file for Flies.
     * 
-    * @parameter expression="${flies.client.config}"
+    * @parameter expression="${flies.userConfig}"
     *            default-value="${user.home}/.config/flies.ini"
     */
    /*
-    * NB the annotation 'default-value' overrides ConfigurableCommand (even
-    * though the values are virtually identical) because Mojos aren't meant to
-    * use System properties directly (since they may be sharing a VM and its
-    * System properties)
+    * NB the annotation 'default-value' overrides the default in
+    * ConfigurableCommand (even though the values are virtually identical)
+    * because Mojos aren't meant to use System properties directly (since they
+    * may be sharing a VM and its System properties)
     */
    @SuppressWarnings("unused")
    private File userConfig;
@@ -73,23 +73,6 @@ public abstract class ConfigurableMojo<C extends ConfigurableCommand> extends Ab
     */
    @SuppressWarnings("unused")
    private String key;
-
-   /**
-    * Whether to enable debug mode. Defaults to the value in flies.ini.
-    * 
-    * @parameter expression="${flies.debug}"
-    */
-   @SuppressWarnings("unused")
-   private boolean debug;
-
-   /**
-    * Whether to display full information about errors (ie exception stack
-    * traces). Defaults to the value in flies.ini.
-    * 
-    * @parameter expression="${flies.errors}"
-    */
-   @SuppressWarnings("unused")
-   private boolean errors;
 
    public ConfigurableMojo(C command)
    {
@@ -135,8 +118,7 @@ public abstract class ConfigurableMojo<C extends ConfigurableCommand> extends Ab
       }
       catch (Exception e)
       {
-         e.printStackTrace();
-         throw new MojoExecutionException("error loading Flies user config", e);
+         throw new MojoExecutionException("Flies mojo exception", e);
       }
       finally
       {
@@ -147,16 +129,6 @@ public abstract class ConfigurableMojo<C extends ConfigurableCommand> extends Ab
    public C getCommand()
    {
       return command;
-   }
-
-   public void setDebug(boolean debug)
-   {
-      command.setDebug(debug);
-   }
-
-   public void setErrors(boolean errors)
-   {
-      command.setErrors(errors);
    }
 
    public void setKey(String key)
