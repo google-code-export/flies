@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 public class TranslationResourceServiceTest extends FliesRestTest
 {
 
-   private final String RESOURCE_PATH = "/projects/p/sample-project/iterations/i/1.0/resources";
+   private final String RESOURCE_PATH = "/projects/p/sample-project/iterations/i/1.0/r/";
 
    @Override
    protected void prepareDBUnitOperations()
@@ -188,6 +188,7 @@ public class TranslationResourceServiceTest extends FliesRestTest
       assertThat(response.getResponseStatus(), is(Status.OK));
 
       getResponse = client.getTranslations("my.txt", LocaleId.DE);
+      // TODO this should return an empty set of targets, possibly with metadata
       assertThat(getResponse.getResponseStatus(), is(Status.NOT_FOUND));
 
    }
