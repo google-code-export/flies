@@ -18,8 +18,8 @@ import net.openl10n.flies.dao.ProjectIterationDAO;
 import net.openl10n.flies.model.HDocument;
 import net.openl10n.flies.model.HProjectIteration;
 import net.openl10n.flies.model.HTextFlow;
-import net.openl10n.flies.rest.client.FliesClientRequestFactory;
 import net.openl10n.flies.rest.client.IDocumentsResource;
+import net.openl10n.flies.rest.dto.VersionInfo;
 import net.openl10n.flies.rest.dto.deprecated.Document;
 import net.openl10n.flies.rest.dto.deprecated.Documents;
 import net.openl10n.flies.rest.dto.deprecated.SimpleComment;
@@ -65,8 +65,8 @@ public class DocumentsServiceSeamTest extends FliesDBUnitSeamTest
 
    public IDocumentsResource prepareRestEasyClientFramework(String projectSlug, String iter) throws Exception
    {
-      FliesClientRequestFactory clientRequestFactory = new FliesClientRequestFactory(new URI("http://example.com/"), USERNAME, AUTH_KEY, new SeamMockClientExecutor(this));
-      return clientRequestFactory.getDocuments(new URI("/restv1/projects/p/" + projectSlug + "/iterations/i/" + iter + "/documents"));
+      FliesTestClientRequestFactory clientRequestFactory = new FliesTestClientRequestFactory(new URI("http://example.com/"), USERNAME, AUTH_KEY, new SeamMockClientExecutor(this), new VersionInfo("SNAPSHOT", ""));
+      return clientRequestFactory.getDocuments(projectSlug, iter);
    }
 
    @Override

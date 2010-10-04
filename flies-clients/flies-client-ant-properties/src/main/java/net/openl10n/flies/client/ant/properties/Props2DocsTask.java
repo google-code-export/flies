@@ -15,6 +15,7 @@ import net.openl10n.flies.common.LocaleId;
 import net.openl10n.flies.rest.client.ClientUtility;
 import net.openl10n.flies.rest.client.FliesClientRequestFactory;
 import net.openl10n.flies.rest.client.IDocumentsResource;
+import net.openl10n.flies.rest.dto.VersionInfo;
 import net.openl10n.flies.rest.dto.deprecated.Document;
 import net.openl10n.flies.rest.dto.deprecated.Documents;
 
@@ -97,7 +98,7 @@ public class Props2DocsTask extends BaseTask
          else
          {
             // send project to rest api
-            FliesClientRequestFactory factory = new FliesClientRequestFactory(user, apiKey);
+            FliesClientRequestFactory factory = new FliesClientRequestFactory(user, apiKey, new VersionInfo("SNAPSHOT", "Unknow"));
             IDocumentsResource documentsResource = factory.getDocuments(dstURL.toURI());
             ClientResponse response = documentsResource.put(docs);
             ClientUtility.checkResult(response, dstURL.toURI());
