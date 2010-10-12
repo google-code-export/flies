@@ -12,6 +12,7 @@ import java.util.Map;
 import net.openl10n.flies.common.ContentState;
 import net.openl10n.flies.common.ContentType;
 import net.openl10n.flies.common.LocaleId;
+import net.openl10n.flies.common.util.ShortString;
 import net.openl10n.flies.rest.dto.extensions.comment.SimpleComment;
 import net.openl10n.flies.rest.dto.extensions.gettext.HeaderEntry;
 import net.openl10n.flies.rest.dto.extensions.gettext.PoHeader;
@@ -39,10 +40,6 @@ public class PoReader2
    public static final ImmutableSet<String> POT_HEADER_FIELDS = ImmutableSet.of(HeaderFields.KEY_ProjectIdVersion, HeaderFields.KEY_ReportMsgidBugsTo, HeaderFields.KEY_PotCreationDate, HeaderFields.KEY_MimeVersion, HeaderFields.KEY_ContentType, HeaderFields.KEY_ContentTransferEncoding);
 
    public static final ImmutableSet<String> PO_HEADER_FIELDS = ImmutableSet.of(HeaderFields.KEY_PoRevisionDate, HeaderFields.KEY_LastTranslator, HeaderFields.KEY_LanguageTeam, HeaderFields.KEY_Language, "Plural-Forms", "X-Generator");
-
-   // non-opaque ids are useful for testing, but can be too long for the
-   // database column
-   private static final boolean GENERATE_OPAQUE_IDS = true;
 
    public PoReader2()
    {
@@ -97,8 +94,7 @@ public class PoReader2
                // add the target content (msgstr)
                TextFlowTarget tfTarget = new TextFlowTarget();
                tfTarget.setResId(id);
-               // TODO set Source COntent
-               // tfTarget.setSourceContent(message.getMsgid());
+               tfTarget.setDescription(ShortString.shorten(message.getMsgid()));
 
                tfTarget.setContent(message.getMsgstr());
                tfTarget.setState(getContentState(message));
@@ -275,16 +271,9 @@ public class PoReader2
 
    static String createId(Message message)
    {
-      String sep;
-      if (GENERATE_OPAQUE_IDS)
-         sep = "\u0000";
-      else
-         sep = ":";
+      String sep = "\u0000";
       String hashBase = message.getMsgctxt() == null ? message.getMsgid() : message.getMsgctxt() + sep + message.getMsgid();
-      if (GENERATE_OPAQUE_IDS)
-         return generateHash(hashBase);
-      else
-         return hashBase;
+      return generateHash(hashBase);
    }
 
    public static String generateHash(String key)
