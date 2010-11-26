@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN" "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+
+<urlrewrite>
+
+  <!-- Disable the Red Hat crawler -->
+  <rule>
+    <condition name="remote-addr">66.187.233.202</condition>
+    <from>.*</from>
+    <to last="true" type="temporary-redirect">/robots.txt</to>
+  </rule>
+
+  <!-- Disable anything that comes out of Microsoft -->
+  <rule>
+    <condition name="remote-addr">65.55.210.81</condition>
+    <from>.*</from>
+    <to last="true" type="temporary-redirect">/robots.txt</to>
+  </rule>
+
+  <!-- Admin Rules -->
+
+  <rule>
+    <from casesensitive="true">^/admin/server_configuration</from>
+    <to last="true">/admin/server_configuration.seam</to>
+  </rule>
+
+  <!-- Community Rules -->
+
+  <rule>
+    <from casesensitive="true">^/community/create(.+)$</from>
+    <to last="true">/community/create_community.seam?$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/community/view/(.+)$</from>
+    <to last="true">/community/community.seam\?slug=$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/community/list(.+)?$</from>
+    <to last="true">/community/home.seam$1</to>
+  </rule>
+
+  <!-- Language rules -->
+
+  <rule>
+    <from casesensitive="true">^/language/view/(.+)$</from>
+    <to last="true">/language/language.seam\?id=$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/language/list(.+)?$</from>
+    <to last="true">/language/home.seam$1</to>
+  </rule>
+
+  <!-- Project Rules -->
+
+  <rule>
+    <from casesensitive="true">^/project/add_iteration/(.+)$</from>
+    <to last="true">/project/add_iteration.seam\?slug=$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/project/create(.+)$</from>
+    <to last="true">/project/create_project.seam?$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/project/view/(.+)$</from>
+    <to last="true">/project/project.seam\?slug=$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/project/list(.+)?$</from>
+    <to last="true">/project/home.seam$1</to>
+  </rule>
+
+
+  <!-- account / -->
+
+  <rule>
+    <from casesensitive="true">^/account/sign_in(.+)?$</from>
+    <to last="true">/account/login.seam$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/account/sign_out(.+)?$</from>
+    <to last="true">/account/logout.seam$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/account/register(.+)?$</from>
+    <to last="true">/account/register.seam$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/account/activate/(.+)$</from>
+    <to last="true">/account/activate.seam\?key=$1</to>
+  </rule>
+  <rule>
+    <from casesensitive="true">^/account/activate(.+)?$</from>
+    <to last="true">/account/activate.seam$1</to>
+  </rule>
+ 
+  <rule>
+    <from casesensitive="true">^/account/changepassword(.+)?$</from>
+    <to last="true">/account/changepassword.seam$1</to>
+  </rule>  
+
+  <rule>
+    <from casesensitive="true">^/profile/edit(.+)?$</from>
+    <to last="true">/profile/edit.seam$1</to>
+  </rule>  
+
+  <rule>
+    <from casesensitive="true">^/profile/view(.+)?$</from>
+    <to last="true">/profile/view.seam$1</to>
+  </rule>  
+
+  <rule>
+    <from casesensitive="true">^/account/password_reset_request(.+)?$</from>
+    <to last="true">/account/password_reset_request.seam$1</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/account/password_reset/(.+)$</from>
+    <to last="true">/account/password_reset.seam\?key=$1</to>
+  </rule>
+
+  <!-- ROOT / -->
+  <rule>
+    <from>^/$</from>
+    <to>/home.seam</to>
+  </rule>
+
+  <rule>
+    <from>^/admin/$</from>
+    <to>/admin/home.seam</to>
+  </rule>
+
+  <rule>
+    <from casesensitive="true">^/rest/$</from>
+    <to last="true">/rest/index.xrd</to>
+  </rule>  
+
+  <rule>
+    <from casesensitive="true">^/rest/(.+)$</from>
+    <to last="true">/seam/resource/restv1/$1</to>
+  </rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/admin/server_configuration.seam</from>
+    <to>$1/admin/server_configuration</to>
+  </outbound-rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/community/create_community.seam(.+)?$</from>
+    <to>$1/community/create/$2</to>
+  </outbound-rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/community/community.seam\?slug=(.+)$</from>
+    <to>$1/community/view/$2</to>
+  </outbound-rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/community/home.seam(.+)?$</from>
+    <to>$1/community/list$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/language/language.seam\?id=(.+)$</from>
+    <to>$1/language/view/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/language/home.seam(.+)?$</from>
+    <to>$1/language/list$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/project/add_iteration.seam\?slug=(.+)$</from>
+    <to>$1/project/add_iteration/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/project/create_project.seam(.+)?$</from>
+    <to>$1/project/create/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/project/project.seam\?slugaccount/=(.+)$</from>
+    <to>$1/project/view/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/project/home.seam(.+)?$</from>
+    <to>$1/project/list$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/login.seam(.+)?$</from>
+    <to>$1/account/sign_in$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/logout.seam(.+)?$</from>
+    <to>$1/account/sign_out$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/register.seam(.+)?$</from>
+    <to>$1/account/register$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/activate.seam\?key=(.+)$</from>
+    <to>$1/account/activate/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/activate.seam(.+)?$</from>
+    <to>$1/account/activate$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/password_reset_request.seam(.+)?$</from>
+    <to>$1/account/password_reset_request$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/password_reset.seam\?key=(.+)$</from>
+    <to>$1/account/password_reset/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/account/changepassword.seam(.+)?$</from>
+    <to>$1/account/changepassword$2</to>
+  </outbound-rule>
+  
+  <outbound-rule>
+    <from>^(/.+)?/profile/edit.seam(.+)?$</from>
+    <to>$1/profile/edit$2</to>
+  </outbound-rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/profile/view.seam(.+)?$</from>
+    <to>$1/profile/view$2</to>
+  </outbound-rule>
+
+  <outbound-rule>
+    <from>^(/.+)?/home.seam(.+)?$</from>
+    <to>$1/$2</to>
+  </outbound-rule>
+
+</urlrewrite>
+

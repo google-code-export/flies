@@ -1,0 +1,43 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="../WEB-INF/layout/template.xhtml">
+
+    <ui:define name="center_content">
+      <rich:jQuery selector="#tab_admin" query="addClass('ui-tabs-selected')" />
+        <h:form>
+          <s:token allowMultiplePosts="true" />
+          <rich:panel>
+            <f:facet name="header">#{messages['jsf.ServerConfiguration']}</f:facet>
+              
+            <s:decorate id="urlField" template="../WEB-INF/layout/edit.xhtml">
+              <ui:define name="label">#{messages['jsf.ServerUrl']}</ui:define>
+              <h:inputText id="url" value="#{serverConfigurationBean.serverUrl}">
+                <a4j:support event="onblur" reRender="urlField" ajaxSingle="false"/>
+              </h:inputText>
+              <h:graphicImage id="urlHelp" value="../img/msginfo.png" styleClass="input_help">
+                <rich:toolTip>
+                  #{messages['jsf.UrlToolTip']}
+                  <br/>
+                  <em><code>#{messages['jsf.UrlExample']}</code></em>
+                </rich:toolTip>
+              </h:graphicImage>
+            </s:decorate>
+                
+            <div style="clear:both"/>
+
+            <div class="actionButtons">
+              <h:commandButton value="#{messages['jsf.Save']}" action="#{serverConfigurationBean.update}"/>
+              <s:button view="/admin/home.xhtml" value="#{messages['jsf.Cancel']}" propagation="none"/>
+            </div>
+    
+          </rich:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
