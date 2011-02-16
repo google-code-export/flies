@@ -40,11 +40,13 @@ import net.openl10n.flies.webtrans.client.editor.filter.FilterEnabledEvent;
 import net.openl10n.flies.webtrans.client.editor.filter.FilterEnabledEventHandler;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionEvent;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionHandler;
+import net.openl10n.flies.webtrans.client.events.FindMessageHandler;
 import net.openl10n.flies.webtrans.client.events.NavTransUnitEvent;
 import net.openl10n.flies.webtrans.client.events.NavTransUnitEvent.NavigationType;
 import net.openl10n.flies.webtrans.client.events.NavTransUnitHandler;
 import net.openl10n.flies.webtrans.client.events.NotificationEvent;
 import net.openl10n.flies.webtrans.client.events.NotificationEvent.Severity;
+import net.openl10n.flies.webtrans.client.events.FindMessageEvent;
 import net.openl10n.flies.webtrans.client.events.TransMemoryCopyEvent;
 import net.openl10n.flies.webtrans.client.events.TransMemoryCopyHandler;
 import net.openl10n.flies.webtrans.client.events.TransUnitEditEvent;
@@ -61,8 +63,10 @@ import net.openl10n.flies.webtrans.shared.model.TransUnit;
 import net.openl10n.flies.webtrans.shared.model.TransUnitId;
 import net.openl10n.flies.webtrans.shared.rpc.EditingTranslationAction;
 import net.openl10n.flies.webtrans.shared.rpc.EditingTranslationResult;
-import net.openl10n.flies.webtrans.shared.rpc.GetTransUnits;
-import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitsResult;
+import net.openl10n.flies.webtrans.shared.rpc.GetTransUnit;
+import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitResult;
+import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitList;
+import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitListResult;
 import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitsNavigation;
 import net.openl10n.flies.webtrans.shared.rpc.GetTransUnitsNavigationResult;
 import net.openl10n.flies.webtrans.shared.rpc.UpdateTransUnit;
@@ -133,6 +137,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
       int getCurrentPage();
 
       int getPageSize();
+
+      void setFindMessage(String findMessage);
    }
 
    private DocumentId documentId;
@@ -146,6 +152,8 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 
    private int curRowIndex;
    private int curPage;
+
+   private String findMessage;
 
    private final TableEditorMessages messages;
 
@@ -223,6 +231,30 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             display.clearContentFilter();
          }
       }));
+      
+      
+      registerHandler(eventBus.addHandler(FindMessageEvent.getType(), new FindMessageHandler()
+      {
+
+         @Override
+         public void onFindMessage(FindMessageEvent event)
+         {
+            Log.info("Find Message Event: " + event.getMessage());
+            if (selectedTransUnit != null)
+            {
+               Log.info("cancelling selection");
+               display.getTargetCellEditor().clearSelection();
+            }
+            display.startProcessing();
+            findMessage = event.getMessage();
+            display.setFindMessage(findMessage);
+            display.getTableModel().clearCache();
+            display.getTableModel().setRowCount(TableModel.UNKNOWN_ROW_COUNT);
+            display.gotoPage(0, true);
+            display.stopProcessing();
+         }
+
+      }));
 
       registerHandler(eventBus.addHandler(TransUnitUpdatedEvent.getType(), new TransUnitUpdatedEventHandler()
       {
@@ -264,7 +296,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
                   {
                      final int row = display.getCurrentPage() * display.getPageSize() + rowOffset;
                      Log.info("row calculated as " + row);
-                     dispatcher.execute(new GetTransUnits(documentId, row, 1), new AsyncCallback<GetTransUnitsResult>()
+                     dispatcher.execute(new GetTransUnit(event.getTransUnitId().getId()), new AsyncCallback<GetTransUnitResult>()
                      {
                         @Override
                         public void onFailure(Throwable e)
@@ -273,12 +305,10 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
                         }
 
                         @Override
-                        public void onSuccess(GetTransUnitsResult result)
+                        public void onSuccess(GetTransUnitResult result)
                         {
-                           // FIXME should this be row, rowOffset, or something
-                           // else?
-                           Log.info("TransUnit Id" + result.getUnits().get(0).getId());
-                           display.getTableModel().setRowValueOverride(row, result.getUnits().get(0));
+                           Log.info("TransUnit Id" + result.getTransUnit().getId());
+                           display.getTableModel().setRowValueOverride(row, result.getTransUnit());
                         }
                      });
                   }
@@ -445,7 +475,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
 
          int numRows = request.getNumRows();
          int startRow = request.getStartRow();
-         Log.info("Table requesting" + numRows + " starting from " + startRow);
+         Log.info("Table requesting " + numRows + " starting from " + startRow);
 
          if (documentId == null)
          {
@@ -453,13 +483,14 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             return;
          }
 
-         dispatcher.execute(new GetTransUnits(documentId, startRow, numRows), new AsyncCallback<GetTransUnitsResult>()
+         dispatcher.execute(new GetTransUnitList(documentId, startRow, numRows, findMessage), new AsyncCallback<GetTransUnitListResult>()
          {
             @Override
-            public void onSuccess(GetTransUnitsResult result)
+            public void onSuccess(GetTransUnitListResult result)
             {
+               Log.info("find message:" + findMessage);
                SerializableResponse<TransUnit> response = new SerializableResponse<TransUnit>(result.getUnits());
-               Log.debug("Got " + result.getUnits().size() + " rows back");
+               Log.info("Got " + result.getUnits().size() + " rows back");
                callback.onRowsReady(request, response);
                Log.info("Total of " + result.getTotalCount() + " rows available");
                display.getTableModel().setRowCount(result.getTotalCount());
@@ -676,7 +707,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
    private void cacheNextFuzzy(final NavigationCacheCallback callBack)
    {
       isReqComplete = false;
-      dispatcher.execute(new GetTransUnitsNavigation(documentId, curRowIndex, 3, false), new AsyncCallback<GetTransUnitsNavigationResult>()
+      dispatcher.execute(new GetTransUnitsNavigation(selectedTransUnit.getId().getId(), 3, false, findMessage), new AsyncCallback<GetTransUnitsNavigationResult>()
       {
          @Override
          public void onSuccess(GetTransUnitsNavigationResult result)
@@ -684,7 +715,10 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             isReqComplete = true;
             if (!result.getUnits().isEmpty())
             {
-               transIdNextFuzzyCache = result.getUnits();
+               for (Long offset : result.getUnits())
+               {
+                  transIdNextFuzzyCache.add(offset + curRowIndex);
+               }
                callBack.nextFuzzy();
             }
          }
@@ -700,7 +734,7 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
    private void cachePrevFuzzy(final NavigationCacheCallback callBack)
    {
       isReqComplete = false;
-      dispatcher.execute(new GetTransUnitsNavigation(documentId, curRowIndex, 3, true), new AsyncCallback<GetTransUnitsNavigationResult>()
+      dispatcher.execute(new GetTransUnitsNavigation(selectedTransUnit.getId().getId(), 3, true, findMessage), new AsyncCallback<GetTransUnitsNavigationResult>()
       {
          @Override
          public void onSuccess(GetTransUnitsNavigationResult result)
@@ -708,7 +742,10 @@ public class TableEditorPresenter extends DocumentEditorPresenter<TableEditorPre
             isReqComplete = true;
             if (!result.getUnits().isEmpty())
             {
-               transIdPrevFuzzyCache = result.getUnits();
+               for (Long offset : result.getUnits())
+               {
+                  transIdPrevFuzzyCache.add(curRowIndex - offset);
+               }
                callBack.prevFuzzy();
             }
          }

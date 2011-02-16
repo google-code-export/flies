@@ -27,6 +27,7 @@ import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 
 import net.openl10n.flies.webtrans.client.AppPresenter.Display.MainView;
+import net.openl10n.flies.webtrans.client.editor.filter.TransFilterPresenter;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionEvent;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionHandler;
 import net.openl10n.flies.webtrans.client.events.NotificationEvent;
@@ -40,8 +41,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -59,6 +58,8 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
 
       void setTranslationView(Widget translationView);
 
+      void setFilterView(Widget filterView);
+
       void showInMainView(MainView editor);
 
       HasClickHandlers getSignOutLink();
@@ -74,10 +75,13 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
       void setWorkspaceNameLabel(String workspaceNameLabel);
 
       void setSelectedDocument(DocumentInfo document);
+
+      void setNotificationMessage(String var);
    }
 
    private final DocumentListPresenter documentListPresenter;
    private final TranslationPresenter translationPresenter;
+   private final TransFilterPresenter transFilterPresenter;
    private final WorkspaceContext workspaceContext;
    private final Identity identity;
 
@@ -86,13 +90,14 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
    private DocumentId selectedDocument;
 
    @Inject
-   public AppPresenter(Display display, EventBus eventBus, CachingDispatchAsync dispatcher, final TranslationPresenter translationPresenter, final DocumentListPresenter documentListPresenter, final Identity identity, final WorkspaceContext workspaceContext, final WebTransMessages messages)
+   public AppPresenter(Display display, EventBus eventBus, CachingDispatchAsync dispatcher, final TranslationPresenter translationPresenter, final DocumentListPresenter documentListPresenter, final TransFilterPresenter transFilterPresenter, final Identity identity, final WorkspaceContext workspaceContext, final WebTransMessages messages)
    {
       super(display, eventBus);
       this.identity = identity;
       this.messages = messages;
       this.documentListPresenter = documentListPresenter;
       this.translationPresenter = translationPresenter;
+      this.transFilterPresenter = transFilterPresenter;
       this.workspaceContext = workspaceContext;
    }
 
@@ -112,14 +117,7 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
          @Override
          public void onNotification(NotificationEvent event)
          {
-            PopupPanel popup = new PopupPanel(true);
-            popup.addStyleDependentName("Notification");
-            popup.addStyleName("Severity-" + event.getSeverity().name());
-            Widget center = documentListPresenter.getDisplay().asWidget();
-            popup.setWidth(center.getOffsetWidth() - 40 + "px");
-            popup.setWidget(new Label(event.getMessage()));
-            popup.setPopupPosition(center.getAbsoluteLeft() + 20, center.getAbsoluteTop() + 30);
-            popup.show();
+            display.setNotificationMessage(event.getMessage());
          }
       }));
 
@@ -127,9 +125,12 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
 
       documentListPresenter.bind();
       translationPresenter.bind();
+      transFilterPresenter.bind();
 
       display.setDocumentListView(documentListPresenter.getDisplay().asWidget());
       display.setTranslationView(translationPresenter.getDisplay().asWidget());
+      display.setFilterView(transFilterPresenter.getDisplay().asWidget());
+
       display.showInMainView(MainView.Documents);
 
 
