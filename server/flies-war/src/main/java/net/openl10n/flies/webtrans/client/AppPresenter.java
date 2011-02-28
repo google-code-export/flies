@@ -21,11 +21,8 @@
 package net.openl10n.flies.webtrans.client;
 
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
-
 import net.openl10n.flies.webtrans.client.AppPresenter.Display.MainView;
 import net.openl10n.flies.webtrans.client.editor.filter.TransFilterPresenter;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionEvent;
@@ -37,6 +34,7 @@ import net.openl10n.flies.webtrans.shared.auth.Identity;
 import net.openl10n.flies.webtrans.shared.model.DocumentId;
 import net.openl10n.flies.webtrans.shared.model.DocumentInfo;
 import net.openl10n.flies.webtrans.shared.model.WorkspaceContext;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -99,12 +97,6 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
       this.translationPresenter = translationPresenter;
       this.transFilterPresenter = transFilterPresenter;
       this.workspaceContext = workspaceContext;
-   }
-
-   @Override
-   public Place getPlace()
-   {
-      return null;
    }
 
    @Override
@@ -186,22 +178,12 @@ public class AppPresenter extends WidgetPresenter<AppPresenter.Display>
    }
 
    @Override
-   protected void onPlaceRequest(PlaceRequest request)
-   {
-   }
-
-   @Override
    protected void onUnbind()
    {
    }
 
    @Override
-   public void refreshDisplay()
-   {
-   }
-
-   @Override
-   public void revealDisplay()
+   public void onRevealDisplay()
    {
    }
 }

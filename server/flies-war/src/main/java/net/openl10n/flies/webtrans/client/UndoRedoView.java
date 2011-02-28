@@ -20,46 +20,51 @@
  */
 package net.openl10n.flies.webtrans.client;
 
+import net.openl10n.flies.webtrans.client.editor.table.NavigationMessages;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.StyleInjector;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class TranslationView extends Composite implements TranslationPresenter.Display
+public class UndoRedoView extends Composite implements UndoRedoPresenter.Display
 {
-   interface TranslationViewUiBinder extends UiBinder<LayoutPanel, TranslationView>
+   private static UndoRedoViewUiBinder uiBinder = GWT.create(UndoRedoViewUiBinder.class);
+
+   interface UndoRedoViewUiBinder extends UiBinder<Widget, UndoRedoView>
    {
    }
 
-   private static TranslationViewUiBinder uiBinder = GWT.create(TranslationViewUiBinder.class);
+   @UiField
+   Image undo, redo, undoDisabled, redoDisabled;
 
    @UiField(provided = true)
-   final Resources resources;
-
-   @UiField
-   LayoutPanel editorContainer, sidePanelContainer, sidePanelOuterContainer;
-
-   @UiField
-   SplitLayoutPanel mainSplitPanel;
-
-   final WebTransMessages messages;
+   Resources resources;
 
    @Inject
-   public TranslationView(Resources resources, WebTransMessages messages)
+   public UndoRedoView(final NavigationMessages messages, final Resources resources)
    {
       this.resources = resources;
-      this.messages = messages;
-
-      StyleInjector.inject(resources.style().getText(), true);
-
       initWidget(uiBinder.createAndBindUi(this));
-      mainSplitPanel.setWidgetMinSize(sidePanelOuterContainer, 200);
 
+      undo.setTitle(messages.actionToolTip(messages.undoLabel(), ""));
+      redo.setTitle(messages.actionToolTip(messages.redoLabel(), ""));
+   }
+
+   @Override
+   public HasClickHandlers getUndoButton()
+   {
+      return undo;
+   }
+
+   @Override
+   public HasClickHandlers getRedoButton()
+   {
+      return redo;
    }
 
    @Override
@@ -68,17 +73,28 @@ public class TranslationView extends Composite implements TranslationPresenter.D
       return this;
    }
 
-   @Override
-   public void setEditorView(Widget editorView)
+   public void disableUndo()
    {
-      this.editorContainer.add(editorView);
+      undo.setVisible(false);
+      undoDisabled.setVisible(true);
    }
 
-   @Override
-   public void setSidePanel(Widget sidePanel)
+   public void enableUndo()
    {
-      sidePanelContainer.clear();
-      sidePanelContainer.add(sidePanel);
+      undo.setVisible(true);
+      undoDisabled.setVisible(false);
+   }
+
+   public void disableRedo()
+   {
+      redo.setVisible(false);
+      redoDisabled.setVisible(true);
+   }
+
+   public void enableRedo()
+   {
+      redo.setVisible(true);
+      redoDisabled.setVisible(false);
    }
 
 }
