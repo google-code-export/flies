@@ -1,3 +1,23 @@
+/*
+ * Copyright 2010, Red Hat, Inc. and individual contributors as indicated by the
+ * @author tags. See the copyright.txt file in the distribution for a full
+ * listing of individual contributors.
+ * 
+ * This is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
+ * site: http://www.fsf.org.
+ */
 package net.openl10n.flies.webtrans.client;
 
 import java.util.ArrayList;
@@ -8,11 +28,8 @@ import java.util.Map;
 
 import net.customware.gwt.dispatch.client.DispatchAsync;
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
-
 import net.openl10n.flies.common.TransUnitCount;
 import net.openl10n.flies.common.TransUnitWords;
 import net.openl10n.flies.common.TranslationStats;
@@ -21,9 +38,9 @@ import net.openl10n.flies.webtrans.client.editor.filter.ContentFilter;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionEvent;
 import net.openl10n.flies.webtrans.client.events.DocumentSelectionHandler;
 import net.openl10n.flies.webtrans.client.events.NotificationEvent;
+import net.openl10n.flies.webtrans.client.events.NotificationEvent.Severity;
 import net.openl10n.flies.webtrans.client.events.TransUnitUpdatedEvent;
 import net.openl10n.flies.webtrans.client.events.TransUnitUpdatedEventHandler;
-import net.openl10n.flies.webtrans.client.events.NotificationEvent.Severity;
 import net.openl10n.flies.webtrans.client.rpc.CachingDispatchAsync;
 import net.openl10n.flies.webtrans.shared.model.DocumentId;
 import net.openl10n.flies.webtrans.shared.model.DocumentInfo;
@@ -48,8 +65,6 @@ import com.google.inject.Inject;
 
 public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter.Display> implements HasDocumentSelectionHandlers
 {
-
-   public static final Place PLACE = new Place("DocumentListList");
 
    public interface Display extends WidgetDisplay
    {
@@ -90,12 +105,6 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
       this.messages = messages;
       Log.info("DocumentListPresenter()");
       loadDocumentList();
-   }
-
-   @Override
-   public Place getPlace()
-   {
-      return PLACE;
    }
 
    @Override
@@ -180,10 +189,10 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
          {
             TransUnitCount projectCount = projectStats.getUnitCount();
             projectCount.decrement(event.getPreviousStatus());
-            projectCount.increment(event.getNewStatus());
+            projectCount.increment(event.getTransUnit().getStatus());
             TransUnitWords projectWords = projectStats.getWordCount();
             projectWords.decrement(event.getPreviousStatus(), event.getWordCount());
-            projectWords.increment(event.getNewStatus(), event.getWordCount());
+            projectWords.increment(event.getTransUnit().getStatus(), event.getWordCount());
             getDisplay().getTransUnitCountBar().setStats(projectStats);
          }
       }));
@@ -231,41 +240,13 @@ public class DocumentListPresenter extends WidgetPresenter<DocumentListPresenter
 
    private final BasicContentFilter basicContentFilter = new BasicContentFilter();
 
-   private long calPercentage(long untranslated, long fuzzy, long translated)
-   {
-
-      if (translated < 0 || untranslated < 0 || fuzzy < 0 || (translated + untranslated + fuzzy) == 0)
-      {
-         return 0;
-      }
-      else
-      {
-         long value = (long) ((translated * 100) / (fuzzy + untranslated + translated));
-         return value;
-      }
-
-   }
-
-   @Override
-   protected void onPlaceRequest(PlaceRequest request)
-   {
-      // TODO Auto-generated method stub
-
-   }
-
    @Override
    protected void onUnbind()
    {
    }
 
    @Override
-   public void refreshDisplay()
-   {
-      loadDocumentList();
-   }
-
-   @Override
-   public void revealDisplay()
+   public void onRevealDisplay()
    {
       // TODO Auto-generated method stub
 
