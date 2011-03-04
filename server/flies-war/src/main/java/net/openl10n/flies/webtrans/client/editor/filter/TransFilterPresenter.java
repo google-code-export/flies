@@ -21,12 +21,9 @@
 package net.openl10n.flies.webtrans.client.editor.filter;
 
 import net.customware.gwt.presenter.client.EventBus;
-import net.customware.gwt.presenter.client.place.Place;
-import net.customware.gwt.presenter.client.place.PlaceRequest;
 import net.customware.gwt.presenter.client.widget.WidgetDisplay;
 import net.customware.gwt.presenter.client.widget.WidgetPresenter;
 import net.openl10n.flies.webtrans.client.events.FindMessageEvent;
-
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -35,9 +32,6 @@ import com.google.inject.Inject;
 
 public class TransFilterPresenter extends WidgetPresenter<TransFilterPresenter.Display>
 {
-
-   public static final Place PLACE = new Place("TransUnitInfoPresenter");
-
    public interface Display extends WidgetDisplay
    {
       HasValue<String> getFilterText();
@@ -47,12 +41,6 @@ public class TransFilterPresenter extends WidgetPresenter<TransFilterPresenter.D
    public TransFilterPresenter(final Display display, final EventBus eventBus)
    {
       super(display, eventBus);
-   }
-
-   @Override
-   public Place getPlace()
-   {
-      return PLACE;
    }
 
    @Override
@@ -71,13 +59,6 @@ public class TransFilterPresenter extends WidgetPresenter<TransFilterPresenter.D
    }
 
    @Override
-   protected void onPlaceRequest(PlaceRequest request)
-   {
-      // TODO Auto-generated method stub
-
-   }
-
-   @Override
    protected void onUnbind()
    {
       // TODO Auto-generated method stub
@@ -85,14 +66,7 @@ public class TransFilterPresenter extends WidgetPresenter<TransFilterPresenter.D
    }
 
    @Override
-   public void refreshDisplay()
-   {
-      // TODO Auto-generated method stub
-
-   }
-
-   @Override
-   public void revealDisplay()
+   public void onRevealDisplay()
    {
       // TODO Auto-generated method stub
 
