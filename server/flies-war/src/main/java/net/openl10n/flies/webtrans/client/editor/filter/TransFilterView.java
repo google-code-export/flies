@@ -65,16 +65,6 @@ public class TransFilterView extends Composite implements TransFilterPresenter.D
    }
 
    @Override
-   public void startProcessing()
-   {
-   }
-
-   @Override
-   public void stopProcessing()
-   {
-   }
-
-   @Override
    public TextBox getFilterText()
    {
       return filterTextBox.getTextBox();

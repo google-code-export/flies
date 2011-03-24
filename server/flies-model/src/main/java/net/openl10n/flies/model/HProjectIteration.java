@@ -21,12 +21,16 @@
 package net.openl10n.flies.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
@@ -35,7 +39,6 @@ import net.openl10n.flies.rest.dto.ProjectIteration;
 
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Where;
-import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 import org.jboss.seam.annotations.security.Restrict;
 
@@ -49,9 +52,6 @@ import org.jboss.seam.annotations.security.Restrict;
 public class HProjectIteration extends AbstractSlugEntity
 {
 
-   private String name;
-   private String description;
-
    private HIterationProject project;
 
    private Boolean active = true;
@@ -62,26 +62,9 @@ public class HProjectIteration extends AbstractSlugEntity
    private Map<String, HDocument> documents;
    private Map<String, HDocument> allDocuments;
 
-   @Length(max = 20)
-   public String getName()
-   {
-      return name;
-   }
+   private Boolean overrideLocales;
+   private Set<HLocale> customizedLocales;
 
-   public void setName(String name)
-   {
-      this.name = name;
-   }
-
-   public String getDescription()
-   {
-      return description;
-   }
-
-   public void setDescription(String description)
-   {
-      this.description = description;
-   }
 
    public void setActive(Boolean active)
    {
@@ -92,6 +75,17 @@ public class HProjectIteration extends AbstractSlugEntity
    public Boolean getActive()
    {
       return active;
+   }
+
+   public void setOverrideLocales(Boolean var)
+   {
+      this.overrideLocales = var;
+   }
+
+   @NotNull
+   public Boolean getOverrideLocales()
+   {
+      return this.overrideLocales;
    }
 
    @ManyToOne
@@ -105,6 +99,20 @@ public class HProjectIteration extends AbstractSlugEntity
    public void setProject(HIterationProject project)
    {
       this.project = project;
+   }
+
+   @ManyToMany
+   @JoinTable(name = "HProjectIteration_Locale", joinColumns = @JoinColumn(name = "projectIterationId"), inverseJoinColumns = @JoinColumn(name = "localeId"))
+   public Set<HLocale> getCustomizedLocales()
+   {
+      if (customizedLocales == null)
+         customizedLocales = new HashSet<HLocale>();
+      return customizedLocales;
+   }
+
+   public void setCustomizedLocales(Set<HLocale> locales)
+   {
+      this.customizedLocales = locales;
    }
 
    @OneToMany(mappedBy = "parent")
@@ -163,7 +171,7 @@ public class HProjectIteration extends AbstractSlugEntity
    @Override
    public String toString()
    {
-      return super.toString() + "[name=" + name + ",project=" + project + "]";
+      return super.toString() + "project=" + project + "]";
    }
 
 }
