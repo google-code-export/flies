@@ -18,27 +18,59 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package net.openl10n.flies.webtrans.shared.rpc;
+package net.openl10n.flies.webtrans.client.action;
 
-public class GetTransUnit extends AbstractWorkspaceAction<GetTransUnitResult>
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
+import com.google.gwt.event.shared.GwtEvent;
+
+public class UndoManager
 {
-   private static final long serialVersionUID = 1L;
+   private static final int DEFAULT_LIMIT = 20;
+   private int limit = DEFAULT_LIMIT;
+   private Vector<UndoableAction<?>> undoList = new Vector<UndoableAction<?>>(limit);
+   private List<GwtEvent<?>> history = new ArrayList<GwtEvent<?>>();
 
-   private Long id;
-
-   @SuppressWarnings("unused")
-   private GetTransUnit()
+   public void addEdit(UndoableAction<?> edit)
    {
+      undoList.add(edit);
    }
 
-   public GetTransUnit(Long id)
+   public boolean canUndo()
    {
-      this.id = id;
+      return false;
+      // return !undoList.isEmpty();
    }
 
-   public Long getId()
+   public boolean canRedo()
    {
-      return this.id;
+      return false;
    }
+
+   public void undo()
+   {
+      UndoableAction<?> var = undoList.lastElement();
+      var.undo();
+      undoList.remove(var);
+   }
+
+   public void setLimit(int lim)
+   {
+      this.limit = lim;
+   }
+
+   public void addEvent(GwtEvent<?> event)
+   {
+      history.add(event);
+   }
+
+   public void clear()
+   {
+      undoList.clear();
+      history.clear();
+   }
+
 
 }

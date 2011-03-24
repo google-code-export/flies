@@ -58,6 +58,10 @@
     <to last="true">/project/home.seam$1</to>
   </rule>
 
+  <rule>
+    <from casesensitive="true">^/project/maintainer/(.+)?$</from>
+    <to last="true">/project/assign_maintainer.seam$1</to>
+  </rule>
 
   <!-- account / -->
 
@@ -119,6 +123,13 @@
     <from casesensitive="true">^/account/password_reset/(.+)$</from>
     <to last="true">/account/password_reset.seam\?key=$1</to>
   </rule>
+  
+  <!-- help / -->
+
+  <rule>
+    <from casesensitive="true">^/help/view(.+)?$</from>
+    <to last="true">/help/view.seam$1</to>
+  </rule>  
 
   <!-- ROOT / -->
   <rule>
@@ -161,6 +172,10 @@
   <outbound-rule>
     <from>^(/.+)?/project/create_project.seam(.+)?$</from>
     <to>$1/project/create/$2</to>
+  </outbound-rule>
+  <outbound-rule>
+    <from>^(/.+)?/project/assign_maintainer.seam(.+)?$</from>
+    <to>$1/project/maintainer/$2</to>
   </outbound-rule>
   <outbound-rule>
     <from>^(/.+)?/project/project.seam\?slug=(.+)$</from>
@@ -224,6 +239,11 @@
   <outbound-rule>
     <from>^(/.+)?/home.seam(.+)?$</from>
     <to>$1/$2</to>
+  </outbound-rule>
+  
+  <outbound-rule>
+    <from>^(/.+)?/help/view.seam(.+)?$</from>
+    <to>$1/help/view$2</to>
   </outbound-rule>
 
 </urlrewrite>

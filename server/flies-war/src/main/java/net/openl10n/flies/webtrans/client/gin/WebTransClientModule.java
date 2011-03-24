@@ -23,8 +23,6 @@ package net.openl10n.flies.webtrans.client.gin;
 import net.customware.gwt.presenter.client.DefaultEventBus;
 import net.customware.gwt.presenter.client.EventBus;
 import net.customware.gwt.presenter.client.gin.AbstractPresenterModule;
-import net.customware.gwt.presenter.client.place.PlaceManager;
-
 import net.openl10n.flies.webtrans.client.AppPresenter;
 import net.openl10n.flies.webtrans.client.AppView;
 import net.openl10n.flies.webtrans.client.Application;
@@ -46,6 +44,8 @@ import net.openl10n.flies.webtrans.client.TranslationEditorPresenter;
 import net.openl10n.flies.webtrans.client.TranslationEditorView;
 import net.openl10n.flies.webtrans.client.TranslationPresenter;
 import net.openl10n.flies.webtrans.client.TranslationView;
+import net.openl10n.flies.webtrans.client.UndoRedoPresenter;
+import net.openl10n.flies.webtrans.client.UndoRedoView;
 import net.openl10n.flies.webtrans.client.WebTransMessages;
 import net.openl10n.flies.webtrans.client.WorkspaceUsersPresenter;
 import net.openl10n.flies.webtrans.client.WorkspaceUsersView;
@@ -72,7 +72,6 @@ public class WebTransClientModule extends AbstractPresenterModule
    protected void configure()
    {
       bind(EventBus.class).to(DefaultEventBus.class).in(Singleton.class);
-      bind(PlaceManager.class).in(Singleton.class);
       bind(EventProcessor.class).in(Singleton.class);
       bind(Resources.class).in(Singleton.class);
       bind(WebTransMessages.class).in(Singleton.class);
@@ -89,6 +88,7 @@ public class WebTransClientModule extends AbstractPresenterModule
       bindPresenter(SidePanelPresenter.class, SidePanelPresenter.Display.class, SidePanel.class);
       bindPresenter(TranslationEditorPresenter.class, TranslationEditorPresenter.Display.class, TranslationEditorView.class);
       bindPresenter(TransUnitDetailsPresenter.class, TransUnitDetailsPresenter.Display.class, TransUnitDetailsView.class);
+      bindPresenter(UndoRedoPresenter.class, UndoRedoPresenter.Display.class, UndoRedoView.class);
 
       bind(HasPageNavigation.class).to(TableEditorView.class).in(Singleton.class);
 

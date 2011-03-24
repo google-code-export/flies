@@ -1,3 +1,23 @@
+/*
+ * Copyright 2010, Red Hat, Inc. and individual contributors as indicated by the
+ * @author tags. See the copyright.txt file in the distribution for a full
+ * listing of individual contributors.
+ * 
+ * This is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ * 
+ * This software is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA, or see the FSF
+ * site: http://www.fsf.org.
+ */
 package net.openl10n.flies.rest.service;
 
 import java.io.InputStream;
@@ -37,7 +57,6 @@ import net.openl10n.flies.common.ContentState;
 import net.openl10n.flies.common.LocaleId;
 import net.openl10n.flies.common.Namespaces;
 import net.openl10n.flies.dao.DocumentDAO;
-import net.openl10n.flies.dao.LocaleDAO;
 import net.openl10n.flies.dao.PersonDAO;
 import net.openl10n.flies.dao.ProjectIterationDAO;
 import net.openl10n.flies.dao.TextFlowTargetDAO;
@@ -46,7 +65,6 @@ import net.openl10n.flies.model.HDocument;
 import net.openl10n.flies.model.HLocale;
 import net.openl10n.flies.model.HPerson;
 import net.openl10n.flies.model.HProjectIteration;
-import net.openl10n.flies.model.HSimpleComment;
 import net.openl10n.flies.model.HTextFlow;
 import net.openl10n.flies.model.HTextFlowTarget;
 import net.openl10n.flies.rest.NoSuchEntityException;
@@ -141,9 +159,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
    @In
    private LocaleService localeServiceImpl;
 
-   @In
-   private LocaleDAO localeDAO;
-   
+
    public TranslationResourcesService()
    {
    }
@@ -231,7 +247,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
       Resource entity = RestUtils.unmarshall(Resource.class, messageBody, requestContentType, headers.getRequestHeaders());
 
       HDocument document = documentDAO.getByDocId(hProjectIteration, entity.getName());
-      HLocale hLocale = validateLocale(entity.getLang());
+      HLocale hLocale = validateLocale(entity.getLang(), projectSlug, iterationSlug);
       int nextDocRev;
       if (document != null)
       {
@@ -312,12 +328,12 @@ public class TranslationResourcesService implements TranslationResourcesResource
       return Response.ok().entity(entity).tag(etag).lastModified(doc.getLastChanged()).build();
    }
 
-   private HLocale validateLocale(LocaleId locale)
+   private HLocale validateLocale(LocaleId locale, String projectSlug, String iterationSlug)
    {
       HLocale hLocale;
       try
       {
-         hLocale = localeServiceImpl.getSupportedLanguageByLocale(locale);
+         hLocale = localeServiceImpl.validateLocaleByProjectIteration(locale, projectSlug, iterationSlug);
          return hLocale;
       }
       catch (FliesServiceException e)
@@ -350,7 +366,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
 
       HDocument document = documentDAO.getByDocId(hProjectIteration, id);
       LocaleId locale = entity.getLang();
-      HLocale hLocale = validateLocale(locale);
+      HLocale hLocale = validateLocale(locale, projectSlug, iterationSlug);
       int nextDocRev;
       if (document == null)
       { // must be a create operation
@@ -507,7 +523,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
       {
          return Response.status(Status.NOT_FOUND).build();
       }
-      HLocale hLocale = validateLocale(entity.getLang());
+      HLocale hLocale = validateLocale(entity.getLang(), projectSlug, iterationSlug);
       boolean changed = resourceUtils.transferFromResourceMetadata(entity, document, extensions, hLocale, document.getRevision() + 1);
 
       if (changed)
@@ -548,15 +564,8 @@ public class TranslationResourcesService implements TranslationResourcesResource
          return Response.status(Status.NOT_FOUND).build();
       }
 
-      HLocale hLocale;
-      try
-      {
-         hLocale = localeServiceImpl.getSupportedLanguageByLocale(locale);
-      }
-      catch (FliesServiceException e)
-      {
-         return Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build();
-      }
+      HLocale hLocale = validateLocale(locale, projectSlug, iterationSlug);
+
       List<HTextFlowTarget> hTargets = textFlowTargetDAO.findTranslations(document, locale);
       TranslationsResource translationResource = new TranslationsResource();
       resourceUtils.transferToTranslationsResourceExtensions(document, translationResource.getExtensions(true), extensions, hLocale);
@@ -655,7 +664,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
 
       boolean changed = false;
 
-      HLocale hLocale = validateLocale(locale);
+      HLocale hLocale = validateLocale(locale, projectSlug, iterationSlug);
       // handle extensions
       changed |= resourceUtils.transferFromTranslationsResourceExtensions(entity.getExtensions(true), document, extensions, hLocale);
 
@@ -819,6 +828,7 @@ public class TranslationResourcesService implements TranslationResourcesResource
       }
    }
    
+   @SuppressWarnings("unused")
    private String createComment(HTextFlowTarget target) 
    {
       String authorname;

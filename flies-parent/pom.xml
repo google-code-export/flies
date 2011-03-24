@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.openl10n.flies</groupId>
 	<artifactId>flies-parent</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<name>Flies Parent POM</name>
 	<url>http://flies.openl10n.net/</url>
 	<packaging>pom</packaging>
@@ -57,8 +57,20 @@
 		</mailingList>
 
 		<mailingList>
+			<name>flies-issues</name>
+			<!-- users can't post messages:
+			<post>flies-issues@googlegroups.com</post>
+			-->
+			<subscribe>flies-issues+subscribe@googlegroups.com</subscribe>
+			<unsubscribe>flies-issues+unsubscribe@googlegroups.com</unsubscribe>
+			<archive>http://groups.google.com/group/flies-issues</archive>
+		</mailingList>
+
+		<mailingList>
 			<name>flies-code-reviews</name>
+			<!-- users can't post messages:
 			<post>flies-code-reviews@googlegroups.com</post>
+			-->
 			<subscribe>flies-code-reviews+subscribe@googlegroups.com</subscribe>
 			<unsubscribe>flies-code-reviews+unsubscribe@googlegroups.com</unsubscribe>
 			<archive>http://groups.google.com/group/flies-code-reviews</archive>
@@ -66,7 +78,9 @@
 
 		<mailingList>
 			<name>flies-commits</name>
+			<!-- users can't post messages:
 			<post>flies-commits@googlegroups.com</post>
+			-->
 			<subscribe>flies-commits+subscribe@googlegroups.com</subscribe>
 			<unsubscribe>flies-commits+unsubscribe@googlegroups.com</unsubscribe>
 			<archive>http://groups.google.com/group/flies-commits</archive>
@@ -74,7 +88,9 @@
 
 		<mailingList>
 			<name>flies-builds</name>
+			<!-- users can't post messages:
 			<post>flies-builds@googlegroups.com</post>
+			-->
 			<subscribe>flies-builds+subscribe@googlegroups.com</subscribe>
 			<unsubscribe>flies-builds+unsubscribe@googlegroups.com</unsubscribe>
 			<archive>http://groups.google.com/group/flies-builds</archive>
@@ -97,6 +113,14 @@
 			<timezone>10</timezone>
 		</developer>
 		<developer>
+			<id>jni@redhat.com</id>
+			<name>James Ni</name>
+			<email>jni@redhat.com</email>
+			<organization>Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<timezone>8</timezone>
+		</developer>
+		<developer>
 			<id>sflaniga@redhat.com</id>
 			<name>Sean Flanigan</name>
 			<email>sflaniga@redhat.com</email>
@@ -106,7 +130,28 @@
 		</developer>
 	</developers>
 
+	<contributors>
+		<!-- in alphabetical order (by email field) -->
+		<contributor>
+			<name>Ding-Yi Chen</name>
+			<email>dchen@redhat.com</email>
+			<organization>Red Hat</organization>
+			<organizationUrl>http://www.redhat.com/</organizationUrl>
+			<roles>
+				<role>tester</role>
+			</roles>
+			<timezone>10</timezone>
+		</contributor>
+	</contributors>
+
 	<properties>
+		<!--
+		  MERCURIAL_REVISION is supplied by Hudson.
+		  changeSet property can be provided by
+		  buildnumber-maven-plugin, but
+		  see http://jira.codehaus.org/browse/MOJO-1432
+		-->
+		<changeSet>${env.MERCURIAL_REVISION}</changeSet>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<gwt.version>2.1.0</gwt.version>
@@ -148,6 +193,53 @@
 			</plugin>
 
 			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<useFile>false</useFile>
+				</configuration>
+			</plugin>
+
+			<!-- http://jira.codehaus.org/browse/MOJO-1432
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.0-beta-4</version>
+				<executions>
+					<execution>
+						<id>define-changeset</id>
+						<phase>initialize</phase>
+						<goals>
+							sets Maven properties changeSet and changeSetDate
+							<goal>hgchangeset</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+
+			<!-- useful for debugging Maven properties
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo>[changeSet] ${changeSet}</echo>
+								<echo>[changeSetDate] ${changeSetDate}</echo>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			-->
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.3.1</version>
@@ -159,8 +251,8 @@
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
 						<manifestEntries>
-							<Implementation-Version>${project.version}</Implementation-Version>
 							<Implementation-Build>${maven.build.timestamp}</Implementation-Build>
+							<SCM-Changeset>${changeSet}</SCM-Changeset>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -197,7 +289,7 @@
 				</plugin>
 				<plugin>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.5</version>
+					<version>2.7.2</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -219,6 +311,33 @@
 	</build>
 	
 	<profiles>
+		<profile>
+			<!--
+			  This profile lets us skip unit tests (but not
+			  integration tests) with
+			  a) -PskipUnitTests, or
+			  b) -Dit.test=<integration-test-name>
+
+			  The option -DskipTests can still be used to skip
+			  all tests (unit and integration).
+			-->
+			<id>skipUnitTests</id>
+			<activation>
+				<property>
+					<name>it.test</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>eclipse</id>
 			<build>
@@ -367,9 +486,12 @@
 				<version>1.2.0-20100906.075839-2</version>
 			</dependency>
 
-
+			<!-- 
+			Looks like com.googlecode.gwt.inject is the canonical groupId
+			http://code.google.com/p/google-gin/issues/detail?id=45#c27
+			-->
 			<dependency>
-				<groupId>com.google.gwt.inject</groupId>
+				<groupId>com.googlecode.gwt.inject</groupId>
 				<artifactId>gin</artifactId>
 				<version>1.0</version>
 			</dependency>

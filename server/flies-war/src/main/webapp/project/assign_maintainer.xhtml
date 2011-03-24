@@ -23,7 +23,7 @@
           return confirm("#{messages['jsf.AreYouSureYouWishToDeleteThisPersonThisActionCannotBeUndone']}");
         }
       </script>
-      <rich:panel>
+      <rich:panel rendered="#{s:hasPermission(projectHome.instance, 'update')}">
         <f:facet name="header">#{messages['jsf.ProjectMaintainerManager']}</f:facet>
 		<h:messages />
 		
@@ -49,8 +49,7 @@
 	          <rich:column width="auto">
 	            <f:facet name="header">#{messages['jsf.Actions']}</f:facet>          
 	            <h:commandLink value="#{messages['jsf.Remove']}" action="#{projectMaintainerManageAction.deleteMaintainer(projectMaintainerManageAction.selectedPerson)}"
-	                    rendered="#{s:hasPermission(projectHome.instance, 'update')}"
-	                    onclick="return confirmDelete()"/>
+	                      onclick="return confirmDelete()"/>
 	          </rich:column>
 	  	    </rich:dataTable>
         </h:form>              

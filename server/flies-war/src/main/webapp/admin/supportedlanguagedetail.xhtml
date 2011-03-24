@@ -15,42 +15,8 @@
 		<h:form>
 			<s:token allowMultiplePosts="true" />
 			<rich:panel>
-				<f:facet name="header">#{messages['jsf.SupportedLanguageDetails']}</f:facet>
-				<h:panelGrid>
-					<s:decorate id="localeField"
-						template="../WEB-INF/layout/edit.xhtml">
-						<ui:define name="label">#{messages['jsf.Language']}</ui:define>
-						<h:selectOneMenu id="selectLocale"
-							value="#{languageManagerAction.language}" >
-							<a4j:support event="onchange" reRender="output"
-								action="#{languageManagerAction.updateLanguage()}" />
-							<f:selectItems value="#{languageManagerAction.localeStringList}" />
-						</h:selectOneMenu>
-					</s:decorate>
-				</h:panelGrid>
+			        <ui:include src="../WEB-INF/layout/language_detail.xhtml" />
 
-				<div><h:panelGrid id="output" >
-					<s:decorate id="output1" template="../WEB-INF/layout/display.xhtml">
-						<ui:define name="label">#{messages['jsf.CountryCode']} </ui:define>
-						<h:outputText value="#{languageManagerAction.uLocale.country}" />
-					</s:decorate>
-					<s:decorate id="output2" template="../WEB-INF/layout/display.xhtml">
-						<ui:define name="label">#{messages['jsf.Name']} </ui:define>
-						<h:outputText value="#{languageManagerAction.uLocale.displayName}" />
-					</s:decorate>
-					<s:decorate id="output3" template="../WEB-INF/layout/display.xhtml">
-						<ui:define name="label">#{messages['jsf.LanguageCode']} </ui:define>
-						<h:outputText value="#{languageManagerAction.uLocale.language}" />
-					</s:decorate>
-					<s:decorate id="output4" template="../WEB-INF/layout/display.xhtml">
-						<ui:define name="label">#{messages['jsf.Variant']} </ui:define>
-						<h:outputText value="#{languageManagerAction.uLocale.variant}" />
-					</s:decorate>
-					<s:decorate id="output5" template="../WEB-INF/layout/display.xhtml">
-						<ui:define name="label">#{messages['jsf.NativeName']} </ui:define>
-						<h:outputText value="#{languageManagerAction.uLocale.getDisplayName(languageManagerAction.uLocale)}" />
-					</s:decorate>
-				</h:panelGrid></div>
 				<div style="clear: both" />
 
 				<div class="actionButtons"><h:commandButton
