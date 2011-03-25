@@ -1,0 +1,18 @@
+package net.openl10n.flies.client.commands;
+
+import org.kohsuke.args4j.Option;
+
+public interface PutVersionOptions extends ConfigurableOptions
+{
+
+   @Option(name = "--version-project", metaVar = "PROJ", usage = "Flies project version's project", required = true)
+   public void setVersionProject(String id);
+
+   @Option(name = "--version-slug", metaVar = "VER", usage = "Flies project version ID", required = true)
+   public void setVersionSlug(String id);
+
+   public String getVersionProject();
+
+   public String getVersionSlug();
+
+}
