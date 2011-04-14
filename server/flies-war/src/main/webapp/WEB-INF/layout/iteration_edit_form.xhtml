@@ -1,0 +1,86 @@
+<a4j:form id="iterationForm"
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    
+>
+
+    <s:token allowMultiplePosts="true" />
+    <rich:panel>
+        <s:decorate id="slugField" template="edit.xhtml">
+            <ui:define name="label">#{messages['jsf.Id']}</ui:define>
+            <h:outputText rendered="#{projectIterationHome.managed}" value="#{projectIterationHome.instance.slug}" />
+            <h:inputText rendered="#{not projectIterationHome.managed}"
+                         id="slug" required="true"
+                         value="#{projectIterationHome.instance.slug}" 
+                         valueChangeListener="#{projectIterationHome.verifySlugAvailable}">
+              <a4j:support event="onblur" reRender="slugField" ajaxSingle="true"/>
+            </h:inputText>
+        </s:decorate>
+
+        <s:decorate id="activeField" template="edit.xhtml">
+            <ui:define name="label">#{messages['jsf.Active']}</ui:define>
+            <h:selectBooleanCheckbox id="acvite"
+                         value="#{projectIterationHome.instance.active}"/>
+        </s:decorate>
+
+        <div style="clear:both"/>
+
+    </rich:panel>
+
+	<s:div>
+		<a4j:region>
+		<h:selectBooleanCheckbox
+		 title="overrideLocales"
+		  value="#{projectIterationLocaleAction.setting}" >
+			<a4j:support event="onchange" reRender="languagelist" />
+		</h:selectBooleanCheckbox>
+		</a4j:region>
+		<h:outputText
+		  value="Would you like add a customized list of locales?"/>
+	</s:div>
+
+
+	<s:div id="languagelist">
+	<rich:spacer height="20px" />
+	<a4j:region renderRegionOnly="true">
+      	<h:panelGrid columns="3" id ="languagePanel" rendered="#{projectIterationLocaleAction.setting}">
+	    <h:outputText value="#{messages['jsf.AvailableLocales']}"/>
+	    <h:outputText value=""/>
+	    <h:outputText value="#{messages['jsf.SelectedLocales']}"/>
+            <h:selectManyListbox id ="languagelist2" value="#{projectIterationLocaleAction.availableList}" styleClass="language_list">
+                <f:selectItems value="#{iterationAvailableItems}"/>
+		<a4j:support event="ondblclick" reRender="languagePanel" action="#{projectIterationLocaleAction.toCustomizedLocales}"/>
+            </h:selectManyListbox>
+            <h:panelGroup id="buttons" styleClass="language_action_buttons">
+                <a4j:commandButton value="&gt;" action="#{projectIterationLocaleAction.toCustomizedLocales}" styleClass="language_action_button" reRender ="languagePanel" />
+                <a4j:commandButton value="&lt;" action="#{projectIterationLocaleAction.removeFromCustomizedLocales}" styleClass="language_action_button" reRender ="languagePanel" />
+            </h:panelGroup>
+            <h:selectManyListbox id="languagelist1" value="#{projectIterationLocaleAction.customizedLocales}" styleClass="language_list" >
+                <f:selectItems value="#{projectIterationLocaleAction.iterationCustomizedItems}"/>
+		<a4j:support event="ondblclick" reRender="languagePanel" action="#{projectIterationLocaleAction.removeFromCustomizedLocales}"/>
+            </h:selectManyListbox>
+      	</h:panelGrid>
+	</a4j:region>
+	</s:div>
+
+
+    <div class="actionButtons">
+        <h:commandButton id="save"
+                      value="#{messages['jsf.Save']}"
+                     action="#{projectIterationHome.persist}"
+                   rendered="#{!projectIterationHome.managed}"/>
+        <h:commandButton id="update"
+                      value="#{messages['jsf.Update']}"
+                     action="#{projectIterationHome.update}"
+                   rendered="#{projectIterationHome.managed}"/>
+        <s:button id="cancel"
+                        value="#{messages['jsf.Cancel']}"
+                         action="#{projectIterationHome.cancel}"/>
+    </div>
+
+</a4j:form>

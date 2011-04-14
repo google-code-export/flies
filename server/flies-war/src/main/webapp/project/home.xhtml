@@ -1,0 +1,57 @@
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:s="http://jboss.com/products/seam/taglib"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:rich="http://richfaces.org/rich"
+    xmlns:a4j="http://richfaces.org/a4j"
+    template="../WEB-INF/layout/template.xhtml">
+
+  <ui:define name="left_content">
+    <rich:panel rendered="#{identity.loggedIn}">
+      <f:facet name="header">#{messages['jsf.Actions']}</f:facet>
+      <s:link styleClass="action_link"
+      				rendered="#{s:hasPermission(projectHome.instance, 'insert')}"
+      				value="#{messages['jsf.CreateProject']}"
+                    view="/project/create_project.xhtml"
+                    propagation="none"/>
+    </rich:panel>
+  </ui:define>
+
+  <ui:define name="center_content">
+    <rich:jQuery selector="#tab_projects" query="addClass('ui-tabs-selected')" />
+    <s:fragment rendered="#{projectAction.getEmpty()}">
+	<h:outputText value="#{messages['jsf.NoProjectExists']}" />
+    </s:fragment>
+    <s:fragment rendered="#{!projectAction.getEmpty()}">
+      <a4j:form>
+	 <rich:datascroller align="center" for="projectList" maxPages="10"
+		    page="#{projectAction.scrollerPage}" id="scroller" reRender="sc2" />
+	<rich:spacer height="15" />
+        <rich:dataTable id="projectList" 
+            rows="#{projectAction.pageSize}"  columnsWidth="200px,200px,80px" 
+            value="#{projectAction.projectPagedListDataModel}" var="project">
+				<rich:column>
+					       <s:link id="project" styleClass="project_link" value="#{project.name}"  propagation="none"
+						     view="/project/project.xhtml"> 
+						    <f:param name="slug" value="#{project.slug}"/>
+						</s:link>
+	        		</rich:column>
+				<rich:column>
+						<h:outputText value="#{project.description}" />
+	        		</rich:column>
+				<rich:column>
+						<h:outputText value="#{project.creationDate}">
+						   <f:convertDateTime type="date" dateStyle="default"/>
+						</h:outputText>	            		
+	        		</rich:column>
+        </rich:dataTable>
+	 <rich:datascroller align="center" for="projectList" maxPages="10"
+		    page="#{projectAction.scrollerPage}" id="sc2" reRender="scroller" />    
+	</a4j:form>
+</s:fragment>
+  </ui:define>
+
+</ui:composition>
